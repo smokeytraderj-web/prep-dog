@@ -150,6 +150,16 @@ The palette is the app's own (`src/styles.css`), not a vendor's.
   decoration: anything that does not answer how much, how risky, what of, or
   what it costs does not belong on it.
 
+The range is stated so it explains itself. The lede names each side (Downside,
+Upside) with its percentage and its dollar figure. The bar is anchored at
+today's value and labeled with the ending portfolio values at each end, the
+percentile each one represents, and one sentence saying what 95% means: in 95
+of every 100 modeled six-month periods the portfolio ends between them, one in
+twenty falls outside, and the model does not say how far. A range shown as two
+bare percentages is not a finished slide -- a reader who does not already know
+the measure cannot tell what it claims, and the tail disclosure is what keeps
+the modeled range from reading as a floor.
+
 Figures on the page wear ink, never a series color: the range percentages are
 navy text beside a colored bar, not colored text.
 

@@ -36,7 +36,7 @@ const plain = (n, d = 2) => `${n.toFixed(d)}%`;
 
 // Risk Score as a ring gauge: the arc fills to the score's place on 1-99 and
 // the number sits inside, so the score reads as the page's one headline.
-function gauge(score, size = 156) {
+function gauge(score, size = 132) {
   const r = size / 2 - 11;
   const c = 2 * Math.PI * r;
   const frac = (score - 1) / 98;
@@ -51,16 +51,25 @@ function gauge(score, size = 156) {
   </svg>`;
 }
 
-// Diverging range bar, anchored at zero, 3px rounded outer ends.
-function rangeBar(range, w, h = 13) {
+// Diverging range bar, anchored at today's value. Ending portfolio values sit
+// above each end and the percentile each one represents sits below, so the bar
+// states what the metric is without a legend.
+function rangeBar(range, total, w, h = 15) {
   const span = Math.abs(range.downside_pct) + Math.abs(range.upside_pct) || 1;
   const z = (Math.abs(range.downside_pct) / span) * w;
-  return `<svg viewBox="0 0 ${w} ${h + 18}" width="${w}" role="img" aria-label="Six-month 95% probability range from ${pct(range.downside_pct)} to ${pct(range.upside_pct)}.">
-    <path d="M3 0 h${(z - 5).toFixed(1)} v${h} h-${(z - 5).toFixed(1)} a3 3 0 0 1-3-3 v-${h - 6} a3 3 0 0 1 3-3z" fill="${DOWN}"/>
-    <path d="M${(z + 2).toFixed(1)} 0 h${(w - z - 5).toFixed(1)} a3 3 0 0 1 3 3 v${h - 6} a3 3 0 0 1-3 3 h-${(w - z - 5).toFixed(1)}z" fill="${UP}"/>
-    <text x="0" y="${h + 16}" font-size="8" fill="${FAINT}">Downside ${pct(range.downside_pct)} &#183; 5th percentile</text>
-    <text x="${z.toFixed(1)}" y="${h + 16}" font-size="8" fill="${FAINT}" text-anchor="middle">0%</text>
-    <text x="${w}" y="${h + 16}" font-size="8" fill="${FAINT}" text-anchor="end">95th percentile &#183; upside ${pct(range.upside_pct)}</text>
+  const lo = total + range.downside_value;
+  const hi = total + range.upside_value;
+  return `<svg viewBox="0 0 ${w} ${h + 54}" width="${w}" role="img" aria-label="In 95 of 100 modeled six-month periods the portfolio ends between ${usd(lo)} and ${usd(hi)}.">
+    <text x="0" y="12" font-size="13" fill="${INK}" font-family="Georgia,serif">${usd(lo)}</text>
+    <text x="${z.toFixed(1)}" y="12" font-size="9" fill="${MUTED}" text-anchor="middle">${usd(total)} today</text>
+    <text x="${w}" y="12" font-size="13" fill="${INK}" font-family="Georgia,serif" text-anchor="end">${usd(hi)}</text>
+    <g transform="translate(0 24)">
+      <path d="M3 0 h${(z - 5).toFixed(1)} v${h} h-${(z - 5).toFixed(1)} a3 3 0 0 1-3-3 v-${h - 6} a3 3 0 0 1 3-3z" fill="${DOWN}"/>
+      <path d="M${(z + 2).toFixed(1)} 0 h${(w - z - 5).toFixed(1)} a3 3 0 0 1 3 3 v${h - 6} a3 3 0 0 1-3 3 h-${(w - z - 5).toFixed(1)}z" fill="${UP}"/>
+      <line x1="${z.toFixed(1)}" x2="${z.toFixed(1)}" y1="-6" y2="${h + 6}" stroke="${MUTED}" stroke-width="1"/>
+      <text x="0" y="${h + 18}" font-size="8.5" fill="${FAINT}">5th percentile &#183; ${pct(range.downside_pct)}</text>
+      <text x="${w}" y="${h + 18}" font-size="8.5" fill="${FAINT}" text-anchor="end">95th percentile &#183; ${pct(range.upside_pct)}</text>
+    </g>
   </svg>`;
 }
 
@@ -105,20 +114,23 @@ export function renderSlide(s) {
   .mark{width:38px;height:38px;border-radius:50%;border:1px solid #b7c3cf;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:13px;line-height:1;letter-spacing:-.5px;color:${INK};flex:none}
   .brand>div b{display:block;font-size:8px;letter-spacing:1.5px;font-weight:600;color:${INK}}
   .brand>div span{display:block;font-size:5.5px;letter-spacing:1.8px;color:#8094a4;margin-top:4px}
-  .head{display:flex;justify-content:space-between;align-items:flex-end;margin-top:34px;padding-bottom:16px;border-bottom:1px solid ${RULE}}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px;padding-bottom:16px;border-bottom:1px solid ${RULE}}
   .eyebrow{font-size:9px;letter-spacing:2.2px;font-weight:600;color:${GOLD};margin:0 0 14px}
   h2{font-family:Georgia,"Times New Roman",serif;font-size:36px;font-weight:400;letter-spacing:-1px;line-height:1.15;margin:0}
   .asof{font-size:10px;color:${INK2};letter-spacing:.3px}
   .body{flex:1;display:flex;flex-direction:column;min-height:0}
-  .lede{display:grid;grid-template-columns:1fr 1fr 190px;gap:48px;align-items:center;padding:24px 0;border-bottom:1px solid ${RULE}}
+  .lede{display:grid;grid-template-columns:1fr 1fr 190px;gap:48px;align-items:center;padding:18px 0;border-bottom:1px solid ${RULE}}
   .lede em{font-style:normal;display:block;font-size:8.5px;letter-spacing:1.9px;color:${MUTED};font-weight:600;margin-bottom:11px}
-  .lede b{font-family:Georgia,serif;font-size:38px;font-weight:400;letter-spacing:-1.2px;line-height:1;display:block;font-variant-numeric:tabular-nums}
+  .lede b{font-family:Georgia,serif;font-size:34px;font-weight:400;letter-spacing:-1.2px;line-height:1;display:block;font-variant-numeric:tabular-nums}
   .lede p{font-size:10px;color:${MUTED};margin:9px 0 0}
-  .pair{display:flex;gap:34px}
-  .pair b{font-size:25px}
-  .grid{display:grid;grid-template-columns:1fr 320px;gap:60px;padding-top:26px;flex:1;min-height:0}
+  .pair{display:flex;gap:40px}
+  .pair b{font-size:24px}
+  .pair i{font-style:normal;display:block;font-size:8.5px;letter-spacing:1.6px;text-transform:uppercase;color:${MUTED};font-weight:600;margin-top:9px}
+  .pair span{display:block;font-size:11px;color:${INK2};margin-top:4px;font-variant-numeric:tabular-nums}
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:60px;padding-top:20px;flex:1;min-height:0}
   h3{font-size:8.5px;letter-spacing:1.9px;text-transform:uppercase;color:${MUTED};font-weight:600;margin:0 0 16px}
-  .legend{display:flex;flex-wrap:wrap;gap:9px 28px;font-size:10.5px;color:${INK2};margin-top:14px}
+  .explain{font-size:9.5px;line-height:1.6;color:${INK2};margin:11px 0 0;max-width:560px}
+  .legend{display:flex;flex-wrap:wrap;gap:9px 28px;font-size:10.5px;color:${INK2};margin-top:12px}
   .sw{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:7px;vertical-align:middle}
   table{width:100%;border-collapse:collapse;font-size:10.5px}
   td{padding:8px 0;border-bottom:1px solid ${RULE}}
@@ -145,10 +157,9 @@ export function renderSlide(s) {
       <div>
         <em>SIX-MONTH RANGE &#183; 95% PROBABILITY</em>
         <div class="pair">
-          <b>${pct(s.range.downside_pct)}</b>
-          <b>${pct(s.range.upside_pct)}</b>
+          <div><b>${pct(s.range.downside_pct)}</b><i>Downside</i><span>${usd(s.range.downside_value)}</span></div>
+          <div><b>${pct(s.range.upside_pct)}</b><i>Upside</i><span>${usd(s.range.upside_value, true)}</span></div>
         </div>
-        <p>${usd(s.range.downside_value)} to ${usd(s.range.upside_value, true)}</p>
       </div>
       <div style="justify-self:end;text-align:center">
         ${gauge(s.risk_score)}
@@ -157,9 +168,10 @@ export function renderSlide(s) {
     </div>
     <div class="grid">
       <div>
-        <h3>Range of outcomes</h3>
-        ${rangeBar(s.range, 560)}
-        <div style="margin-top:34px">
+        <h3>Where the portfolio could be in six months</h3>
+        ${rangeBar(s.range, s.total_value, 560)}
+        <p class="explain">In 95 of every 100 modeled six-month periods the portfolio ends between these two values. One period in twenty falls outside them, and the model does not say how far.</p>
+        <div style="margin-top:20px">
           <h3>Allocation</h3>
           ${stacked(alloc, 560)}
           <div class="legend">${alloc
