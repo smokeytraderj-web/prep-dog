@@ -1,4 +1,16 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-export default defineConfig({ plugins: [react(), tailwindcss()] });
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { benchmarkResponse } from './server/benchmark.js';
+const benchmarkApi = {
+  name: 'benchmark-api',
+  configureServer(server) {
+    server.middlewares.use('/api/benchmark/sp500', async (req, res) => {
+      const response = await benchmarkResponse(new Request('http://localhost/api/benchmark/sp500', {method: req.method}));
+      res.statusCode = response.status;
+      for (const [key, value] of response.headers) res.setHeader(key, value);
+      res.end(await response.text());
+    });
+  },
+};
+export default defineConfig({plugins: [react(), tailwindcss(), benchmarkApi]});

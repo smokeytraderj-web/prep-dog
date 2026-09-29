@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  ArrowRight,
   ArrowLeft,
   Upload,
   Check,
@@ -20,9 +19,12 @@ import {
 } from "lucide-react";
 import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
+import "./workspace.css";
 import EquitySlide from "./EquitySlide";
 import equityExample from "./equity-example.json";
-import { SECTOR_ORDER, validateEquity } from "./equity";
+import { validateEquity } from "./equity";
+import { comparePortfolio, isBenchmarkStale } from "./benchmark";
+import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 const money = (n) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -81,10 +83,13 @@ function App() {
     [page, setPage] = useState(0),
     [done, setDone] = useState(false),
     [drag, setDrag] = useState(false);
-  const [equity, setEquity] = useState(null),
+  const [importedEquity, setEquity] = useState(null),
     [equityError, setEquityError] = useState(""),
-    [equityStatus, setEquityStatus] = useState(""),
     [showExample, setShowExample] = useState(false);
+  const [deckEquity, setDeckEquity] = useState(null);
+  const benchmark = useBenchmark();
+  const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot) : null;
+  const equity = importedEquity || (benchmark.snapshot && !isBenchmarkStale(benchmark.snapshot) ? comparison?.data : null);
   const equityFile = useRef(null);
   const file = useRef(null);
   const total = totalValue(holdings);
@@ -133,6 +138,8 @@ function App() {
     );
     if (r.holdings.length && !r.errors.length) {
       setHoldings(r.holdings);
+      setEquity(null);
+      setEquityError("");
       setReviewed(true);
     }
   };
@@ -179,7 +186,6 @@ function App() {
     setErrors([]);
     setEquity(null);
     setEquityError("");
-    setEquityStatus("");
     navigate(0);
   }
   async function uploadEquity(f) {
@@ -194,36 +200,12 @@ function App() {
       setEquityError(e.message);
     }
   }
-  async function loadLiveEquity() {
-    setEquityStatus("Loading latest S&P 500 exposure…");
-    setEquityError("");
-    try {
-      const response = await fetch("/api/benchmark/sp500");
-      if (!response.ok) throw Error("The live benchmark source is unavailable right now.");
-      const { readSheet } = await import("read-excel-file/browser");
-      const rows = await readSheet(await response.blob());
-      const headerIndex = rows.findIndex((row) => row.some((cell) => /sector/i.test(String(cell || ""))) && row.some((cell) => /weight/i.test(String(cell || ""))));
-      if (headerIndex < 0) throw Error("The benchmark source format changed. Use the supplied sector file instead.");
-      const headers = rows[headerIndex].map((cell) => String(cell || "").toLowerCase());
-      const sectorIndex = headers.findIndex((header) => header.includes("sector"));
-      const weightIndex = headers.findIndex((header) => header.includes("weight"));
-      const map = {"information technology":"Info Tech","technology":"Info Tech","financials":"Financial Svcs","financial services":"Financial Svcs","consumer discretionary":"Cons Discr","consumer cyclical":"Cons Discr","communication services":"Comms Svcs","communication":"Comms Svcs","industrials":"Industrials","health care":"Healthcare","healthcare":"Healthcare","consumer staples":"Cons Staples","consumer defensive":"Cons Staples","real estate":"REITs","energy":"Energy","materials":"Materials","utilities":"Utilities"};
-      const totals = Object.fromEntries(SECTOR_ORDER.map((name) => [name, 0]));
-      rows.slice(headerIndex + 1).forEach((row) => { const sector = map[String(row[sectorIndex] || "").trim().toLowerCase()]; const weight = Number(String(row[weightIndex] || "").replace(/%/g, "").replace(/,/g, "")); if (sector && Number.isFinite(weight)) totals[sector] += weight; });
-      const sectors = SECTOR_ORDER.map((name) => ({ name, portfolio: totals[name], benchmark: totals[name] }));
-      const totalWeight = sectors.reduce((sum, sector) => sum + sector.benchmark, 0);
-      if (totalWeight < 95) throw Error("The benchmark source did not return a complete sector snapshot.");
-      const asOf = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
-      setEquity(validateEquity({ title: "S&P 500 Equity Exposure", as_of: `Updated ${asOf}`, portfolio_label: "S&P 500", benchmark_label: "S&P 500", benchmark_short: "S&P 500", source_note: "Source: State Street SPY daily holdings workbook.", sectors }));
-      setEquityStatus("Latest benchmark snapshot loaded");
-    } catch (e) { setEquity(null); setEquityStatus(""); setEquityError(e.message); }
-  }
   function slideContent(slide) {
-    if (slide.id === "equity") return <EquitySlide data={equity} />;
+    if (slide.id === "equity") return <EquitySlide data={deckEquity} />;
     if (slide.id === "cover")
       return (
         <div className="cover-content">
-          <p className="eyebrow">A MORE INFORMED CONVERSATION</p>
+          <p className="eyebrow">PORTFOLIO REVIEW</p>
           <h2>{title || "Portfolio review"}</h2>
           <div className="gold-rule" />
           <p className="cover-sub">
@@ -261,7 +243,8 @@ function App() {
     if (slide.id === "allocation") {
       const colors = ["#173b5a", "#315f82", "#5b86a6", "#88a8bd", "#b4c6d2", "#d0dce4"];
       let cursor = 0;
-      const stops = ranked.map((h, i) => {
+      const slices = ranked.length > 6 ? [...ranked.slice(0, 5), {ticker: "Other", value: ranked.slice(5).reduce((sum, h) => sum + h.value, 0)}] : ranked;
+      const stops = slices.map((h, i) => {
         const start = cursor;
         cursor += (h.value / total) * 100;
         return `${colors[i % colors.length]} ${start.toFixed(2)}% ${cursor.toFixed(2)}%`;
@@ -278,16 +261,16 @@ function App() {
             <div className="allocation-readout">
               <p className="allocation-kicker">PORTFOLIO MIX</p>
               <strong>{topThree.toFixed(1)}%</strong>
-              <span>in the three largest positions</span>
+              <span>in the {Math.min(3, ranked.length)} largest positions</span>
               <p className="allocation-insight">Largest position: <b>{largest?.ticker}</b> at {((largest?.value / total) * 100).toFixed(1)}%.</p>
             </div>
           </div>
           <div className="allocation-legend">
-            {ranked.slice(0, 6).map((h, i) => (
+            {slices.map((h, i) => (
               <div key={h.ticker}><span className="allocation-swatch" style={{ background: colors[i % colors.length] }} /><b>{h.ticker}</b><span>{((h.value / total) * 100).toFixed(1)}%</span></div>
             ))}
           </div>
-          {ranked.length > 6 && <p className="slide-note">Top six shown individually; remaining positions are included in the chart.</p>}
+          {ranked.length > 6 && <p className="slide-note">Other combines {ranked.length - 5} smaller positions.</p>}
         </>
       );
     }
@@ -367,8 +350,8 @@ function App() {
             {slide.id === "cover"
               ? "PORTFOLIO REVIEW"
               : slide.id === "equity"
-                ? "Source: imported sector data · As-of date supplied above"
-                : "Source: user-provided holdings · No live market data"}
+                ? "Benchmark methodology and source shown above"
+                : "Source: supplied portfolio position values"}
           </span>
           <span>{String(index + 1).padStart(2, "0")}</span>
         </footer>
@@ -388,8 +371,7 @@ function App() {
             </div>
           </div>
           <div className="product-name">
-            prep dog
-            <span className="gold-dot" />
+            Prep Dog <span className="product-divider">/</span><small>Portfolio studio</small>
           </div>
         </header>
         <nav className="step-nav" aria-label="Deck progress">
@@ -421,6 +403,7 @@ function App() {
             <>
               {!reviewed ? (
                 <section
+                  aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
                   onDragOver={(e) => {
                     e.preventDefault();
@@ -434,7 +417,7 @@ function App() {
                   }}
                 >
                   <div className="input-top">
-                    <label htmlFor="holdings">Add your holdings</label>
+                    <label htmlFor="holdings">Holdings</label>
                     <button
                       className="text-button"
                       onClick={() => {
@@ -442,7 +425,7 @@ function App() {
                         setErrors([]);
                       }}
                     >
-                      Try an example <ArrowRight size={13} />
+                      Load example
                     </button>
                   </div>
                   <textarea
@@ -452,15 +435,9 @@ function App() {
                       setText(e.target.value);
                       setErrors([]);
                     }}
-                    placeholder={
-                      "Paste holdings here…\n\nAAPL  33,032\nMSFT  49,808\nNVDA  21,208"
-                    }
+                    aria-describedby="holdings-format"
                     spellCheck="false"
                   />
-                  <div className="input-hint">
-                    Ticker + position value (USD). Paste any two-column list, or
-                    upload an Excel / CSV file.
-                  </div>
                   <div className="input-actions">
                     <button
                       className="upload-button"
@@ -474,7 +451,7 @@ function App() {
                       onClick={parse}
                       disabled={!text.trim()}
                     >
-                      Review holdings <ArrowRight size={16} />
+                      Review holdings
                     </button>
                   </div>
                   <input
@@ -493,7 +470,7 @@ function App() {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <p className="eyebrow">READY TO REVIEW</p>
-                      <h2>{holdings.length} positions. All in view.</h2>
+                      <h2>{holdings.length} holdings</h2>
                     </div>
                     <button
                       className="text-button"
@@ -528,7 +505,7 @@ function App() {
                   </div>
                   <div className="flex justify-end mt-6">
                     <button className="primary" onClick={() => navigate(1)}>
-                      Choose components <ArrowRight size={16} />
+                      Choose components
                     </button>
                   </div>
                 </section>
@@ -540,10 +517,8 @@ function App() {
                   ))}
                 </div>
               )}
-              <div className="privacy-note">
-                <ShieldCheck size={14} /> Your holdings stay in this browser
-                session.
-              </div>
+              <div className="input-meta"><p id="holdings-format">Paste tickers and position values in USD, or drop a file.</p><p><ShieldCheck size={14} /> Holdings stay in your browser.</p></div>
+              <BenchmarkPanel benchmark={benchmark}/>
             </>
           )}
           {step === 1 && (
@@ -587,20 +562,17 @@ function App() {
                   {selected.includes("equity") && (
                     <div className="equity-input">
                       <div>
-                        <h3>Equity sector data</h3>
-                        <p>
-                          Attach the sector JSON produced for this portfolio.
-                          Requires all 11 sectors and benchmark weights.
-                        </p>
+                        <h3>Portfolio vs. S&P 500</h3>
+                        <p>{benchmark.loading && !benchmark.snapshot ? "Loading daily benchmark…" : benchmark.snapshot ? `IVV equity proxy · As of ${benchmark.snapshot.asOf}` : "Benchmark unavailable. Retry or import sector data."}</p>
+                        {comparison && !importedEquity && <p className="coverage-note">{comparison.coverage.toFixed(1)}% of portfolio classified</p>}
+                        {comparison?.unmatched.length > 0 && !importedEquity && <p className="errors" role="alert">Sector data needed for {comparison.unmatched.map(h => h.ticker).join(", ")}. Import verified sector data to include this slide. We do not guess ETF look-through or unknown sectors.</p>}
+                        {benchmark.snapshot && isBenchmarkStale(benchmark.snapshot) && !importedEquity && <p className="errors">This benchmark is older than four days. Refresh or import a current sector file before building this slide.</p>}
                       </div>
                       <div className="flex gap-3 flex-wrap">
-                        <button className="primary" onClick={loadLiveEquity}>
-                          <ChartNoAxesColumnIncreasing size={14} /> Load live S&P 500
-                        </button>
-                        <button className="secondary" onClick={() => equityFile.current.click()}>
-                          <Upload size={14} /> Import sector data
-                        </button>
-                        <button className="text-button" onClick={() => setShowExample(true)}>View example</button>
+                        <button className="secondary" disabled={benchmark.loading} onClick={benchmark.refresh}>Refresh benchmark</button>
+                        <button className="secondary" onClick={() => equityFile.current.click()}><Upload size={14} /> Import sector data</button>
+                        <button className="text-button" onClick={() => setShowExample(true)}>Layout example</button>
+                        {importedEquity && <button className="text-button" onClick={() => setEquity(null)}>Use daily benchmark</button>}
                       </div>
                       <input
                         className="hidden"
@@ -612,8 +584,8 @@ function App() {
                           e.target.value = "";
                         }}
                       />
-                      {equityStatus && <p className="live-status"><span className="live-dot" />{equityStatus} · {equity?.as_of}</p>}
-                      {equity && !equityStatus && <p className="helper">Loaded: {equity.portfolio_label} · {equity.as_of}</p>}
+                      {equity && <p className="live-status"><Check size={15}/> {importedEquity ? "Imported sector data" : "Portfolio comparison ready"} · {equity.as_of}</p>}
+                      {benchmark.error && !importedEquity && <p className="errors" role="alert">{benchmark.error}</p>}
                       {equityError && (
                         <p className="errors" role="alert">
                           {equityError}
@@ -621,6 +593,7 @@ function App() {
                       )}
                     </div>
                   )}
+                  <div className="planned-skills"><span>Next slide skills</span><p>Attribution report <i>Awaiting report template</i></p><p>Riskalyze <i>Awaiting report template</i></p></div>
                   {selected.includes("notes") && (
                     <div className="notes-input">
                       <label htmlFor="notes">Discussion points</label>
@@ -671,10 +644,11 @@ function App() {
                       (selected.includes("notes") && !notes.trim()) ||
                       (selected.includes("equity") && !equity)
                     }
-                    onClick={() => navigate(2)}
+                    onClick={() => { setDeckEquity(equity); navigate(2); }}
                   >
-                    Preview deck <ArrowRight size={16} />
+                    Preview deck
                   </button>
+                  {selected.includes("equity") && !equity && <p className="helper">Complete the sector comparison to preview this component.</p>}
                   {selected.includes("notes") && !notes.trim() && (
                     <p className="helper">
                       Add your discussion points to continue.

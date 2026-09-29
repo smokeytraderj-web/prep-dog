@@ -7,7 +7,8 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --test src/holdings.test.js"
+    "test": "node --test src/*.test.js",
+    "build:site": "vite build && node scripts/build-site.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "^0.28.2",
     "tailwindcss": "^4.2.0",
     "vite": "^7.3.0"
   }

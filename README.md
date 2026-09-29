@@ -1,49 +1,42 @@
 # Prep Dog
 
-A focused, frontend-only portfolio deck workspace for Gottfried & Somberg Wealth Management. React, Vite, Tailwind CSS, and Lucide icons. Navy, white, and blues; no gold chart bars.
+GSWM portfolio-deck workspace built with React, Vite, Tailwind CSS and Lucide. A dark navy application surrounds white, print-ready presentation slides.
 
 ## Run
 
 ```sh
 npm ci
 npm run dev
+npm test
+npm run build
 ```
 
-`npm run build` produces `dist/`. `npm test` checks import validation. Import this GitHub repository into Vercel using the included Vite configuration. No environment variables, account, database, or backend are required.
+The Vite dev server and Vercel deployment both expose `/api/benchmark/sp500`. The server only fetches public benchmark data; user holdings remain in browser memory. No accounts, database or API keys are required. `npm run build:site` packages the same app and benchmark endpoint for Sites.
 
-## Flow
+## Holdings and deck flow
 
-1. Paste holdings or upload `.xlsx`, `.csv`, `.tsv`, or `.txt` from your computer. Excel uses the first sheet. Input is two columns: ticker and **total position value in USD**, not share price. Headers are optional. Markdown tables and comma-formatted values are supported. Duplicate tickers are combined. Unreadable rows block continuation for correction.
-2. Confirm parsed holdings and totals, then select deck components.
-3. Preview all slides, finish the deck, and print/save a PDF. Holdings detail paginates at eight positions per slide.
+Paste two columns (ticker and total USD position value), or upload XLSX, CSV, TSV or TXT up to 5 MB. Excel uses the first sheet. Headers, markdown tables, comma-formatted values and duplicate tickers are supported. Correct invalid rows, confirm holdings, select components, preview, finish and print/save a PDF. Holdings details paginate at eight positions per slide. Allocation groups portfolios with more than six holdings into the five largest plus Other, with a matching legend.
 
-Everything stays in browser memory and disappears when the page reloads. No holdings are uploaded to a server or stored in localStorage. The example portfolio is clearly user-triggered.
+No holdings are stored in localStorage or sent to the benchmark endpoint. Reloading clears the portfolio. Values are supplied position values, not fetched live prices.
 
-## Equity exposure component
+## Daily S&P 500 exposure
 
-The supplied `equity-sector-exposure` skill informs the frontend data contract and layout. It has an 11-sector table grouped into Cyclical, Sensitive, and Defensive, with portfolio minus benchmark bars. Navy is overweight; blue is underweight. It does not execute the Python skill or infer sector data from tickers.
+The benchmark uses the public [iShares IVV daily holdings CSV](https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/latest-holdings.csv). IVV tracks the S&P 500 but is an ETF proxy, not a licensed official index constituent feed. Equity market values are aggregated into all 11 sectors and normalized to 100%; cash and derivatives are excluded. The API rejects incomplete files, missing sectors, invalid dates, duplicate symbols and unexpected constituent counts.
 
-Select Equity sector exposure and import sector JSON matching `src/equity-example.json`. The data must include all 11 unique sectors, percentage weights, portfolio/benchmark labels, as-of date, and source note. Both sets of sector weights must total approximately 100%. The supplied sample is available in a separate, clearly marked example dialog and is never automatically added to a client deck. Imported JSON must correspond to the portfolio being reviewed.
+The app fetches on load, hourly while open, on returning to the tab, and via Refresh. Server/CDN caching lasts at most one hour per cache layer; browser caching is five minutes. This retrieves the provider's published daily snapshot. It is not intraday market-open/close exposure. The provider's effective date is displayed separately from retrieval time. Snapshots older than four calendar days are marked older and blocked for automatic slide generation. A refresh failure preserves an already loaded snapshot with an explicit warning, never a fake fresh timestamp.
 
-## Planned skill integration
+Individual holdings are classified against the provider's current constituent sectors. IVV gets equity-only look-through. Other funds, non-constituent equities and cash require a verified imported sector file; incomplete coverage blocks comparison rather than silently renormalizing a partial portfolio. Import custom sector JSON using `src/equity-example.json` as the schema. Sample data is preview-only. Editing and confirming holdings clears previously imported sector data.
 
-Keep slide definitions in a component registry and add a backend adapter for each future skill. The frontend should submit confirmed holdings, selected component IDs, and options, then receive validated slide data/artifacts. Do not execute arbitrary uploaded skill code in the browser. Wait for every selected component to complete before making the final deck available.
+Verified against the actual provider file on 2026-09-29: 504 equity holdings, effective date 2026-09-28, all 11 sectors. No hardcoded market snapshot is shipped.
 
-### Daily S&P 500 benchmark requirement
+## Slide skill roadmap
 
-This frontend has **no live benchmark feed or scheduled refresh**. Future backend work must:
+The equity slide uses the supplied 11-sector layout, with actual portfolio-minus-benchmark differences. Navy is overweight; light blue is underweight.
 
-- Obtain licensed/authorized S&P 500 constituents, constituent weights, and sector classifications from a selected provider.
-- Refresh at least once per US trading day; target two snapshots around the market open and after the close, subject to provider availability.
-- Use America/New_York and a US exchange calendar, including holidays, daylight saving time, and early closes. Do not assume every weekday has a 16:00 close.
-- Store both provider effective time and retrieval time, validate completeness, and atomically publish a full snapshot.
-- Display source, effective date/time, and freshness in the component and exported slide. Never label an old snapshot as current after a failed refresh.
-- Calculate portfolio sector exposure with verified classifications and fund look-through where needed. Flag missing coverage rather than silently assigning sectors.
+Draft app-module specifications are in `docs/slide-skills/attribution-report.md` and `docs/slide-skills/riskalyze.md`. Each defines one core slide, up to two optional slides, required report data and validation rules. They are not yet executable or selectable components. An anonymized report for each is the next input needed to finalize the layouts and extraction contracts.
 
-## Scope
+## Deployment
 
-Implemented: browser import, selection, data-driven preview, sample skill preview, sector JSON adapter, browser print/PDF layout. Not implemented: live prices/benchmarks, automated research, remote skill execution, PPTX export, server accounts, or hosting deployment.
+Vercel uses the repository's `vercel.json` and `api/benchmark/sp500.js`. GitHub pushes trigger deployment when its existing Vercel integration is connected. Sites uses its own source repository and the Worker build; changes must be published to each destination. A successful GitHub push alone does not update Sites.
 
-## Live S&P 500 exposure
-
-The Equity sector exposure component now has a **Load live S&P 500** action. In a Vercel deployment it calls `api/benchmark/sp500.js`, which proxies State Street's daily SPY holdings workbook with six-hour caching and parses the returned sector weights in the browser. The component shows the retrieval time and source. If the provider is unavailable or the workbook is incomplete, the app blocks the component instead of showing stale data.
+Checks: parser and benchmark tests, actual provider/API fetch, browser paste/upload → selection → sector comparison → PDF flow, mobile layout and provider-failure state. Export is browser print/PDF; PPTX and remote skill execution are not implemented.
