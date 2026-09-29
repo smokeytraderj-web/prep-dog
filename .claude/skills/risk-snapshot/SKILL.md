@@ -1,24 +1,27 @@
 ---
 name: risk-snapshot
-description: Turn a holdings list into a one-page risk snapshot slide — portfolio total, 1-99 Risk Score, six-month 95% probability range in dollars and percent, stocks/bonds/other/cash allocation donut, risk-adjusted grade, dividend, max drawdown, annual range midpoint, and a tax drag / expense ratio / advisory fee cost bar. Use this when someone asks for a Riskalyze- or Nitrogen-style risk page, a "risk number" slide, a proposal risk summary, a downside/upside range for a portfolio, or a risk section for a GSWM client deck. Not for sector attribution (see docs/slide-skills/attribution-report.md) or equity sector exposure (src/EquitySlide.jsx).
+description: Turn a holdings list into a one-page risk snapshot slide — portfolio total, 1-99 Risk Score, six-month 95% probability range in dollars and percent, stocks/bonds/other/cash allocation, risk-adjusted grade, dividend, max drawdown, annual range midpoint, and tax drag / expense ratio / advisory fee costs, on a slide styled to the firm deck. Use this when someone asks for a Riskalyze- or Nitrogen-style risk page, a "risk number" slide, a proposal risk summary, a downside/upside range for a portfolio, or a risk section for a GSWM client deck. Not for sector attribution (see docs/slide-skills/attribution-report.md) or equity sector exposure (src/EquitySlide.jsx).
 ---
 
 # Risk snapshot slide
 
 Builds the risk page of a client deck from holdings the user supplies. It is an
 in-house re-implementation of the layout and measure set of a Riskalyze/Nitrogen
-proposal page, formatted for GSWM 16:9 slides. It does **not** reproduce their
-proprietary Risk Number or GPA, and no output may be labeled as theirs.
+proposal page, rebuilt in the firm deck's house style. It does **not** reproduce
+their proprietary Risk Number or GPA, and no output may be labeled as theirs.
 
 ## Pipeline
 
 ```sh
 node scripts/snapshot.mjs input.json snapshot.json   # holdings -> measures
-node scripts/render.mjs snapshot.json slide.html     # measures -> 16:9 slide
+node scripts/render.mjs snapshot.json slide.html     # measures -> deck slide
 ```
 
 `slide.html` is self-contained (no scripts, no network, inline SVG) and prints to
-one 1280x720 page. Run `node --test scripts/snapshot.test.mjs` after any change.
+one 1280x800 page (16:10, the deck's page size). Run
+`node --test scripts/snapshot.test.mjs` after any change, and look at the
+rendered slide before calling it done -- the tests check the figures, not the
+layout.
 
 ## Step 1 — collect the input
 
@@ -63,9 +66,9 @@ Read `snapshot.json` back to the user with the inputs beside it, and check:
 
 ## Step 3 — render and place
 
-Render the slide, open it, and print to PDF at 1280x800 (16:10, the deck's page
-size). To pull it into a deck,
-hand `snapshot.json` to the deck builder rather than re-typing figures.
+Render the slide, open it, and print to PDF at 1280x800. Set `page_number` so the
+footer matches its place in the deck. To pull it into a deck, hand
+`snapshot.json` to the deck builder rather than re-typing figures.
 
 ## Matching a vendor's score
 
@@ -83,8 +86,8 @@ history helps more than retuning anchors ever will.
 - The Risk Score, grade and range come from `reference/methodology.md`. Do not
   retune the anchors to hit a number someone expects.
 - Never call the output a Riskalyze Risk Number, a Nitrogen score or a GPA.
-- The range is modeled, not a guarantee and not a maximum loss. The footer says
-  so; keep it.
+- The range is modeled, not a guarantee and not a maximum loss. The slide says
+  so twice -- the sentence under the bar and the footer basis line. Keep both.
 - No live prices are fetched. Values are the supplied position values.
 - Colors are the app's own palette and the encodings are deliberate; see
   "Slide encodings" in `reference/methodology.md`. Re-run the dataviz validator
