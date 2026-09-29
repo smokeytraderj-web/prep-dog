@@ -232,37 +232,39 @@ function App() {
           </p>
         </>
       );
-    if (slide.id === "allocation")
+    if (slide.id === "allocation") {
+      const colors = ["#173b5a", "#315f82", "#5b86a6", "#88a8bd", "#b4c6d2", "#d0dce4"];
+      let cursor = 0;
+      const stops = ranked.map((h, i) => {
+        const start = cursor;
+        cursor += (h.value / total) * 100;
+        return `${colors[i % colors.length]} ${start.toFixed(2)}% ${cursor.toFixed(2)}%`;
+      }).join(", ");
+      const topThree = ranked.slice(0, 3).reduce((sum, h) => sum + h.value, 0) / total * 100;
+      const largest = ranked[0];
       return (
         <>
-          <h2>Position allocation</h2>
-          <div className="allocation-bar">
-            {ranked.map((h, i) => (
-              <div
-                key={h.ticker}
-                style={{
-                  width: `${(h.value / total) * 100}%`,
-                  background: `hsl(210 45% ${24 + (i % 6) * 9}%)`,
-                }}
-                title={`${h.ticker}: ${((h.value / total) * 100).toFixed(2)}%`}
-              />
-            ))}
+          <h2>Where the portfolio is invested.</h2>
+          <div className="allocation-visual">
+            <div className="allocation-donut" style={{ background: `conic-gradient(${stops})` }}>
+              <div className="allocation-donut-center"><strong>{holdings.length}</strong><span>positions</span></div>
+            </div>
+            <div className="allocation-readout">
+              <p className="allocation-kicker">PORTFOLIO MIX</p>
+              <strong>{topThree.toFixed(1)}%</strong>
+              <span>in the three largest positions</span>
+              <p className="allocation-insight">Largest position: <b>{largest?.ticker}</b> at {((largest?.value / total) * 100).toFixed(1)}%.</p>
+            </div>
           </div>
           <div className="allocation-legend">
-            {ranked.slice(0, 8).map((h) => (
-              <div key={h.ticker}>
-                <b>{h.ticker}</b>
-                <span>{((h.value / total) * 100).toFixed(2)}%</span>
-              </div>
+            {ranked.slice(0, 6).map((h, i) => (
+              <div key={h.ticker}><span className="allocation-swatch" style={{ background: colors[i % colors.length] }} /><b>{h.ticker}</b><span>{((h.value / total) * 100).toFixed(1)}%</span></div>
             ))}
           </div>
-          {ranked.length > 8 && (
-            <p className="slide-note">
-              All positions shown in the bar. Eight largest listed above.
-            </p>
-          )}
+          {ranked.length > 6 && <p className="slide-note">Top six shown individually; remaining positions are included in the chart.</p>}
         </>
       );
+    }
     if (slide.id === "holdings")
       return (
         <>
