@@ -1,0 +1,31 @@
+{
+  "marketIndexes": {
+    "asOf": "YYYY-MM-DD", "basis": "YTD total return", "source": "Market data source",
+    "indexes": [
+      {"id":"sp500","label":"S&P 500","region":"U.S. large cap","return":null},
+      {"id":"nasdaq","label":"Nasdaq Composite","region":"U.S. growth","return":null},
+      {"id":"emerging","label":"MSCI Emerging Markets","region":"Emerging markets","return":null},
+      {"id":"msci","label":"MSCI World ex USA","region":"International developed","return":null}
+    ]
+  },
+  "risk": {
+    "asOf": "YYYY-MM-DD",
+    "source": "Source report and date",
+    "scope": "Accounts and exclusions included in the source report",
+    "accounts": [{"name": "Account name", "value": null, "score": null, "lowerPct": null, "upperPct": null, "confidence": null, "horizonMonths": null, "gpa": null, "dividend": null, "midpoint": null}]
+  },
+  "attribution": {
+    "periodStart": "YYYY-MM-DD", "periodEnd": "YYYY-MM-DD",
+    "feeBasis": "Gross or net, as stated by the source", "source": "Source report",
+    "accounts": [{"name": "Account name", "holdings": [{"ticker": "Ticker", "name": "Security name", "return": null, "contribution": null}]}]
+  },
+  "sectorPerformance": {
+    "asOf": "YYYY-MM-DD", "basis": "Price return or Total return", "source": "Market data source",
+    "sectors": [{"name":"Materials","return":null},{"name":"Cons Discr","return":null},{"name":"Financial Svcs","return":null},{"name":"REITs","return":null},{"name":"Comms Svcs","return":null},{"name":"Energy","return":null},{"name":"Industrials","return":null},{"name":"Info Tech","return":null},{"name":"Cons Staples","return":null},{"name":"Healthcare","return":null},{"name":"Utilities","return":null}]
+  },
+  "earnings": {
+    "asOf": "YYYY-MM-DD", "source": "Earnings data source",
+    "quarters": [{"period":"Quarter and year","growth":null,"kind":"Reported"},{"period":"Quarter and year","growth":null,"kind":"Estimate"}],
+    "years": [{"period":"Year","growth":null,"kind":"Estimate"},{"period":"Year","growth":null,"kind":"Estimate"}]
+  }
+}

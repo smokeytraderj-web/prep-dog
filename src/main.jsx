@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowLeft,
@@ -20,11 +20,21 @@ import {
 import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
 import "./workspace.css";
+import "./report.css";
+import "./slide-updates.css";
 import EquitySlide from "./EquitySlide";
+import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
 import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
+import HoldingsImport from "./HoldingsImport";
+import { textToSheets } from "./holding-import";
+import { PortfolioOverview, PortfolioAllocation, ConcentrationSlide } from "./PortfolioSlides";
+import { MarketIndexesSlide, MarketIndexesEditor, SectorPerformanceEditor, EarningsEditor, SectorPerformanceSlide, EarningsSlide } from "./MarketContext";
+import { AccountSummarySlide, RegionalAttributionSlide, RiskSlide, AttributionSlide } from "./SupportingSlides";
+import { validateSupporting, groupPositions } from "./supporting-data";
+import { emptyMarketIndexes, emptySectorPerformance, emptyEarnings, validMarketIndexes, validSectorPerformance, validEarnings } from "./market-context";
 const money = (n) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -35,41 +45,33 @@ const sample =
   "AAPL 33032\nMSFT 49808\nNVDA 21208\nAVGO 34020\nJPM 34706\nLLY 23750";
 const sections = [
   {
-    id: "overview",
-    name: "Portfolio overview",
-    description: "The big picture. Total value and position count.",
+    id: "account-summary",
+    name: "Account summary",
+    description: "Major breakdown, account values, and equities versus fixed income.",
     icon: Layers,
+    auto: true,
   },
   {
-    id: "allocation",
-    name: "Position allocation",
-    description: "A clear view of how the portfolio is weighted.",
-    icon: PieChart,
-  },
-  {
-    id: "holdings",
-    name: "Holdings detail",
-    description: "Every position, value, and portfolio weight.",
-    icon: List,
-  },
-  {
-    id: "concentration",
-    name: "Concentration",
-    description: "Largest positions and their combined weight.",
+    id: "market-indexes",
+    name: "YTD market snapshot",
+    description: "S&P 500, Nasdaq, emerging markets, and MSCI returns.",
     icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
+    id: "regional-attribution",
+    name: "Regional attribution",
+    description: "Client regional weights compared with the same market regions.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
   },
   {
     id: "equity",
-    name: "Equity sector exposure",
-    description: "Sector weights and over / underweight vs. a benchmark.",
+    name: "Equity exposure",
+    description: "Sector weights versus the current S&P 500 proxy.",
     icon: ChartNoAxesColumnIncreasing,
   },
-  {
-    id: "notes",
-    name: "Discussion points",
-    description: "Your talking points for the conversation.",
-    icon: MessageSquare,
-  },
+  { id: "risk", name: "Riskalyze", description: "Add sourced Riskalyze scores and modeled ranges.", icon: ShieldCheck },
 ];
 function App() {
   const [step, setStep] = useState(0),
@@ -77,7 +79,7 @@ function App() {
     [holdings, setHoldings] = useState([]),
     [errors, setErrors] = useState([]),
     [reviewed, setReviewed] = useState(false),
-    [selected, setSelected] = useState(["overview", "allocation", "holdings"]),
+    [selected, setSelected] = useState(["account-summary", "market-indexes", "regional-attribution"]),
     [title, setTitle] = useState("Portfolio review"),
     [notes, setNotes] = useState(""),
     [page, setPage] = useState(0),
@@ -87,7 +89,28 @@ function App() {
     [equityError, setEquityError] = useState(""),
     [showExample, setShowExample] = useState(false);
   const [deckEquity, setDeckEquity] = useState(null);
+  const [snippetImages, setSnippetImages] = useState([]);
+  const [importBook, setImportBook] = useState(null), [importBusy, setImportBusy] = useState(false), [importSource, setImportSource] = useState("");
+  const [marketIndexes, setMarketIndexes] = useState(emptyMarketIndexes), [sectorPerformance, setSectorPerformance] = useState(emptySectorPerformance), [earnings, setEarnings] = useState(emptyEarnings);
+  const [marketLoading, setMarketLoading] = useState(false), [marketError, setMarketError] = useState("");
+  const [deckMarket, setDeckMarket] = useState({});
+  const [positions, setPositions] = useState([]), [supporting, setSupporting] = useState({}), [supportError, setSupportError] = useState("");
+  const [preparedFor, setPreparedFor] = useState(""), [advisor, setAdvisor] = useState(""), [reportDate, setReportDate] = useState(new Date().toLocaleDateString('en-CA'));
+  const supportFile = useRef(null);
+  const assetReady = positions.length > 0 && positions.every(p => p.assetClass);
+  const accountsReady = positions.length > 0 && positions.every(p => p.account);
   const benchmark = useBenchmark();
+  async function refreshMarketIndexes() {
+    setMarketLoading(true); setMarketError("");
+    try {
+      const response = await fetch('/api/market/ytd');
+      const data = await response.json();
+      if (!response.ok) throw Error(data.error || 'YTD market data is unavailable.');
+      setMarketIndexes(data);
+    } catch (error) { setMarketError(error.message || 'YTD market data is unavailable.'); }
+    finally { setMarketLoading(false); }
+  }
+  useEffect(() => { refreshMarketIndexes(); }, []);
   const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot) : null;
   const equity = importedEquity || (benchmark.snapshot && !isBenchmarkStale(benchmark.snapshot) ? comparison?.data : null);
   const equityFile = useRef(null);
@@ -103,24 +126,12 @@ function App() {
     ...sections
       .filter((s) => selected.includes(s.id))
       .flatMap((s) =>
-        s.id === "holdings"
-          ? Array.from({ length: Math.ceil(holdings.length / 8) }, (_, i) => ({
-              ...s,
-              offset: i * 8,
-              name: `Holdings detail${holdings.length > 8 ? ` · ${i + 1}` : ""}`,
-            }))
-          : s.id === "notes"
-            ? Array.from(
-                { length: Math.max(1, Math.ceil(noteLines.length / 4)) },
-                (_, i) => ({
-                  ...s,
-                  offset: i * 4,
-                  name: `Discussion points${noteLines.length > 4 ? ` · ${i + 1}` : ""}`,
-                }),
-              )
-            : [s],
+        s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
+        : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
+        : [s],
       ),
   ];
+  slides.push(...snippetImages.map(image => ({id:`snippet-${image.id}`, name:image.title || 'Source image', snippet:image})));
   const navigate = (n) => {
     setStep(n);
     setDone(false);
@@ -137,6 +148,8 @@ function App() {
           : ["Add at least one holding to continue."],
     );
     if (r.holdings.length && !r.errors.length) {
+      setImportSource("");
+      setPositions(r.holdings); setSupporting({}); setSupportError("");
       setHoldings(r.holdings);
       setEquity(null);
       setEquityError("");
@@ -155,32 +168,31 @@ function App() {
       setErrors(["Choose a file smaller than 5 MB."]);
       return;
     }
+    setImportBusy(true);
     try {
-      let input;
+      let sheets;
       if (/\.xlsx$/i.test(f.name)) {
-        const { readSheet: readXlsxFile } =
-          await import("read-excel-file/browser");
-        const rows = await readXlsxFile(f);
-        input = rows
-          .filter((row) => row.some((v) => v !== null))
-          .map((row) => row.map((v) => v ?? "").join("\t"))
-          .join("\n");
-      } else input = await f.text();
-      setText(input);
-      setReviewed(false);
+        const { default: readWorkbook } = await import("read-excel-file/browser");
+        sheets = await readWorkbook(f);
+      } else sheets = textToSheets(await f.text(), "Holdings");
+      if (!sheets.length || sheets.every(s => !s.data.length)) throw Error("Empty workbook");
+      setImportBook({name: f.name, sheets});
       setErrors([]);
     } catch {
       setErrors([
-        "This file could not be read. Use an unprotected .xlsx file, or paste the holdings directly.",
+        "This file could not be read. Use an unprotected .xlsx, CSV, TSV or text file with ticker-level holdings.",
       ]);
-    }
+    } finally { setImportBusy(false); }
   }
 
   function reset() {
+    setSnippetImages([]);
     setText("");
+    setImportBook(null); setImportSource(""); setPositions([]); setSupporting({}); setSupportError(""); setPreparedFor(""); setAdvisor("");
+    setMarketIndexes(emptyMarketIndexes()); setMarketError(""); setSectorPerformance(emptySectorPerformance()); setEarnings(emptyEarnings());
     setHoldings([]);
     setReviewed(false);
-    setSelected(["overview", "allocation", "holdings"]);
+    setSelected(["account-summary", "market-indexes", "regional-attribution"]);
     setTitle("Portfolio review");
     setNotes("");
     setErrors([]);
@@ -200,80 +212,44 @@ function App() {
       setEquityError(e.message);
     }
   }
+  async function uploadSupporting(f) {
+    if (!f) return;
+    try {
+      if (f.size > 2 * 1024 * 1024) throw Error("Choose a report data file smaller than 2 MB.");
+      const data = validateSupporting(JSON.parse(await f.text()));
+      setSupporting(v => ({...v, ...data}));
+      if (data.marketIndexes) setMarketIndexes(data.marketIndexes);
+      if (data.sectorPerformance) setSectorPerformance(data.sectorPerformance);
+      if (data.earnings) setEarnings(data.earnings);
+      setSupportError("");
+    } catch (e) { setSupportError(e.message || "This report data file could not be read."); }
+  }
   function slideContent(slide) {
+    if (slide.snippet) return <SourceSnippetSlide data={slide.snippet}/>;
     if (slide.id === "equity") return <EquitySlide data={deckEquity} />;
     if (slide.id === "cover")
       return (
         <div className="cover-content">
           <p className="eyebrow">PORTFOLIO REVIEW</p>
-          <h2>{title || "Portfolio review"}</h2>
+          <h2>{title || "Portfolio review"}</h2>{preparedFor && <p className="cover-client">Prepared for {preparedFor}</p>}
           <div className="gold-rule" />
           <p className="cover-sub">
-            Prepared with Gottfried & Somberg
-            <br />
-            Wealth Management
+            {advisor ? `Presented by ${advisor}` : "Gottfried & Somberg Wealth Management"}
           </p>
           <span className="cover-date">
-            {new Date().toLocaleDateString("en-US", {
-              month: "long",
-              year: "numeric",
-            })}
+            {reportDate ? new Date(`${reportDate}T12:00:00`).toLocaleDateString("en-US", {month: "long", day: "numeric", year: "numeric"}) : ""}
           </span>
         </div>
       );
-    if (slide.id === "overview")
-      return (
-        <>
-          <h2>Your portfolio, at a glance.</h2>
-          <div className="slide-metrics">
-            <div>
-              <small>Total portfolio value</small>
-              <strong>{money(total)}</strong>
-            </div>
-            <div>
-              <small>Positions</small>
-              <strong>{holdings.length}</strong>
-            </div>
-          </div>
-          <p className="slide-note">
-            Based on the position values provided for this review.
-          </p>
-        </>
-      );
-    if (slide.id === "allocation") {
-      const colors = ["#173b5a", "#315f82", "#5b86a6", "#88a8bd", "#b4c6d2", "#d0dce4"];
-      let cursor = 0;
-      const slices = ranked.length > 6 ? [...ranked.slice(0, 5), {ticker: "Other", value: ranked.slice(5).reduce((sum, h) => sum + h.value, 0)}] : ranked;
-      const stops = slices.map((h, i) => {
-        const start = cursor;
-        cursor += (h.value / total) * 100;
-        return `${colors[i % colors.length]} ${start.toFixed(2)}% ${cursor.toFixed(2)}%`;
-      }).join(", ");
-      const topThree = ranked.slice(0, 3).reduce((sum, h) => sum + h.value, 0) / total * 100;
-      const largest = ranked[0];
-      return (
-        <>
-          <h2>Where the portfolio is invested.</h2>
-          <div className="allocation-visual">
-            <div className="allocation-donut" style={{ background: `conic-gradient(${stops})` }}>
-              <div className="allocation-donut-center"><strong>{holdings.length}</strong><span>positions</span></div>
-            </div>
-            <div className="allocation-readout">
-              <p className="allocation-kicker">PORTFOLIO MIX</p>
-              <strong>{topThree.toFixed(1)}%</strong>
-              <span>in the {Math.min(3, ranked.length)} largest positions</span>
-              <p className="allocation-insight">Largest position: <b>{largest?.ticker}</b> at {((largest?.value / total) * 100).toFixed(1)}%.</p>
-            </div>
-          </div>
-          <div className="allocation-legend">
-            {slices.map((h, i) => (
-              <div key={h.ticker}><span className="allocation-swatch" style={{ background: colors[i % colors.length] }} /><b>{h.ticker}</b><span>{((h.value / total) * 100).toFixed(1)}%</span></div>
-            ))}
-          </div>
-          {ranked.length > 6 && <p className="slide-note">Other combines {ranked.length - 5} smaller positions.</p>}
-        </>
-      );
-    }
+    if (slide.id === "account-summary") return <AccountSummarySlide positions={positions} source={importSource}/>;
+    if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
+    if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={positions} data={deckMarket.marketIndexes}/>;
+    if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
+    if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
+    if (slide.id === "overview") return <PortfolioOverview holdings={holdings} equity={deckEquity}/>;
+    if (slide.id === "allocation") return <PortfolioAllocation holdings={holdings} equity={deckEquity}/>;
+    if (slide.id === "sector-performance") return <SectorPerformanceSlide data={deckMarket.sectorPerformance}/>;
+    if (slide.id === "earnings") return <EarningsSlide data={deckMarket.earnings}/>;
     if (slide.id === "holdings")
       return (
         <>
@@ -298,30 +274,7 @@ function App() {
           </table>
         </>
       );
-    if (slide.id === "concentration")
-      return (
-        <>
-          <h2>Where the portfolio is focused.</h2>
-          <div className="concentration">
-            <strong>
-              {(
-                (ranked.slice(0, 3).reduce((s, h) => s + h.value, 0) / total) *
-                100
-              ).toFixed(1)}
-              <span>%</span>
-            </strong>
-            <p>in the {Math.min(3, ranked.length)} largest positions</p>
-          </div>
-          <div className="top-positions">
-            {ranked.slice(0, 3).map((h) => (
-              <div key={h.ticker}>
-                <b>{h.ticker}</b>
-                <span>{((h.value / total) * 100).toFixed(2)}%</span>
-              </div>
-            ))}
-          </div>
-        </>
-      );
+    if (slide.id === "concentration") return <ConcentrationSlide holdings={holdings}/>;
     return (
       <>
         <h2>For our conversation.</h2>
@@ -339,16 +292,17 @@ function App() {
   function renderSlide({ slide, index, print = false }) {
     return (
       <article
-        className={`slide ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
+        className={`slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
       >
         <div className="slide-brand">
-          GOTTFRIED & SOMBERG <span>WEALTH MANAGEMENT</span>
+          <img src="/gswm-logo.png" alt=""/><div>GOTTFRIED & SOMBERG <span>WEALTH MANAGEMENT</span></div>
         </div>
         <div className="slide-body">{slideContent(slide)}</div>
         <footer>
           <span>
-            {slide.id === "cover"
+            {slide.snippet ? "Source: uploaded image" : slide.id === "cover"
               ? "PORTFOLIO REVIEW"
+              : ["market-indexes", "regional-attribution", "risk", "attribution", "account-summary"].includes(slide.id) ? "Source and reporting basis shown above"
               : slide.id === "equity"
                 ? "Benchmark methodology and source shown above"
                 : "Source: supplied portfolio position values"}
@@ -362,14 +316,12 @@ function App() {
     <>
       <div className="app-shell print:hidden">
         <header className="app-header">
-          <div className="brand">
-            <span className="brand-mark">
-              G<span>&</span>S
-            </span>
+          <button type="button" className="brand brand-home" aria-label="Go to home" onClick={() => navigate(0)}>
+            <img className="brand-logo" src="/gswm-logo.png" alt="Gottfried & Somberg Wealth Management logo"/>
             <div className="brand-name">
               GOTTFRIED & SOMBERG<small>WEALTH MANAGEMENT</small>
             </div>
-          </div>
+          </button>
           <div className="product-name">
             Prep Dog <span className="product-divider">/</span><small>Portfolio studio</small>
           </div>
@@ -401,7 +353,7 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              {!reviewed ? (
+              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
                 <section
                   aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -441,9 +393,10 @@ function App() {
                   <div className="input-actions">
                     <button
                       className="upload-button"
+                      disabled={importBusy}
                       onClick={() => file.current.click()}
                     >
-                      <Plus size={17} /> Upload file
+                      <Plus size={17} /> {importBusy ? "Reading file…" : "Upload file"}
                     </button>
                     <span className="file-types">XLSX, CSV, TXT</span>
                     <button
@@ -469,8 +422,8 @@ function App() {
                 <section className="review-card">
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <p className="eyebrow">READY TO REVIEW</p>
-                      <h2>{holdings.length} holdings</h2>
+                      <p className="eyebrow">{importSource ? "IMPORTED HOLDINGS" : "READY TO REVIEW"}</p>
+                      <h2>{holdings.length} holdings</h2>{importSource && <p className="import-origin">{importSource}</p>}
                     </div>
                     <button
                       className="text-button"
@@ -534,30 +487,13 @@ function App() {
               </div>
               <div className="builder-layout">
                 <section>
-                  <div className="component-grid">
-                    {sections.map((s) => (
-                      <button
-                        key={s.id}
-                        aria-pressed={selected.includes(s.id)}
-                        className={`component-card ${selected.includes(s.id) ? "selected" : ""}`}
-                        onClick={() =>
-                          setSelected((v) =>
-                            v.includes(s.id)
-                              ? v.filter((x) => x !== s.id)
-                              : [...v, s.id],
-                          )
-                        }
-                      >
-                        <div className="flex justify-between items-start">
-                          <s.icon size={23} strokeWidth={1.4} />
-                          <span className="checkbox">
-                            {selected.includes(s.id) && <Check size={13} />}
-                          </span>
-                        </div>
-                        <h2>{s.name}</h2>
-                        <p>{s.description}</p>
-                      </button>
-                    ))}
+                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>These first three slides are always included and are built from the confirmed holdings and sourced market context.</p></div>
+                  <div className="component-grid auto-components">
+                    {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
+                  </div>
+                  <div className="optional-heading"><span className="slide-kicker">OPTIONAL ADD-ONS</span><p>Add only the specialist slides you want reviewed.</p></div>
+                  <div className="component-grid optional-components">
+                    {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
                   </div>
                   {selected.includes("equity") && (
                     <div className="equity-input">
@@ -593,20 +529,8 @@ function App() {
                       )}
                     </div>
                   )}
-                  <div className="planned-skills"><span>Next slide skills</span><p>Attribution report <i>Awaiting report template</i></p><p>Riskalyze <i>Awaiting report template</i></p></div>
-                  {selected.includes("notes") && (
-                    <div className="notes-input">
-                      <label htmlFor="notes">Discussion points</label>
-                      <textarea
-                        id="notes"
-                        maxLength={800}
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Add one talking point per line…"
-                      />
-                      <small>{notes.length}/800 characters</small>
-                    </div>
-                  )}
+                  <MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/>
+                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <section className="supporting-upload"><h3>Source data</h3><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section>}
                 </section>
                 <aside className="deck-summary">
                   <div className="summary-icon">
@@ -620,18 +544,14 @@ function App() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
+                  <div className="personalization"><label className="field-label">Prepared for<input maxLength={80} value={preparedFor} onChange={e=>setPreparedFor(e.target.value)}/></label><label className="field-label">Advisor<input maxLength={80} value={advisor} onChange={e=>setAdvisor(e.target.value)}/></label><label className="field-label">Report date<input type="date" value={reportDate} onChange={e=>setReportDate(e.target.value)}/></label></div>
                   <div className="deck-outline">
                     <div>
                       <span>01</span>Cover <small>Included</small>
                     </div>
-                    {sections
-                      .filter((s) => selected.includes(s.id))
-                      .map((s, i) => (
-                        <div key={s.id}>
-                          <span>{String(i + 2).padStart(2, "0")}</span>
-                          {s.name}
-                        </div>
-                      ))}
+                    {slides.slice(1).map((s, i) => (
+                      <div key={s.id}><span>{String(i + 2).padStart(2, "0")}</span>{s.name}</div>
+                    ))}
                   </div>
                   <div className="summary-count">
                     <span>{slides.length} slides</span>
@@ -641,13 +561,14 @@ function App() {
                     className="primary w-full"
                     disabled={
                       !selected.length ||
-                      (selected.includes("notes") && !notes.trim()) ||
-                      (selected.includes("equity") && !equity)
+                      (selected.includes("equity") && !equity) ||
+                      (selected.includes("risk") && !supporting.risk)
                     }
-                    onClick={() => { setDeckEquity(equity); navigate(2); }}
+                    onClick={() => { setDeckEquity(equity); setDeckMarket({marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>
+                  {selected.includes("risk") && !supporting.risk && <p className="helper">Upload Riskalyze data to add this optional slide.</p>}
                   {selected.includes("equity") && !equity && <p className="helper">Complete the sector comparison to preview this component.</p>}
                   {selected.includes("notes") && !notes.trim() && (
                     <p className="helper">

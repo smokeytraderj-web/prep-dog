@@ -11,7 +11,7 @@ npm test
 npm run build
 ```
 
-The Vite dev server and Vercel deployment both expose `/api/benchmark/sp500`. The server only fetches public benchmark data; user holdings remain in browser memory. No accounts, database or API keys are required. `npm run build:site` packages the same app and benchmark endpoint for Sites.
+The Vite dev server and Sites Worker expose `/api/benchmark/sp500`. The server only fetches public benchmark data; user holdings remain in browser memory. No accounts, database or API keys are required. `npm run build:site` packages the app and benchmark endpoint for Sites.
 
 ## Holdings and deck flow
 
@@ -29,6 +29,10 @@ Individual holdings are classified against the provider's current constituent se
 
 Verified against the actual provider file on 2026-09-29: 504 equity holdings, effective date 2026-09-28, all 11 sectors. No hardcoded market snapshot is shipped.
 
+## Automatic YTD market snapshot
+
+The first market slide loads year-to-date returns automatically from Yahoo Finance historical chart data when the workspace opens, with a manual refresh control. It uses direct index symbols for the S&P 500 (`^GSPC`) and Nasdaq Composite (`^IXIC`), and clearly labeled ETF proxies for MSCI Emerging Markets (`EEM`) and MSCI EAFE (`EFA`). The endpoint calculates adjusted-close returns from the last available close of the prior year through the latest available session, displays the provider date, and caches the response for one hour. If the provider is unavailable, the deck keeps the last loaded snapshot or asks for a sourced upload rather than inventing a value.
+
 ## Slide skill roadmap
 
 The equity slide uses the supplied 11-sector layout, with actual portfolio-minus-benchmark differences. Navy is overweight; light blue is underweight.
@@ -37,6 +41,20 @@ Draft app-module specifications are in `docs/slide-skills/attribution-report.md`
 
 ## Deployment
 
-Vercel uses the repository's `vercel.json` and `api/benchmark/sp500.js`. GitHub pushes trigger deployment when its existing Vercel integration is connected. Sites uses its own source repository and the Worker build; changes must be published to each destination. A successful GitHub push alone does not update Sites.
+Sites is the primary host and publishes the Worker build, including the benchmark endpoint. The repository keeps a `vercel.json` compatibility file with Git deployments disabled, so GitHub pushes do not create a competing Vercel deployment. A GitHub push alone does not publish Sites; publish the updated source through Sites after changes.
 
 Checks: parser and benchmark tests, actual provider/API fetch, browser paste/upload → selection → sector comparison → PDF flow, mobile layout and provider-failure state. Export is browser print/PDF; PPTX and remote skill execution are not implemented.
+
+## Personalized report behavior
+
+The report flow is driven by the uploaded file. Workbook imports inspect all worksheets, locate a holdings header below preamble rows, detect ticker/symbol, market value, quantity, price, currency, account, asset class and security name columns, and show a review table before accepting the data. Market value is preferred; quantity × price is available when a market value column is absent. A price-only export is blocked because a share price is not a position value. Non-USD rows, invalid tickers, totals, negative values and ambiguous rows are surfaced for correction.
+
+The upload review preserves per-row account and asset-class detail. This powers the personalized asset allocation and account summary slides. Historical performance, Riskalyze metrics, earnings expectations and attribution are never invented from a current holdings snapshot. They require a sourced supporting report JSON using `public/report-data-template.json`. The deck builder only enables those components after validation of dates, units, source, periods and reported values.
+
+The Max Bender reference informs the report structure: a client cover, portfolio overview, asset allocation, account summary, market context, risk metrics and performance contribution. The supplied Bloom pages 5 and 8 informed the sector-performance and earnings layouts. Their fixed example values are not shipped as production data.
+
+Sites is the primary publication. Vercel Git deployments are disabled in `vercel.json` so a GitHub push does not create a competing Vercel deployment. GitHub remains the source of truth and every Sites publication is built from the pushed commit.
+
+## Image source slides
+
+Drop PNG, JPG, or WEBP snippets into Source data (up to 8 MB per image). Each image creates its own slide with an editable title and optional takeaway. Images remain in browser memory and are included in print/PDF output; this does not extract or invent data from the images. The logo returns to the holdings screen without clearing the current work. The YTD slide includes a daily return graph when history is available, or a comparison bar chart for manually supplied returns.

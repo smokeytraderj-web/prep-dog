@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && node scripts/build-site.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test src/*.test.js",
-    "build:site": "vite build && node scripts/build-site.mjs"
+    "build:site": "npm run build"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",

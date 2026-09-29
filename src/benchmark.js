@@ -13,14 +13,14 @@ export const SECTOR_NAMES = {
 export const normalizeTicker = ticker => ticker.trim().toUpperCase().replace(/[./]/g, '-');
 
 // RFC 4180 quoting, including escaped quotes, commas and newlines in fields.
-export function parseCsv(text) {
+export function parseCsv(text, delimiter = ',') {
   const rows = []; let row = [], field = '', quoted = false;
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (c === '"') {
       if (quoted && text[i + 1] === '"') { field += '"'; i++; }
       else quoted = !quoted;
-    } else if (c === ',' && !quoted) { row.push(field); field = ''; }
+    } else if (c === delimiter && !quoted) { row.push(field); field = ''; }
     else if ((c === '\n' || c === '\r') && !quoted) {
       if (c === '\r' && text[i + 1] === '\n') i++;
       row.push(field); rows.push(row); row = []; field = '';
