@@ -43,3 +43,7 @@ This frontend has **no live benchmark feed or scheduled refresh**. Future backen
 ## Scope
 
 Implemented: browser import, selection, data-driven preview, sample skill preview, sector JSON adapter, browser print/PDF layout. Not implemented: live prices/benchmarks, automated research, remote skill execution, PPTX export, server accounts, or hosting deployment.
+
+## Live S&P 500 exposure
+
+The Equity sector exposure component now has a **Load live S&P 500** action. In a Vercel deployment it calls `api/benchmark/sp500.js`, which proxies State Street's daily SPY holdings workbook with six-hour caching and parses the returned sector weights in the browser. The component shows the retrieval time and source. If the provider is unavailable or the workbook is incomplete, the app blocks the component instead of showing stale data.

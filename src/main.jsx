@@ -22,7 +22,7 @@ import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
 import EquitySlide from "./EquitySlide";
 import equityExample from "./equity-example.json";
-import { validateEquity } from "./equity";
+import { SECTOR_ORDER, validateEquity } from "./equity";
 const money = (n) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -83,6 +83,7 @@ function App() {
     [drag, setDrag] = useState(false);
   const [equity, setEquity] = useState(null),
     [equityError, setEquityError] = useState(""),
+    [equityStatus, setEquityStatus] = useState(""),
     [showExample, setShowExample] = useState(false);
   const equityFile = useRef(null);
   const file = useRef(null);
@@ -178,6 +179,7 @@ function App() {
     setErrors([]);
     setEquity(null);
     setEquityError("");
+    setEquityStatus("");
     navigate(0);
   }
   async function uploadEquity(f) {
@@ -191,6 +193,30 @@ function App() {
       setEquity(null);
       setEquityError(e.message);
     }
+  }
+  async function loadLiveEquity() {
+    setEquityStatus("Loading latest S&P 500 exposure…");
+    setEquityError("");
+    try {
+      const response = await fetch("/api/benchmark/sp500");
+      if (!response.ok) throw Error("The live benchmark source is unavailable right now.");
+      const { readSheet } = await import("read-excel-file/browser");
+      const rows = await readSheet(await response.blob());
+      const headerIndex = rows.findIndex((row) => row.some((cell) => /sector/i.test(String(cell || ""))) && row.some((cell) => /weight/i.test(String(cell || ""))));
+      if (headerIndex < 0) throw Error("The benchmark source format changed. Use the supplied sector file instead.");
+      const headers = rows[headerIndex].map((cell) => String(cell || "").toLowerCase());
+      const sectorIndex = headers.findIndex((header) => header.includes("sector"));
+      const weightIndex = headers.findIndex((header) => header.includes("weight"));
+      const map = {"information technology":"Info Tech","technology":"Info Tech","financials":"Financial Svcs","financial services":"Financial Svcs","consumer discretionary":"Cons Discr","consumer cyclical":"Cons Discr","communication services":"Comms Svcs","communication":"Comms Svcs","industrials":"Industrials","health care":"Healthcare","healthcare":"Healthcare","consumer staples":"Cons Staples","consumer defensive":"Cons Staples","real estate":"REITs","energy":"Energy","materials":"Materials","utilities":"Utilities"};
+      const totals = Object.fromEntries(SECTOR_ORDER.map((name) => [name, 0]));
+      rows.slice(headerIndex + 1).forEach((row) => { const sector = map[String(row[sectorIndex] || "").trim().toLowerCase()]; const weight = Number(String(row[weightIndex] || "").replace(/%/g, "").replace(/,/g, "")); if (sector && Number.isFinite(weight)) totals[sector] += weight; });
+      const sectors = SECTOR_ORDER.map((name) => ({ name, portfolio: totals[name], benchmark: totals[name] }));
+      const totalWeight = sectors.reduce((sum, sector) => sum + sector.benchmark, 0);
+      if (totalWeight < 95) throw Error("The benchmark source did not return a complete sector snapshot.");
+      const asOf = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+      setEquity(validateEquity({ title: "S&P 500 Equity Exposure", as_of: `Updated ${asOf}`, portfolio_label: "S&P 500", benchmark_label: "S&P 500", benchmark_short: "S&P 500", source_note: "Source: State Street SPY daily holdings workbook.", sectors }));
+      setEquityStatus("Latest benchmark snapshot loaded");
+    } catch (e) { setEquity(null); setEquityStatus(""); setEquityError(e.message); }
   }
   function slideContent(slide) {
     if (slide.id === "equity") return <EquitySlide data={equity} />;
@@ -393,9 +419,6 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              <div className="intro">
-                <h1>Create a deck</h1>
-              </div>
               {!reviewed ? (
                 <section
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -571,19 +594,13 @@ function App() {
                         </p>
                       </div>
                       <div className="flex gap-3 flex-wrap">
-                        <button
-                          className="secondary"
-                          onClick={() => equityFile.current.click()}
-                        >
-                          <Upload size={14} />
-                          {equity ? "Replace sector data" : "Add sector data"}
+                        <button className="primary" onClick={loadLiveEquity}>
+                          <ChartNoAxesColumnIncreasing size={14} /> Load live S&P 500
                         </button>
-                        <button
-                          className="text-button"
-                          onClick={() => setShowExample(true)}
-                        >
-                          View supplied example
+                        <button className="secondary" onClick={() => equityFile.current.click()}>
+                          <Upload size={14} /> Import sector data
                         </button>
+                        <button className="text-button" onClick={() => setShowExample(true)}>View example</button>
                       </div>
                       <input
                         className="hidden"
@@ -595,11 +612,8 @@ function App() {
                           e.target.value = "";
                         }}
                       />
-                      {equity && (
-                        <p className="helper">
-                          Loaded: {equity.portfolio_label} · {equity.as_of}
-                        </p>
-                      )}
+                      {equityStatus && <p className="live-status"><span className="live-dot" />{equityStatus} · {equity?.as_of}</p>}
+                      {equity && !equityStatus && <p className="helper">Loaded: {equity.portfolio_label} · {equity.as_of}</p>}
                       {equityError && (
                         <p className="errors" role="alert">
                           {equityError}
