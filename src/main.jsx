@@ -392,13 +392,7 @@ function App() {
           {step === 0 && (
             <>
               <div className="intro">
-                <p className="eyebrow">THE START OF A BETTER REVIEW</p>
-                <h1>
-                  Your holdings.
-                  <br />
-                  <span>A clearer conversation.</span>
-                </h1>
-                <p>Bring your portfolio. We’ll help you shape the deck.</p>
+                <h1>Create a deck</h1>
               </div>
               {!reviewed ? (
                 <section
@@ -531,8 +525,7 @@ function App() {
             <>
               <div className="workspace-heading">
                 <div>
-                  <p className="eyebrow">MAKE IT YOURS</p>
-                  <h1>Only what matters.</h1>
+                  <h1>Choose components</h1>
                   <p>Select the components you want in your deck.</p>
                 </div>
                 <span className="portfolio-pill">
@@ -685,11 +678,8 @@ function App() {
             <>
               <div className="workspace-heading">
                 <div>
-                  <p className="eyebrow">
-                    {done ? "READY FOR THE CONVERSATION" : "ONE LAST LOOK"}
-                  </p>
                   <h1>
-                    {done ? "Your deck is ready." : "A deck, on your terms."}
+                    {done ? "Your deck is ready." : "Review your deck"}
                   </h1>
                   <p>
                     {done
@@ -769,13 +759,7 @@ function App() {
             </>
           )}
         </main>
-        <footer className="app-footer">
-          <span>GOTTFRIED & SOMBERG</span>
-          <span>Thoughtfully prepared.</span>
-          <span>
-            PREP DOG <span className="footer-divider">/</span> PORTFOLIO DECKS
-          </span>
-        </footer>
+
       </div>
       {showExample && (
         <div className="modal-backdrop" onClick={() => setShowExample(false)}>
