@@ -33,7 +33,7 @@ Verified against the actual provider file on 2026-09-29: 504 equity holdings, ef
 
 The equity slide uses the supplied 11-sector layout, with actual portfolio-minus-benchmark differences. Navy is overweight; light blue is underweight.
 
-Draft app-module specifications are in `docs/slide-skills/attribution-report.md` and `docs/slide-skills/riskalyze.md`. Each defines one core slide, up to two optional slides, required report data and validation rules. They are not yet executable or selectable components. An anonymized report for each is the next input needed to finalize the layouts and extraction contracts.
+The risk page is implemented as a Claude skill in `.claude/skills/risk-snapshot/`: holdings JSON in, a reviewable `snapshot.json` of measures, then a self-contained 16:9 print slide. Its measures (1-99 Risk Score, six-month 95% probability range, allocation, risk-adjusted grade, drawdown, cost bar) are in-house and documented in that skill's `reference/methodology.md`; they are not Riskalyze/Nitrogen figures and must never be labeled as such. `npm test` covers it. Draft app-module specifications are in `docs/slide-skills/attribution-report.md` and `docs/slide-skills/riskalyze.md`. Each defines one core slide, up to two optional slides, required report data and validation rules. They are not yet executable or selectable components. An anonymized report for each is the next input needed to finalize the layouts and extraction contracts.
 
 ## Deployment
 

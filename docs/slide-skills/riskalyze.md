@@ -1,9 +1,13 @@
 # Riskalyze — slide skill specification
 
-Status: draft contract; awaiting an anonymized Riskalyze report and layout review. This is an app module specification, not an installed or executable skill.
+Status: implemented as the `risk-snapshot` skill in `.claude/skills/risk-snapshot/`. That skill is the executable contract; formulas live in its `reference/methodology.md` and the sections below record the layout rules it follows. It is a Claude skill, not yet a selectable app module inside the React workspace.
 
 ## Purpose and inputs
-Create one to three GSWM slides from a supplied Riskalyze report. Require report date, client/portfolio labels, source references and every metric's exact name, units, horizon and stated confidence level. Use supplied Risk Numbers and modeled ranges only. The app must not reconstruct proprietary scores, infer a client's tolerance from holdings or invent scenario results.
+Two distinct paths, never blended on one slide.
+
+**Transcribe a vendor report.** When a Riskalyze/Nitrogen report is the source, require report date, client/portfolio labels, source references and every metric's exact name, units, horizon and stated confidence level. Use the supplied Risk Numbers and modeled ranges only; never reconstruct a proprietary score, infer a client's tolerance from holdings or invent scenario results.
+
+**Compute in-house from holdings.** This is what `.claude/skills/risk-snapshot/` does: it derives its own 1-99 Risk Score, six-month 95% probability range, allocation, risk-adjusted grade, drawdown and cost bar from supplied position values and return inputs, under `reference/methodology.md`. These figures are ours. They carry no vendor's meaning, must never be labeled a Risk Number or a GPA, and must never be presented beside vendor figures as though the scales agree. A client's risk tolerance is still an input, never something derived from the holdings.
 
 ## Slide 1 — Risk alignment
 16:9 white slide. Navy title at top; report date and portfolio labels beneath. Center a single horizontal 1–99 score scale only when that is the scale stated by the source. Plot separate clearly labeled markers for the client's stated tolerance, current portfolio and proposed portfolio, including only available values. Below, show a brief factual comparison (“Current portfolio score is X above the stated target”). Avoid arbitrary safe/danger zones, endorsements or invented suitability conclusions. Bottom source band includes score definition and report date.
