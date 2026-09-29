@@ -74,3 +74,40 @@ inferred). Omitted inputs count as zero, which understates the bar — say so.
 - Never mix two portfolios computed on different horizons, confidence levels,
   risk-free rates or period counts on one slide.
 - Never retune an anchor table to produce an expected score.
+
+## Matching a vendor's exact score
+
+Exact parity with a Riskalyze/Nitrogen Risk Number is **not reachable by
+computation from holdings alone**, for three separate reasons. Only one of them
+is about the formula:
+
+1. **The mapping is proprietary.** The scale from modeled downside to a 1-99
+   score is not published. Ours is an anchor table that happens to agree at the
+   point we could observe (-10.27% downside -> 52).
+2. **The inputs differ even when the formula agrees.** Their score is computed
+   from their own security history database, their lookback window and stress
+   period, and their look-through from funds to underlying holdings. Two engines
+   using the same formula on different return histories produce different
+   scores. This is usually a larger gap than the mapping.
+3. **Some inputs are not derivable.** A client's risk tolerance score comes from
+   a questionnaire, not from a portfolio. No amount of holdings data recovers it.
+
+Three honest routes, best first:
+
+- **Use their number.** If the firm subscribes, take the score from the vendor's
+  own report or integration and put it on the slide with attribution. This is the
+  only way to display a real Risk Number, and it is not a compliance problem
+  because it is theirs and is labeled as theirs.
+- **Calibrate ours against theirs.** Collect real report pages that print both a
+  six-month 95% downside and the score, record them in `assets/calibration.json`,
+  and run `scripts/calibrate.mjs` to see the residual and a re-fitted anchor
+  table. Roughly a dozen pairs spread across the range gets our score close over
+  the range that matters. It still will not tie out holding-for-holding, because
+  of reason 2 above.
+- **Improve the inputs.** Supplying real aligned price history for every holding
+  removes our correlation assumptions and is the single biggest accuracy gain
+  available to us. Do this before touching the anchors.
+
+Never retune an anchor to make one portfolio hit an expected number, and never
+label a calibrated output as a Risk Number or a GPA. Calibration narrows a gap
+between two different measures; it does not merge them.

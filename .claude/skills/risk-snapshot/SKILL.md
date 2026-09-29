@@ -65,6 +65,17 @@ Read `snapshot.json` back to the user with the inputs beside it, and check:
 Render the slide, open it, and print to PDF at 1280x720. To pull it into a deck,
 hand `snapshot.json` to the deck builder rather than re-typing figures.
 
+## Matching a vendor's score
+
+Asked to make the number tie out to a Riskalyze/Nitrogen report? Read
+`reference/methodology.md` section "Matching a vendor's exact score" before
+answering. Short version: exact parity is not computable from holdings, mostly
+because their security history and fund look-through differ from ours, not
+because of the formula. Use their number if the firm subscribes; otherwise
+record real report pairs in `assets/calibration.json` and run
+`node scripts/calibrate.mjs` to measure and narrow the gap. Supplying real price
+history helps more than retuning anchors ever will.
+
 ## Rules
 
 - The Risk Score, grade and range come from `reference/methodology.md`. Do not
@@ -73,5 +84,7 @@ hand `snapshot.json` to the deck builder rather than re-typing figures.
 - The range is modeled, not a guarantee and not a maximum loss. The footer says
   so; keep it.
 - No live prices are fetched. Values are the supplied position values.
+- Chart colors are validated; see the note in `scripts/render.mjs`. Re-run the
+  dataviz validator before changing any hue.
 - Omit a measure rather than estimating it. A missing measure is a question for
   the user, not a default.

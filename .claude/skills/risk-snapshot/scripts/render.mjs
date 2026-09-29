@@ -1,13 +1,17 @@
 // Render a snapshot as a print-ready 16:9 GSWM slide (HTML + inline SVG).
-const NAVY = "#1b2a4a";
-const MID = "#759bbf";
-const DOWN = "#b8433a";
-const UP = "#2e7d64";
+// Palette validated with the dataviz six-checks against a light surface:
+// lightness band, chroma floor, CVD separation, normal-vision floor, contrast.
+// Navy is ink, never a series color. Do not substitute hues without re-running
+// the validator.
+const NAVY = "#16243d";
+const MID = "#5c7086";
+const DOWN = "#c0453c";
+const UP = "#0f8f7a";
 const CLASS_COLORS = {
-  stocks: "#1b2a4a",
-  bonds: "#4a7fb5",
-  other: "#8a7652",
-  cash: "#b6c6d6",
+  stocks: "#2a78d6",
+  bonds: "#c98500",
+  other: "#0f8f7a",
+  cash: "#8a7bd0",
 };
 const LABELS = { stocks: "Stocks", bonds: "Bonds", other: "Other", cash: "Cash" };
 
