@@ -19,8 +19,11 @@ const FAINT = "#8b9eae";
 const RULE = "#e6edf3";
 const TRACK = "#e7eef5";
 const GOLD = "#8c7853";
-const DOWN = "#bd6a52";
-const UP = "#3d6fa8";
+// Polarity follows src/EquitySlide.jsx: navy against light blue, no red. Both
+// ends are directly labeled, so direction is never carried by color alone --
+// which is also the required relief for the light step's contrast.
+const DOWN = "#1b2a4a";
+const UP = "#759bbf";
 const RAMP = ["#142f49", "#385875", "#7892a7", "#b9cce4"]; // sequential, dark->light
 const LABELS = { stocks: "Stocks", bonds: "Bonds", other: "Other", cash: "Cash" };
 
@@ -33,19 +36,18 @@ const plain = (n, d = 2) => `${n.toFixed(d)}%`;
 
 // Risk Score as a ring gauge: the arc fills to the score's place on 1-99 and
 // the number sits inside, so the score reads as the page's one headline.
-function gauge(score, size = 150) {
-  const r = size / 2 - 12;
+function gauge(score, size = 156) {
+  const r = size / 2 - 11;
   const c = 2 * Math.PI * r;
   const frac = (score - 1) / 98;
   const m = size / 2;
-  const a = (-90 + frac * 360) * (Math.PI / 180);
   return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Risk Score ${score} on a 1 to 99 scale.">
-    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${TRACK}" stroke-width="10"/>
-    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${INK}" stroke-width="10" stroke-linecap="round"
+    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${TRACK}" stroke-width="8"/>
+    <circle cx="${m}" cy="${m}" r="${r}" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"
       stroke-dasharray="${(frac * c).toFixed(2)} ${((1 - frac) * c).toFixed(2)}" transform="rotate(-90 ${m} ${m})"/>
-    <circle cx="${(m + r * Math.cos(a)).toFixed(1)}" cy="${(m + r * Math.sin(a)).toFixed(1)}" r="6" fill="#fff" stroke="${GOLD}" stroke-width="2.5"/>
-    <text x="${m}" y="${m - 4}" text-anchor="middle" font-size="7" letter-spacing="1.8" fill="${MUTED}" font-weight="600">RISK SCORE</text>
-    <text x="${m}" y="${m + 28}" text-anchor="middle" font-size="40" font-weight="450" fill="${INK}" font-family="Georgia,serif">${score}</text>
+    <text x="${m}" y="${m - 12}" text-anchor="middle" font-size="7.5" letter-spacing="1.9" fill="${MUTED}" font-weight="600">RISK SCORE</text>
+    <text x="${m}" y="${m + 21}" text-anchor="middle" font-size="44" font-weight="400" fill="${INK}" font-family="Georgia,serif">${score}</text>
+    <text x="${m}" y="${m + 38}" text-anchor="middle" font-size="8" fill="${FAINT}">of 99</text>
   </svg>`;
 }
 
@@ -56,9 +58,9 @@ function rangeBar(range, w, h = 13) {
   return `<svg viewBox="0 0 ${w} ${h + 18}" width="${w}" role="img" aria-label="Six-month 95% probability range from ${pct(range.downside_pct)} to ${pct(range.upside_pct)}.">
     <path d="M3 0 h${(z - 5).toFixed(1)} v${h} h-${(z - 5).toFixed(1)} a3 3 0 0 1-3-3 v-${h - 6} a3 3 0 0 1 3-3z" fill="${DOWN}"/>
     <path d="M${(z + 2).toFixed(1)} 0 h${(w - z - 5).toFixed(1)} a3 3 0 0 1 3 3 v${h - 6} a3 3 0 0 1-3 3 h-${(w - z - 5).toFixed(1)}z" fill="${UP}"/>
-    <text x="0" y="${h + 16}" font-size="8" fill="${FAINT}">5th percentile</text>
+    <text x="0" y="${h + 16}" font-size="8" fill="${FAINT}">Downside ${pct(range.downside_pct)} &#183; 5th percentile</text>
     <text x="${z.toFixed(1)}" y="${h + 16}" font-size="8" fill="${FAINT}" text-anchor="middle">0%</text>
-    <text x="${w}" y="${h + 16}" font-size="8" fill="${FAINT}" text-anchor="end">95th percentile</text>
+    <text x="${w}" y="${h + 16}" font-size="8" fill="${FAINT}" text-anchor="end">95th percentile &#183; upside ${pct(range.upside_pct)}</text>
   </svg>`;
 }
 
@@ -143,14 +145,14 @@ export function renderSlide(s) {
       <div>
         <em>SIX-MONTH RANGE &#183; 95% PROBABILITY</em>
         <div class="pair">
-          <b style="color:${DOWN}">${pct(s.range.downside_pct)}</b>
-          <b style="color:${UP}">${pct(s.range.upside_pct)}</b>
+          <b>${pct(s.range.downside_pct)}</b>
+          <b>${pct(s.range.upside_pct)}</b>
         </div>
         <p>${usd(s.range.downside_value)} to ${usd(s.range.upside_value, true)}</p>
       </div>
       <div style="justify-self:end;text-align:center">
         ${gauge(s.risk_score)}
-        <p style="margin-top:6px">1&#8211;99 scale, set by the downside</p>
+        <p style="margin-top:8px">Set by the six-month downside</p>
       </div>
     </div>
     <div class="grid">

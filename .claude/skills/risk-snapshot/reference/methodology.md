@@ -133,17 +133,25 @@ The palette is the app's own (`src/styles.css`), not a vendor's.
   brand's muted tones cannot supply four categorical hues that separate under
   the dataviz checks -- gold against terracotta fails even for normal vision --
   so four distinct hues here would be a defect, not a style choice.
-- **The range is the one diverging encoding**: brand terracotta `#bd6a52` for
-  the downside against brand blue `#3d6fa8` for the upside, zero-anchored, both
-  validated for CVD separation and contrast. No red/green.
+- **The range is navy against light blue**, the same polarity pair
+  `src/EquitySlide.jsx` already uses (`#1b2a4a` / `#759bbf`), zero-anchored. No
+  red and no green anywhere on the slide. Because the light step sits under 3:1
+  against white, both ends carry their value as a direct label -- that labeling
+  is the required relief, not decoration, so do not remove it. Direction is
+  never carried by color alone.
 - **The Risk Score is a ring gauge**, filled to the score's position on 1-99
-  with a gold marker at the arc end and the number inside. It is the page's
-  headline and the downside figure that sets it is labeled as such.
+  with the number inside and `of 99` naming the scale. No marker, no needle and
+  no colored zones: an arc against a plain track is the whole mark. It is the
+  page's headline, and the downside figure that sets it is labeled as its
+  source.
 - **Measures are one table**, with cost components demoted to a single quiet
   line beneath it rather than their own block, and annualized volatility
   promoted out of the footnote. The page carries one chart per idea and no
   decoration: anything that does not answer how much, how risky, what of, or
   what it costs does not belong on it.
+
+Figures on the page wear ink, never a series color: the range percentages are
+navy text beside a colored bar, not colored text.
 
 Re-run `scripts/validate_palette.js` from the dataviz skill before changing any
 hue, and re-render and look at the slide before calling a layout change done.
