@@ -8,16 +8,16 @@
   "firm": "Gottfried & Somberg Wealth Management, LLC",
   "page": { "number": 7, "total": 12 },
   "sectors": [
-    { "name": "Materials",      "portfolio": 3.07,  "benchmark": 1.83 },
-    { "name": "Cons Discr",     "portfolio": 9.25,  "benchmark": 9.32 },
+    { "name": "Materials", "portfolio": 3.07, "benchmark": 1.83 },
+    { "name": "Cons Discr", "portfolio": 9.25, "benchmark": 9.32 },
     { "name": "Financial Svcs", "portfolio": 14.23, "benchmark": 11.78 },
-    { "name": "REITs",          "portfolio": 1.87,  "benchmark": 1.83 },
-    { "name": "Comms Svcs",     "portfolio": 7.91,  "benchmark": 9.70 },
-    { "name": "Energy",         "portfolio": 4.24,  "benchmark": 2.98 },
-    { "name": "Industrials",    "portfolio": 12.17, "benchmark": 8.81 },
-    { "name": "Info Tech",      "portfolio": 30.14, "benchmark": 38.08 },
-    { "name": "Cons Staples",   "portfolio": 5.55,  "benchmark": 4.57 },
-    { "name": "Healthcare",     "portfolio": 8.64,  "benchmark": 8.90 },
-    { "name": "Utilities",      "portfolio": 2.92,  "benchmark": 2.20 }
+    { "name": "REITs", "portfolio": 1.87, "benchmark": 1.83 },
+    { "name": "Comms Svcs", "portfolio": 7.91, "benchmark": 9.7 },
+    { "name": "Energy", "portfolio": 4.24, "benchmark": 2.98 },
+    { "name": "Industrials", "portfolio": 12.17, "benchmark": 8.81 },
+    { "name": "Info Tech", "portfolio": 30.14, "benchmark": 38.08 },
+    { "name": "Cons Staples", "portfolio": 5.55, "benchmark": 4.57 },
+    { "name": "Healthcare", "portfolio": 8.64, "benchmark": 8.9 },
+    { "name": "Utilities", "portfolio": 2.92, "benchmark": 2.2 }
   ]
 }
