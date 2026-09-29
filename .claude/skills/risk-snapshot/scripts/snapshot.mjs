@@ -116,6 +116,7 @@ export function buildSnapshot(rawInput) {
     as_of: input.as_of,
     portfolio_label: input.portfolio_label,
     client_label: input.client_label ?? null,
+    page_number: input.page_number ?? null,
     total_value: total,
     risk_score: riskScore(range.downsidePct),
     range: {

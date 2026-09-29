@@ -29,7 +29,8 @@ working example. Never invent a figure; ask for anything missing.
 | --- | --- | --- |
 | `as_of` | yes | Date shown on the slide. |
 | `portfolio_label` | yes | e.g. `Proposal`, `Current`. |
-| `client_label` | no | Printed beside the date. |
+| `client_label` | no | Printed beside the portfolio total. |
+| `page_number` | no | Footer page number, e.g. `06`, to match its place in the deck. |
 | `risk_free_pct` | no | Default 4.0; used only by the grade. |
 | `advisory_fee_pct` | no | Default 0; stated, never assumed. |
 | `periods_per_year` | no | Default 12; set 252 for daily history. |
@@ -62,7 +63,8 @@ Read `snapshot.json` back to the user with the inputs beside it, and check:
 
 ## Step 3 — render and place
 
-Render the slide, open it, and print to PDF at 1280x720. To pull it into a deck,
+Render the slide, open it, and print to PDF at 1280x800 (16:10, the deck's page
+size). To pull it into a deck,
 hand `snapshot.json` to the deck builder rather than re-typing figures.
 
 ## Matching a vendor's score

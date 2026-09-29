@@ -112,6 +112,16 @@ Never retune an anchor to make one portfolio hit an expected number, and never
 label a calibrated output as a Risk Number or a GPA. Calibration narrows a gap
 between two different measures; it does not merge them.
 
+## Slide chrome
+
+The slide follows the deck's house style, taken from `src/styles.css` and
+`src/main.jsx` rather than invented: a 16:10 page, the brand lockup top-left,
+a gold eyebrow over a serif title, the as-of right-aligned on the title
+baseline, hairline `#e6edf3` rules, an italic source note, and a footer
+carrying the reporting basis and the page number (`page_number` on the input).
+A slide that does not sit beside the other deck pages unchanged is wrong, so
+compare against them before shipping a layout change.
+
 ## Slide encodings
 
 The palette is the app's own (`src/styles.css`), not a vendor's.
@@ -129,10 +139,11 @@ The palette is the app's own (`src/styles.css`), not a vendor's.
 - **The Risk Score is a ring gauge**, filled to the score's position on 1-99
   with a gold marker at the arc end and the number inside. It is the page's
   headline and the downside figure that sets it is labeled as such.
-- **Measures are grouped** into risk characteristics (volatility, drawdown,
-  grade) and return characteristics (range midpoint, dividend, total cost)
-  rather than one flat list, and annualized volatility is promoted out of the
-  footnote.
+- **Measures are one table**, with cost components demoted to a single quiet
+  line beneath it rather than their own block, and annualized volatility
+  promoted out of the footnote. The page carries one chart per idea and no
+  decoration: anything that does not answer how much, how risky, what of, or
+  what it costs does not belong on it.
 
 Re-run `scripts/validate_palette.js` from the dataviz skill before changing any
 hue, and re-render and look at the slide before calling a layout change done.
