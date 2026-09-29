@@ -1,179 +1,185 @@
 // Render a snapshot as a print-ready 16:9 GSWM slide (HTML + inline SVG).
-// Palette validated with the dataviz six-checks against a light surface:
-// lightness band, chroma floor, CVD separation, normal-vision floor, contrast.
-// Navy is ink, never a series color. Do not substitute hues without re-running
-// the validator.
-const NAVY = "#16243d";
-const MID = "#5c7086";
-const DOWN = "#c0453c";
-const UP = "#0f8f7a";
-const CLASS_COLORS = {
-  stocks: "#2a78d6",
-  bonds: "#c98500",
-  other: "#0f8f7a",
-  cash: "#8a7bd0",
-};
+//
+// Palette is the app's own (src/styles.css), not a vendor's. Allocation is four
+// ordered parts of a whole, so it uses the brand navy ramp as a sequential
+// scale (checked monotonic light-to-dark) rather than four categorical hues --
+// the brand's muted tones cannot supply four that separate under the dataviz
+// checks. The range is the one diverging encoding: brand terracotta against
+// brand blue, validated for CVD separation and contrast. Re-run the dataviz
+// validator before changing any hue.
+const INK = "#142f49";
+const INK2 = "#385875";
+const MUTED = "#7892a7";
+const RULE = "#dce4ec";
+const TRACK = "#e7eef5";
+const GOLD = "#bfa775";
+const DOWN = "#bd6a52";
+const UP = "#3d6fa8";
+const RAMP = ["#142f49", "#385875", "#7892a7", "#b9cce4"]; // sequential, dark->light
 const LABELS = { stocks: "Stocks", bonds: "Bonds", other: "Other", cash: "Cash" };
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const usd = (n, signed = false) =>
-  `${n < 0 ? "-" : signed ? "+" : ""}$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-const pct = (n, d = 2) => `${n >= 0 ? "+" : ""}${n.toFixed(d)}%`;
+  `${n < 0 ? "−" : signed ? "+" : ""}$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
+const pct = (n, d = 2) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(d)}%`;
 const plain = (n, d = 2) => `${n.toFixed(d)}%`;
 
-function donut(slices) {
-  const r = 52;
+// Risk Score as a circular gauge: the filled arc is the score's position on the
+// 1-99 scale, the number sits inside the ring.
+function gauge(score, size = 172) {
+  const r = size / 2 - 15;
   const c = 2 * Math.PI * r;
-  let offset = 0;
-  const arcs = slices
-    .map((s) => {
-      const len = (s.percent / 100) * c;
-      const seg = `<circle cx="70" cy="70" r="${r}" fill="none" stroke="${CLASS_COLORS[s.name] ?? MID}" stroke-width="16" stroke-dasharray="${len.toFixed(2)} ${(c - len).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" transform="rotate(-90 70 70)"/>`;
-      offset += len;
-      return seg;
-    })
-    .join("");
-  return `<svg viewBox="0 0 140 140" width="140" height="140" role="img" aria-label="Asset allocation. Exact percentages are listed beside the chart.">${arcs}</svg>`;
+  const frac = (score - 1) / 98;
+  const mid = size / 2;
+  const angle = -90 + frac * 360;
+  const px = mid + r * Math.cos((angle * Math.PI) / 180);
+  const py = mid + r * Math.sin((angle * Math.PI) / 180);
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Risk Score ${score} on a 1 to 99 scale.">
+    <circle cx="${mid}" cy="${mid}" r="${r}" fill="none" stroke="${TRACK}" stroke-width="13"/>
+    <circle cx="${mid}" cy="${mid}" r="${r}" fill="none" stroke="${INK}" stroke-width="13" stroke-linecap="round"
+      stroke-dasharray="${(frac * c).toFixed(2)} ${((1 - frac) * c).toFixed(2)}" transform="rotate(-90 ${mid} ${mid})"/>
+    <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="7.5" fill="#fff" stroke="${GOLD}" stroke-width="3"/>
+    <text x="${mid}" y="${mid - 6}" text-anchor="middle" font-size="9.5" letter-spacing="1.7" fill="${MUTED}" font-weight="600">RISK SCORE</text>
+    <text x="${mid}" y="${mid + 32}" text-anchor="middle" font-size="50" font-weight="500" fill="${INK}">${score}</text>
+    <text x="${mid}" y="${mid + 50}" text-anchor="middle" font-size="9.5" fill="${MUTED}">1 &#183; low &#8212; 99 &#183; high</text>
+  </svg>`;
 }
 
-function rangeBar(range) {
+// Diverging range bar, anchored at zero, 4px rounded outer ends.
+function rangeBar(range, w = 470, h = 15) {
   const span = Math.abs(range.downside_pct) + Math.abs(range.upside_pct) || 1;
-  const zero = (Math.abs(range.downside_pct) / span) * 660;
-  return `<svg viewBox="0 0 660 34" role="img" aria-label="Six month ninety-five percent probability range. Exact values are labeled above the bar.">
-      <rect x="0" y="12" width="${zero.toFixed(1)}" height="9" fill="${DOWN}"/>
-      <rect x="${zero.toFixed(1)}" y="12" width="${(660 - zero).toFixed(1)}" height="9" fill="${UP}"/>
-      <text x="0" y="33" font-size="9" fill="#6f879b">5%</text>
-      <text x="660" y="33" font-size="9" fill="#6f879b" text-anchor="end">95%</text>
-    </svg>`;
+  const z = (Math.abs(range.downside_pct) / span) * w;
+  return `<svg viewBox="0 0 ${w} ${h + 21}" width="${w}" role="img" aria-label="Six-month 95% probability range from ${pct(range.downside_pct)} to ${pct(range.upside_pct)}.">
+    <path d="M4 0 h${(z - 6).toFixed(1)} v${h} h-${(z - 6).toFixed(1)} a4 4 0 0 1-4-4 v-${h - 8} a4 4 0 0 1 4-4z" fill="${DOWN}"/>
+    <path d="M${(z + 2).toFixed(1)} 0 h${(w - z - 6).toFixed(1)} a4 4 0 0 1 4 4 v${h - 8} a4 4 0 0 1-4 4 h-${(w - z - 6).toFixed(1)}z" fill="${UP}"/>
+    <line x1="${z.toFixed(1)}" x2="${z.toFixed(1)}" y1="-4" y2="${h + 4}" stroke="${INK}" stroke-width="1.5"/>
+    <text x="0" y="${h + 19}" font-size="9" fill="${MUTED}">5th percentile</text>
+    <text x="${z.toFixed(1)}" y="${h + 19}" font-size="9" fill="${INK2}" text-anchor="middle">0%</text>
+    <text x="${w}" y="${h + 19}" font-size="9" fill="${MUTED}" text-anchor="end">95th percentile</text>
+  </svg>`;
 }
 
-function costBar(costs) {
-  const parts = [
-    ["est_tax_drag_pct", "Est. Tax Drag", NAVY],
-    ["expense_ratio_pct", "Expense Ratio", "#d0942f"],
-    ["advisory_fees_pct", "Advisory Fees", "#6a5a8c"],
-  ];
-  const scale = Math.max(1, parts.reduce((s, [k]) => s + costs[k], 0));
+// 100% stacked allocation bar on the sequential ramp, largest share first,
+// 2px surface gaps between segments.
+function stacked(alloc, w = 500, h = 24) {
   let x = 0;
-  const segs = parts
-    .map(([k, , color]) => {
-      const w = (costs[k] / scale) * 660;
-      const seg = `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="10" fill="${color}"/>`;
-      x += w;
-      return seg;
+  const segs = alloc
+    .map((a, i) => {
+      const sw = (a.percent / 100) * w - (i ? 2 : 0);
+      const g = `<rect x="${(x + (i ? 2 : 0)).toFixed(1)}" y="0" width="${Math.max(0, sw).toFixed(1)}" height="${h}" fill="${RAMP[i] ?? RAMP.at(-1)}"/>`;
+      x += sw + (i ? 2 : 0);
+      return g;
     })
     .join("");
-  const legend = parts
-    .map(
-      ([k, label, color]) =>
-        `<div><span class="rs-swatch" style="background:${color}"></span><strong>${plain(costs[k])}</strong><span>${label}</span></div>`,
-    )
-    .join("");
-  return { svg: `<svg viewBox="0 0 660 10" role="img" aria-label="Proposal costs. Exact percentages are listed below.">${segs}</svg><div class="rs-scale"><span>0%</span><span>${scale.toFixed(0)}%</span></div>`, legend };
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="Allocation: ${alloc.map((a) => `${LABELS[a.name] ?? a.name} ${plain(a.percent)}`).join(", ")}.">${segs}</svg>`;
 }
 
-function scoreScale(score) {
-  const x = ((score - 1) / 98) * 300;
-  return `<svg viewBox="0 0 310 54" role="img" aria-label="Risk Score ${score} on a 1 to 99 scale.">
-      <rect x="0" y="16" width="300" height="7" fill="#e2e8ef"/>
-      <rect x="0" y="16" width="${x.toFixed(1)}" height="7" fill="${NAVY}"/>
-      <polygon points="${(x - 5).toFixed(1)},11 ${(x + 5).toFixed(1)},11 ${x.toFixed(1)},18" fill="${NAVY}"/>
-      <text x="${x.toFixed(1)}" y="8" font-size="10" fill="${NAVY}" text-anchor="middle" font-weight="600">${score}</text>
-      <text x="0" y="38" font-size="9" fill="#6f879b">1 · less modeled downside</text>
-      <text x="300" y="38" font-size="9" fill="#6f879b" text-anchor="end">99</text>
-    </svg>`;
+function costBar(costs, w = 500) {
+  const rows = [
+    ["Est. Tax Drag", costs.est_tax_drag_pct],
+    ["Expense Ratio", costs.expense_ratio_pct],
+    ["Advisory Fees", costs.advisory_fees_pct],
+  ];
+  const total = rows.reduce((a, [, v]) => a + v, 0);
+  return { rows, total };
 }
 
 export function renderSlide(s) {
-  const cost = costBar(s.costs);
-  const metrics = [
-    ["Risk-Adjusted Grade", s.metrics.grade.toFixed(1)],
-    ["Annual Dividend", plain(s.metrics.annual_dividend_pct)],
+  // Allocation reads as a ramp only when it is ordered, so sort by share.
+  const alloc = [...s.allocation].sort((a, b) => b.percent - a.percent);
+  const { rows: costs, total: costTotal } = costBar(s.costs);
+  // Regrouped from the vendor's flat list into what each measure describes.
+  const riskRows = [
+    ["Annualized Volatility", plain(s.metrics.annual_volatility_pct)],
     ["Max Drawdown", plain(s.metrics.max_drawdown_pct)],
-    ["Annual Range Midpoint", plain(s.metrics.annual_range_midpoint_pct)],
+    ["Risk-Adjusted Grade", `${s.metrics.grade.toFixed(1)} / 4.3`],
   ];
+  const returnRows = [
+    ["Annual Range Midpoint", plain(s.metrics.annual_range_midpoint_pct)],
+    ["Annual Dividend", plain(s.metrics.annual_dividend_pct)],
+    ["Total Annual Cost", plain(costTotal)],
+  ];
+  const table = (rows) =>
+    `<table class="tab">${rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>`;
+
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"/>
-<title>Risk Snapshot — ${esc(s.portfolio_label)}</title>
+<title>Risk Snapshot &mdash; ${esc(s.portfolio_label)}</title>
 <style>
-  :root{--navy:${NAVY};--muted:#6f879b}
   *{box-sizing:border-box}
-  body{margin:0;background:#0f1d33;font-family:"Inter","Segoe UI",Arial,sans-serif;color:var(--navy)}
-  .rs-slide{width:1280px;height:720px;margin:24px auto;background:#fff;padding:44px 56px;display:flex;flex-direction:column}
-  .rs-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e2e8ef;padding-bottom:18px}
-  .rs-kicker{font-size:9px;letter-spacing:1.8px;color:#8a7652;margin:0 0 6px}
-  .rs-total{font-size:44px;font-weight:450;letter-spacing:-1.5px;margin:0}
-  .rs-sub{font-size:11px;color:var(--muted);margin:6px 0 0}
-  .rs-score{border:2px solid var(--navy);padding:8px 16px;text-align:center}
-  .rs-score span{display:block;font-size:9px;letter-spacing:1.6px}
-  .rs-score strong{display:block;font-size:34px;font-weight:500;line-height:1.1}
-  .rs-body{display:grid;grid-template-columns:1fr 360px;gap:36px;flex:1;padding-top:22px}
-  h3{font-size:10px;letter-spacing:1.6px;color:#8a7652;font-weight:600;margin:0 0 12px;text-transform:uppercase}
-  .rs-range-figs{display:flex;gap:44px;margin-bottom:6px}
-  .rs-range-figs strong{display:block;font-size:22px;font-weight:450}
-  .rs-range-figs span{font-size:11px;color:var(--muted)}
-  .rs-down strong{color:${DOWN}}.rs-up strong{color:${UP}}
-  .rs-alloc{display:flex;align-items:center;gap:28px;margin-top:30px}
-  .rs-legend{flex:1;font-size:12px}
-  .rs-legend div{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f0f3f7}
-  .rs-legend b{margin-left:auto;font-weight:500}
-  .rs-swatch{width:9px;height:9px;border-radius:2px;flex:none;display:inline-block}
-  .rs-metrics div{display:flex;justify-content:space-between;font-size:12px;background:#f5f7fa;padding:9px 12px;margin-bottom:6px}
-  .rs-metrics b{font-weight:500}
-  .rs-costs{margin-top:26px}
-  .rs-scale{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:3px}
-  .rs-cost-legend{display:flex;gap:18px;margin-top:12px;font-size:10px;color:var(--muted)}
-  .rs-cost-legend div{display:flex;align-items:center;gap:5px}
-  .rs-cost-legend strong{font-size:12px;color:var(--navy);font-weight:500}
-  .rs-note{font-size:10px;line-height:1.6;color:var(--muted);margin:8px 0 0}
-  .rs-foot{border-top:1px solid #e2e8ef;padding-top:12px;margin-top:auto;font-size:9px;line-height:1.6;color:var(--muted)}
-  @media print{body{background:#fff}.rs-slide{margin:0;box-shadow:none}@page{size:1280px 720px;margin:0}}
+  body{margin:0;background:#101c30;font-family:"Inter","Segoe UI",Arial,sans-serif;color:${INK};-webkit-font-smoothing:antialiased}
+  .rs-slide{width:1280px;height:720px;margin:20px auto;background:#fff;padding:40px 60px 30px;display:flex;flex-direction:column;overflow:hidden}
+  .rs-name{font-family:Georgia,"Times New Roman",serif;font-size:19px;letter-spacing:.4px;margin:0}
+  .rs-rule{height:2px;background:${INK};margin-top:13px}
+  .rs-meta{display:flex;justify-content:space-between;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:${MUTED};margin-top:10px}
+  h3{font-size:9.5px;letter-spacing:1.7px;text-transform:uppercase;color:${MUTED};font-weight:600;margin:0 0 13px}
+  .rs-body{display:grid;grid-template-columns:1fr 330px;gap:56px;flex:1;padding-top:16px;min-height:0}
+  .rs-lede{display:flex;gap:52px;padding-bottom:16px;border-bottom:1px solid ${RULE}}
+  .rs-lede em{font-style:normal;display:block;font-size:9.5px;letter-spacing:1.7px;color:${MUTED};font-weight:600;margin-bottom:8px}
+  .rs-lede b{font-family:Georgia,serif;font-size:40px;font-weight:400;letter-spacing:-1px;display:block;line-height:1;font-variant-numeric:tabular-nums}
+  .rs-lede span{font-size:10.5px;color:${INK2};display:block;margin-top:7px}
+  .rs-figs{display:flex;gap:48px;margin-bottom:15px}
+  .rs-figs strong{font-family:Georgia,serif;font-size:27px;font-weight:400;display:block;font-variant-numeric:tabular-nums}
+  .rs-figs span{font-size:10.5px;color:${INK2}}
+  .rs-block{padding:16px 0;border-bottom:1px solid ${RULE}}
+  .tab{width:100%;border-collapse:collapse;font-size:12px}
+  .tab td{padding:6.5px 0;border-bottom:1px solid ${RULE}}
+  .tab td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+  .tab tr:last-child td{border-bottom:0}
+  .rs-legend{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:11px;margin-top:11px;color:${INK2}}
+  .rs-sw{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:7px;vertical-align:middle}
+  .rs-gauge{display:flex;flex-direction:column;align-items:center;padding-bottom:16px;border-bottom:1px solid ${RULE}}
+  .rs-gauge p{font-size:10px;line-height:1.6;color:${MUTED};margin:13px 0 0;text-align:center}
+  .rs-costs{display:flex;justify-content:space-between;font-size:11.5px;padding:6px 0;border-bottom:1px solid ${RULE}}
+  .rs-costs b{font-weight:500;font-variant-numeric:tabular-nums}
+  .rs-foot{font-size:8.5px;line-height:1.55;flex:none;color:${MUTED};border-top:1px solid ${RULE};padding-top:10px;margin-top:12px}
+  @media print{body{background:#fff}.rs-slide{margin:0}@page{size:1280px 720px;margin:0}}
 </style></head>
 <body><section class="rs-slide">
-  <header class="rs-head">
-    <div>
-      <p class="rs-kicker">${esc(s.portfolio_label.toUpperCase())} TOTAL</p>
-      <p class="rs-total">${usd(s.total_value)}</p>
-      <p class="rs-sub">${esc(s.client_label ? `${s.client_label} · ` : "")}As of ${esc(s.as_of)}</p>
-    </div>
-    <div class="rs-score"><span>RISK</span><strong>${s.risk_score}</strong></div>
-  </header>
+  <p class="rs-name">Risk Snapshot</p><div class="rs-rule"></div>
+  <div class="rs-meta">
+    <span>${esc(s.portfolio_label)}${s.client_label ? ` &#183; ${esc(s.client_label)}` : ""}</span>
+    <span>As of ${esc(s.as_of)}</span>
+  </div>
   <div class="rs-body">
     <div>
-      <h3>95% Probability Range (${s.range.horizon_months} months)</h3>
-      <div class="rs-range-figs">
-        <div class="rs-down"><strong>${usd(s.range.downside_value)}</strong><span>${pct(s.range.downside_pct)}</span></div>
-        <div class="rs-up"><strong>${usd(s.range.upside_value, true)}</strong><span>${pct(s.range.upside_pct)}</span></div>
+      <div class="rs-lede">
+        <div><em>${esc(s.portfolio_label.toUpperCase())} TOTAL</em><b>${usd(s.total_value)}</b><span>Supplied position values</span></div>
+        <div><em>SIX-MONTH DOWNSIDE</em><b style="color:${DOWN}">${pct(s.range.downside_pct)}</b><span>${usd(s.range.downside_value)} &#183; sets the Risk Score</span></div>
+        <div><em>SIX-MONTH UPSIDE</em><b style="color:${UP}">${pct(s.range.upside_pct)}</b><span>${usd(s.range.upside_value, true)}</span></div>
       </div>
-      ${rangeBar(s.range)}
-      <div class="rs-alloc">
-        ${donut(s.allocation)}
-        <div class="rs-legend">${s.allocation
+      <div class="rs-block">
+        <h3>95% Probability Range &#183; Six Months</h3>
+        ${rangeBar(s.range, 500)}
+      </div>
+      <div class="rs-block">
+        <h3>Allocation</h3>
+        ${stacked(alloc, 500)}
+        <div class="rs-legend">${alloc
           .map(
-            (a) =>
-              `<div><span class="rs-swatch" style="background:${CLASS_COLORS[a.name] ?? MID}"></span>${LABELS[a.name] ?? esc(a.name)}<b>${plain(a.percent)}</b></div>`,
+            (a, i) =>
+              `<span><span class="rs-sw" style="background:${RAMP[i] ?? RAMP.at(-1)}"></span>${esc(LABELS[a.name] ?? a.name)} <b style="font-weight:500">${plain(a.percent)}</b></span>`,
           )
           .join("")}</div>
       </div>
-      <div class="rs-costs">
+      <div style="padding-top:16px">
         <h3>Proposal Costs</h3>
-        ${cost.svg}
-        <div class="rs-cost-legend">${cost.legend}</div>
+        ${costs.map(([k, v]) => `<div class="rs-costs"><span>${esc(k)}</span><b>${plain(v)}</b></div>`).join("")}
+        <div class="rs-costs" style="border:0"><span style="font-weight:600">Total</span><b>${plain(costTotal)}</b></div>
       </div>
     </div>
     <div>
-      <h3>Portfolio Measures</h3>
-      <div class="rs-metrics">${metrics
-        .map(([k, v]) => `<div>${esc(k)}<b>${esc(v)}</b></div>`)
-        .join("")}</div>
-      <h3 style="margin-top:26px">Risk Score</h3>
-      ${scoreScale(s.risk_score)}
-      <p class="rs-note">Our 1&ndash;99 scale, from the modeled six-month downside. Not a suitability judgment and not a vendor score.</p>
+      <div class="rs-gauge">
+        ${gauge(s.risk_score)}
+        <p>Our 1&#8211;99 scale, set by the six-month downside above.<br/>Not a suitability judgment and not a vendor score.</p>
+      </div>
+      <div style="padding-top:18px"><h3>Risk Characteristics</h3>${table(riskRows)}</div>
+      <div style="padding-top:18px"><h3>Return Characteristics</h3>${table(returnRows)}</div>
     </div>
   </div>
   <footer class="rs-foot">
-    ${esc(s.basis.method)} Range is a modeled ${esc(s.range.confidence)} over ${s.range.horizon_months} months from ${esc(s.basis.covariance)}, not a guarantee or a forecast of maximum loss. Volatility ${plain(s.metrics.annual_volatility_pct)} annualized; risk-free ${plain(s.basis.risk_free_pct)}. ${esc(s.basis.drawdown_basis)} Values are supplied position values, not live prices.${s.warnings.length ? ` ${esc(s.warnings.join(" "))}` : ""}
+    ${esc(s.basis.method)} The range is a modeled ${esc(s.range.confidence)} over ${s.range.horizon_months} months from ${esc(s.basis.covariance)} &mdash; not a guarantee and not a forecast of maximum loss. Risk-free ${plain(s.basis.risk_free_pct)}. ${esc(s.basis.drawdown_basis)} Values are supplied position values, not live prices.${s.warnings.length ? ` ${esc(s.warnings.join(" "))}` : ""}
   </footer>
 </section></body></html>
 `;

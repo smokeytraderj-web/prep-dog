@@ -111,3 +111,28 @@ Three honest routes, best first:
 Never retune an anchor to make one portfolio hit an expected number, and never
 label a calibrated output as a Risk Number or a GPA. Calibration narrows a gap
 between two different measures; it does not merge them.
+
+## Slide encodings
+
+The palette is the app's own (`src/styles.css`), not a vendor's.
+
+- **Allocation is sequential, not categorical.** Four asset classes are ordered
+  parts of one whole, so they use the brand navy ramp
+  (`#142f49 #385875 #7892a7 #b9cce4`, checked monotonic light-to-dark) with the
+  largest share first, 2px surface gaps and a directly labeled legend. The
+  brand's muted tones cannot supply four categorical hues that separate under
+  the dataviz checks -- gold against terracotta fails even for normal vision --
+  so four distinct hues here would be a defect, not a style choice.
+- **The range is the one diverging encoding**: brand terracotta `#bd6a52` for
+  the downside against brand blue `#3d6fa8` for the upside, zero-anchored, both
+  validated for CVD separation and contrast. No red/green.
+- **The Risk Score is a ring gauge**, filled to the score's position on 1-99
+  with a gold marker at the arc end and the number inside. It is the page's
+  headline and the downside figure that sets it is labeled as such.
+- **Measures are grouped** into risk characteristics (volatility, drawdown,
+  grade) and return characteristics (range midpoint, dividend, total cost)
+  rather than one flat list, and annualized volatility is promoted out of the
+  footnote.
+
+Re-run `scripts/validate_palette.js` from the dataviz skill before changing any
+hue, and re-render and look at the slide before calling a layout change done.

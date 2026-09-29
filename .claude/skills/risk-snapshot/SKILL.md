@@ -84,7 +84,8 @@ history helps more than retuning anchors ever will.
 - The range is modeled, not a guarantee and not a maximum loss. The footer says
   so; keep it.
 - No live prices are fetched. Values are the supplied position values.
-- Chart colors are validated; see the note in `scripts/render.mjs`. Re-run the
-  dataviz validator before changing any hue.
+- Colors are the app's own palette and the encodings are deliberate; see
+  "Slide encodings" in `reference/methodology.md`. Re-run the dataviz validator
+  before changing any hue, and re-render before calling a layout change done.
 - Omit a measure rather than estimating it. A missing measure is a question for
   the user, not a default.
