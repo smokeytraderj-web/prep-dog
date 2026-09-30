@@ -66,3 +66,7 @@ The supplied skill is versioned in `docs/slide-skills/risk-snapshot/`, including
 Integration corrections: the original 1.645 normal quantile defines a 5th–95th percentile interval with **90% central coverage**; its formula and score anchors are preserved with corrected labels. Unknown costs, yield, risk-free rates, and drawdown are omitted instead of silently defaulted or estimated. History requires shared ordered dates. The model is explicitly in-house and is never branded as a Riskalyze Risk Number or GPA.
 
 From the skill directory: `node scripts/snapshot.mjs assets/sample-input.json snapshot.json`, then `node scripts/render.mjs snapshot.json slide.html`. The sample is for testing only and never prepopulates a client deck. `npm test` includes the skill and portfolio-integration tests.
+
+## Market feed recovery
+
+Market requests retry once and distinguish provider failures, timeouts, and sign-in HTML responses. The benchmark loader can show the verified, dated public snapshot in `public/benchmark-snapshot.json` if live retrieval fails; it is labeled as saved data and remains subject to the four-day stale-data gate. Successful provider responses replace it. This snapshot is public market data, not user holdings. Yahoo chart requests validate the payload and try the second Yahoo endpoint when the first fails. Starting another report preserves market data while refreshing it. Page 2 data controls live in compact, collapsed sections.

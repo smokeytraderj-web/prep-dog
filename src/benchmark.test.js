@@ -27,6 +27,12 @@ test('staleness uses provider date, not the retrieval timestamp',()=>{
  assert.equal(isBenchmarkStale(snapshot(),Date.parse('2026-09-29')),false);
  assert.equal(isBenchmarkStale(snapshot(),Date.parse('2026-10-05')),true);
 });
+test('provider share-class spaces match dotted or hyphenated uploaded tickers',()=>{
+ const data=parseBenchmark(fixture.replace('T0,','BRK B,'),'2026-09-29T15:00:00Z');
+ assert.equal(data.constituents[0].ticker,'BRK-B');
+ assert.equal(comparePortfolio([{ticker:'BRK.B',value:100}],data).coverage,100);
+ assert.ok(comparePortfolio([{ticker:'BRK-B',value:100}],data).data);
+});
 test('endpoint exposes failure and disallows mutation',async()=>{
  assert.equal((await benchmarkResponse(new Request('https://example.com',{method:'POST'}))).status,405);
  const res=await benchmarkResponse(new Request('https://example.com'),async()=>new Response('Provider unavailable',{status:503}));

@@ -25,6 +25,7 @@ import "./slide-updates.css";
 import EquitySlide from "./EquitySlide";
 import { RiskSnapshotInput, RiskSnapshotSlide } from "./RiskSnapshot";
 import "./risk-snapshot.css";
+import "./data-drawers.css";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -32,6 +33,7 @@ import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 import HoldingsImport from "./HoldingsImport";
 import { textToSheets } from "./holding-import";
+import { fetchMarketJson } from "./market-fetch";
 import { PortfolioOverview, PortfolioAllocation, ConcentrationSlide } from "./PortfolioSlides";
 import { MarketIndexesSlide, MarketIndexesEditor, SectorPerformanceEditor, EarningsEditor, SectorPerformanceSlide, EarningsSlide } from "./MarketContext";
 import { AccountSummarySlide, RegionalAttributionSlide, RiskSlide, AttributionSlide } from "./SupportingSlides";
@@ -106,10 +108,10 @@ function App() {
   async function refreshMarketIndexes() {
     setMarketLoading(true); setMarketError("");
     try {
-      const response = await fetch('/api/market/ytd');
-      const data = await response.json();
-      if (!response.ok) throw Error(data.error || 'YTD market data is unavailable.');
+      const data = await fetchMarketJson('/api/market/ytd');
+      if (!validMarketIndexes(data)) throw Error('The market service returned incomplete index data. Please retry.');
       setMarketIndexes(data);
+      setMarketError(data.warning || '');
     } catch (error) { setMarketError(error.message || 'YTD market data is unavailable.'); }
     finally { setMarketLoading(false); }
   }
@@ -193,7 +195,7 @@ function App() {
     setSnippetImages([]);
     setText("");
     setImportBook(null); setImportSource(""); setPositions([]); setSupporting({}); setSupportError(""); setPreparedFor(""); setAdvisor("");
-    setMarketIndexes(emptyMarketIndexes()); setMarketError(""); setSectorPerformance(emptySectorPerformance()); setEarnings(emptyEarnings());
+    refreshMarketIndexes(); setSectorPerformance(emptySectorPerformance()); setEarnings(emptyEarnings());
     setHoldings([]);
     setReviewed(false);
     setSelected(["account-summary", "market-indexes", "regional-attribution"]);
@@ -502,7 +504,7 @@ function App() {
                     {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
                   </div>
                   {selected.includes("equity") && (
-                    <div className="equity-input">
+                    <details className="data-drawer"><summary><span>Equity benchmark</span><small>{equity ? "Ready" : "Review needed"}</small><ChevronRight size={16}/></summary><div className="equity-input">
                       <div>
                         <h3>Portfolio vs. S&P 500</h3>
                         <p>{benchmark.loading && !benchmark.snapshot ? "Loading daily benchmark…" : benchmark.snapshot ? `IVV equity proxy · As of ${benchmark.snapshot.asOf}` : "Benchmark unavailable. Retry or import sector data."}</p>
@@ -533,11 +535,11 @@ function App() {
                           {equityError}
                         </p>
                       )}
-                    </div>
+                    </div></details>
                   )}
-                  {selected.includes("risk") && <RiskSnapshotInput holdings={holdings} positions={positions} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/>}
-                  <MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/>
-                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <section className="supporting-upload"><h3>Source data</h3><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section>}
+                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk inputs</span><small>{riskSnapshot || supporting.risk ? "Ready" : "Inputs needed"}</small><ChevronRight size={16}/></summary><RiskSnapshotInput holdings={holdings} positions={positions} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/></details>}
+                  <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
+                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
                 </section>
                 <aside className="deck-summary">
                   <div className="summary-icon">
@@ -568,6 +570,7 @@ function App() {
                     className="primary w-full"
                     disabled={
                       !selected.length ||
+                      (marketLoading && !validMarketIndexes(marketIndexes)) ||
                       (selected.includes("equity") && !equity) ||
                       (selected.includes("risk") && !supporting.risk && !riskSnapshot)
                     }

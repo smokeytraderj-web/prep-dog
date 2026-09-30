@@ -1,0 +1,3079 @@
+{
+  "asOf": "2026-09-28",
+  "retrievedAt": "2026-09-30T13:18:04.062Z",
+  "source": "iShares IVV daily holdings",
+  "sourceUrl": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf",
+  "basis": "IVV equity holdings, normalized to 100%; cash and derivatives excluded.",
+  "sectors": [
+    {
+      "name": "Materials",
+      "weight": 1.7156026080230264
+    },
+    {
+      "name": "Cons Discr",
+      "weight": 8.549198368392762
+    },
+    {
+      "name": "Financial Svcs",
+      "weight": 11.532032994259168
+    },
+    {
+      "name": "REITs",
+      "weight": 1.7102731533705502
+    },
+    {
+      "name": "Comms Svcs",
+      "weight": 9.871066821551985
+    },
+    {
+      "name": "Energy",
+      "weight": 3.412986211395091
+    },
+    {
+      "name": "Industrials",
+      "weight": 8.102265047757422
+    },
+    {
+      "name": "Info Tech",
+      "weight": 39.419832696124615
+    },
+    {
+      "name": "Cons Staples",
+      "weight": 4.445942467016067
+    },
+    {
+      "name": "Healthcare",
+      "weight": 9.378437556792306
+    },
+    {
+      "name": "Utilities",
+      "weight": 1.862362075317003
+    }
+  ],
+  "constituents": [
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA",
+      "sector": "Info Tech",
+      "weight": 8.365403651593219
+    },
+    {
+      "ticker": "AAPL",
+      "name": "APPLE",
+      "sector": "Info Tech",
+      "weight": 7.459533742556136
+    },
+    {
+      "ticker": "MSFT",
+      "name": "MICROSOFT",
+      "sector": "Info Tech",
+      "weight": 5.711307245429006
+    },
+    {
+      "ticker": "AMZN",
+      "name": "AMAZON.COM INC",
+      "sector": "Cons Discr",
+      "weight": 3.649363712205704
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "ALPHABET CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 3.037901908362977
+    },
+    {
+      "ticker": "AVGO",
+      "name": "BROADCOM INC",
+      "sector": "Info Tech",
+      "weight": 2.5120055587771204
+    },
+    {
+      "ticker": "GOOG",
+      "name": "ALPHABET CLASS C",
+      "sector": "Comms Svcs",
+      "weight": 2.4349836743799824
+    },
+    {
+      "ticker": "META",
+      "name": "META PLATFORMS CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 2.3834857933574245
+    },
+    {
+      "ticker": "MU",
+      "name": "MICRON TECHNOLOGY",
+      "sector": "Info Tech",
+      "weight": 1.7979991665050876
+    },
+    {
+      "ticker": "TSLA",
+      "name": "TESLA INC",
+      "sector": "Cons Discr",
+      "weight": 1.5215931446392283
+    },
+    {
+      "ticker": "AMD",
+      "name": "ADVANCED MICRO DEVICES",
+      "sector": "Info Tech",
+      "weight": 1.4988264750380567
+    },
+    {
+      "ticker": "LLY",
+      "name": "ELI LILLY",
+      "sector": "Healthcare",
+      "weight": 1.4319126776369804
+    },
+    {
+      "ticker": "BRK B",
+      "name": "BERKSHIRE HATHAWAY INC CLASS B",
+      "sector": "Financial Svcs",
+      "weight": 1.415234499499838
+    },
+    {
+      "ticker": "JPM",
+      "name": "JPMORGAN CHASE & CO",
+      "sector": "Financial Svcs",
+      "weight": 1.3514104126612758
+    },
+    {
+      "ticker": "XOM",
+      "name": "EXXONMOBIL HOLDINGS CORP",
+      "sector": "Energy",
+      "weight": 1.009376138404792
+    },
+    {
+      "ticker": "JNJ",
+      "name": "JOHNSON & JOHNSON",
+      "sector": "Healthcare",
+      "weight": 0.9898920693763981
+    },
+    {
+      "ticker": "V",
+      "name": "VISA CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.9465455449154814
+    },
+    {
+      "ticker": "INTC",
+      "name": "INTEL CORPORATION",
+      "sector": "Info Tech",
+      "weight": 0.8708372470317569
+    },
+    {
+      "ticker": "WMT",
+      "name": "WALMART",
+      "sector": "Cons Staples",
+      "weight": 0.731895982550993
+    },
+    {
+      "ticker": "ABBV",
+      "name": "ABBVIE",
+      "sector": "Healthcare",
+      "weight": 0.7107184029941683
+    },
+    {
+      "ticker": "MA",
+      "name": "MASTERCARD CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.6940500367080523
+    },
+    {
+      "ticker": "PLTR",
+      "name": "PALANTIR TECHNOLOGIES CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.6515098438651388
+    },
+    {
+      "ticker": "CSCO",
+      "name": "CISCO SYSTEMS INC",
+      "sector": "Info Tech",
+      "weight": 0.6354520844621712
+    },
+    {
+      "ticker": "COST",
+      "name": "COSTCO WHOLESALE CORP",
+      "sector": "Cons Staples",
+      "weight": 0.6182040082386203
+    },
+    {
+      "ticker": "CVX",
+      "name": "CHEVRON",
+      "sector": "Energy",
+      "weight": 0.6158546020029185
+    },
+    {
+      "ticker": "LRCX",
+      "name": "LAM RESEARCH",
+      "sector": "Info Tech",
+      "weight": 0.5943457872774509
+    },
+    {
+      "ticker": "AMAT",
+      "name": "APPLIED MATERIAL INC",
+      "sector": "Info Tech",
+      "weight": 0.5837189868830005
+    },
+    {
+      "ticker": "CAT",
+      "name": "CATERPILLAR INC",
+      "sector": "Industrials",
+      "weight": 0.5692577393821501
+    },
+    {
+      "ticker": "MRK",
+      "name": "MERCK & CO INC",
+      "sector": "Healthcare",
+      "weight": 0.554088065961017
+    },
+    {
+      "ticker": "BAC",
+      "name": "BANK OF AMERICA",
+      "sector": "Financial Svcs",
+      "weight": 0.5448656416356961
+    },
+    {
+      "ticker": "PG",
+      "name": "PROCTER & GAMBLE",
+      "sector": "Cons Staples",
+      "weight": 0.5232356865922855
+    },
+    {
+      "ticker": "UNH",
+      "name": "UNITEDHEALTH GROUP",
+      "sector": "Healthcare",
+      "weight": 0.5122315349082072
+    },
+    {
+      "ticker": "KO",
+      "name": "COCA-COLA",
+      "sector": "Cons Staples",
+      "weight": 0.5099024059560485
+    },
+    {
+      "ticker": "GE",
+      "name": "GE AEROSPACE",
+      "sector": "Industrials",
+      "weight": 0.4987511046533641
+    },
+    {
+      "ticker": "PANW",
+      "name": "PALO ALTO NETWORKS",
+      "sector": "Info Tech",
+      "weight": 0.4826447173521143
+    },
+    {
+      "ticker": "PM",
+      "name": "PHILIP MORRIS INTERNATIONAL",
+      "sector": "Cons Staples",
+      "weight": 0.45615374291240274
+    },
+    {
+      "ticker": "HD",
+      "name": "HOME DEPOT",
+      "sector": "Cons Discr",
+      "weight": 0.4365949289098517
+    },
+    {
+      "ticker": "NFLX",
+      "name": "NETFLIX",
+      "sector": "Comms Svcs",
+      "weight": 0.43541167786201623
+    },
+    {
+      "ticker": "GS",
+      "name": "GOLDMAN SACHS GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.4029924868733981
+    },
+    {
+      "ticker": "CRWD",
+      "name": "CROWDSTRIKE HOLDINGS CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.39874479154411074
+    },
+    {
+      "ticker": "TXN",
+      "name": "TEXAS INSTRUMENT INC",
+      "sector": "Info Tech",
+      "weight": 0.3838882761180939
+    },
+    {
+      "ticker": "GEV",
+      "name": "GE VERNOVA",
+      "sector": "Industrials",
+      "weight": 0.3820348043785221
+    },
+    {
+      "ticker": "RTX",
+      "name": "RTX",
+      "sector": "Industrials",
+      "weight": 0.38201245302704434
+    },
+    {
+      "ticker": "TMO",
+      "name": "THERMO FISHER SCIENTIFIC INC",
+      "sector": "Healthcare",
+      "weight": 0.37895895616475117
+    },
+    {
+      "ticker": "SNDK",
+      "name": "SANDISK",
+      "sector": "Info Tech",
+      "weight": 0.3777927754694203
+    },
+    {
+      "ticker": "KLAC",
+      "name": "KLA",
+      "sector": "Info Tech",
+      "weight": 0.3733091050326623
+    },
+    {
+      "ticker": "WFC",
+      "name": "WELLS FARGO",
+      "sector": "Financial Svcs",
+      "weight": 0.3691023276074062
+    },
+    {
+      "ticker": "MS",
+      "name": "MORGAN STANLEY",
+      "sector": "Financial Svcs",
+      "weight": 0.3491131964601376
+    },
+    {
+      "ticker": "ORCL",
+      "name": "ORACLE",
+      "sector": "Info Tech",
+      "weight": 0.34614681136183767
+    },
+    {
+      "ticker": "AMGN",
+      "name": "AMGEN INC",
+      "sector": "Healthcare",
+      "weight": 0.34133227622070045
+    },
+    {
+      "ticker": "MRVL",
+      "name": "MARVELL TECHNOLOGY",
+      "sector": "Info Tech",
+      "weight": 0.333216724804866
+    },
+    {
+      "ticker": "C",
+      "name": "CITIGROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.33268802884868603
+    },
+    {
+      "ticker": "LIN",
+      "name": "LINDE PLC",
+      "sector": "Materials",
+      "weight": 0.32865994727381787
+    },
+    {
+      "ticker": "ANET",
+      "name": "ARISTA NETWORKS",
+      "sector": "Info Tech",
+      "weight": 0.3240108478973064
+    },
+    {
+      "ticker": "STX",
+      "name": "SEAGATE TECHNOLOGY HOLDINGS PLC",
+      "sector": "Info Tech",
+      "weight": 0.3154261124773334
+    },
+    {
+      "ticker": "APH",
+      "name": "AMPHENOL CORP CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.3151853269665083
+    },
+    {
+      "ticker": "IBM",
+      "name": "INTERNATIONAL BUSINESS MACHINES",
+      "sector": "Info Tech",
+      "weight": 0.3140157427815507
+    },
+    {
+      "ticker": "QCOM",
+      "name": "QUALCOMM",
+      "sector": "Info Tech",
+      "weight": 0.3024451350405466
+    },
+    {
+      "ticker": "VZ",
+      "name": "VERIZON COMMUNICATIONS INC",
+      "sector": "Comms Svcs",
+      "weight": 0.2929421006437811
+    },
+    {
+      "ticker": "ADI",
+      "name": "ANALOG DEVICES",
+      "sector": "Info Tech",
+      "weight": 0.290907479946638
+    },
+    {
+      "ticker": "GILD",
+      "name": "GILEAD SCIENCES",
+      "sector": "Healthcare",
+      "weight": 0.2850715284217432
+    },
+    {
+      "ticker": "CRM",
+      "name": "SALESFORCE",
+      "sector": "Info Tech",
+      "weight": 0.28114738271065226
+    },
+    {
+      "ticker": "DIS",
+      "name": "WALT DISNEY",
+      "sector": "Comms Svcs",
+      "weight": 0.2753830569542557
+    },
+    {
+      "ticker": "PEP",
+      "name": "PEPSICO",
+      "sector": "Cons Staples",
+      "weight": 0.264909049483519
+    },
+    {
+      "ticker": "ABT",
+      "name": "ABBOTT LABORATORIES",
+      "sector": "Healthcare",
+      "weight": 0.26392228626829073
+    },
+    {
+      "ticker": "DE",
+      "name": "DEERE",
+      "sector": "Industrials",
+      "weight": 0.26151111032216595
+    },
+    {
+      "ticker": "T",
+      "name": "AT&T",
+      "sector": "Comms Svcs",
+      "weight": 0.257717627970705
+    },
+    {
+      "ticker": "WELL",
+      "name": "WELLTOWER",
+      "sector": "REITs",
+      "weight": 0.25361239107387884
+    },
+    {
+      "ticker": "ETN",
+      "name": "EATON PLC",
+      "sector": "Industrials",
+      "weight": 0.25308019948833127
+    },
+    {
+      "ticker": "MCD",
+      "name": "MCDONALDS CORP",
+      "sector": "Cons Discr",
+      "weight": 0.24967653132073123
+    },
+    {
+      "ticker": "DELL",
+      "name": "DELL TECHNOLOGIES INC CLASS C",
+      "sector": "Info Tech",
+      "weight": 0.24811341766926887
+    },
+    {
+      "ticker": "PFE",
+      "name": "PFIZER",
+      "sector": "Healthcare",
+      "weight": 0.24724874489615772
+    },
+    {
+      "ticker": "WDC",
+      "name": "WESTERN DIGITAL CORP",
+      "sector": "Info Tech",
+      "weight": 0.24681581369507707
+    },
+    {
+      "ticker": "UNP",
+      "name": "UNION PACIFIC",
+      "sector": "Industrials",
+      "weight": 0.2459415474396672
+    },
+    {
+      "ticker": "AXP",
+      "name": "AMERICAN EXPRESS",
+      "sector": "Financial Svcs",
+      "weight": 0.24370719637173527
+    },
+    {
+      "ticker": "SCHW",
+      "name": "CHARLES SCHWAB",
+      "sector": "Financial Svcs",
+      "weight": 0.24135417283590088
+    },
+    {
+      "ticker": "NEE",
+      "name": "NEXTERA ENERGY",
+      "sector": "Utilities",
+      "weight": 0.23784607648145664
+    },
+    {
+      "ticker": "BLK",
+      "name": "BLACKROCK",
+      "sector": "Financial Svcs",
+      "weight": 0.2331047683733864
+    },
+    {
+      "ticker": "COP",
+      "name": "CONOCOPHILLIPS",
+      "sector": "Energy",
+      "weight": 0.22869860575163053
+    },
+    {
+      "ticker": "ISRG",
+      "name": "INTUITIVE SURGICAL",
+      "sector": "Healthcare",
+      "weight": 0.22134087464812444
+    },
+    {
+      "ticker": "BA",
+      "name": "BOEING",
+      "sector": "Industrials",
+      "weight": 0.22012103985832293
+    },
+    {
+      "ticker": "TJX",
+      "name": "TJX",
+      "sector": "Cons Discr",
+      "weight": 0.2173269251964586
+    },
+    {
+      "ticker": "DHR",
+      "name": "DANAHER",
+      "sector": "Healthcare",
+      "weight": 0.21483625505652812
+    },
+    {
+      "ticker": "UBER",
+      "name": "UBER TECHNOLOGIES",
+      "sector": "Industrials",
+      "weight": 0.2102827005654827
+    },
+    {
+      "ticker": "NOW",
+      "name": "SERVICENOW",
+      "sector": "Info Tech",
+      "weight": 0.20526466605095534
+    },
+    {
+      "ticker": "VRTX",
+      "name": "VERTEX PHARMACEUTICALS",
+      "sector": "Healthcare",
+      "weight": 0.20201401679926412
+    },
+    {
+      "ticker": "BMY",
+      "name": "BRISTOL MYERS SQUIBB",
+      "sector": "Healthcare",
+      "weight": 0.19709271440460063
+    },
+    {
+      "ticker": "PLD",
+      "name": "PROLOGIS REIT",
+      "sector": "REITs",
+      "weight": 0.1901065224411056
+    },
+    {
+      "ticker": "BKNG",
+      "name": "BOOKING HOLDINGS",
+      "sector": "Cons Discr",
+      "weight": 0.1859841613290896
+    },
+    {
+      "ticker": "NEM",
+      "name": "NEWMONT",
+      "sector": "Materials",
+      "weight": 0.18469864465120353
+    },
+    {
+      "ticker": "PH",
+      "name": "PARKER-HANNIFIN",
+      "sector": "Industrials",
+      "weight": 0.18463604123023733
+    },
+    {
+      "ticker": "PGR",
+      "name": "PROGRESSIVE",
+      "sector": "Financial Svcs",
+      "weight": 0.1839395149251035
+    },
+    {
+      "ticker": "COF",
+      "name": "CAPITAL ONE FINANCIAL CORP",
+      "sector": "Financial Svcs",
+      "weight": 0.18205186447419625
+    },
+    {
+      "ticker": "GLW",
+      "name": "CORNING",
+      "sector": "Info Tech",
+      "weight": 0.18144415015204268
+    },
+    {
+      "ticker": "SPGI",
+      "name": "S&P GLOBAL",
+      "sector": "Financial Svcs",
+      "weight": 0.1805959471460709
+    },
+    {
+      "ticker": "CB",
+      "name": "CHUBB",
+      "sector": "Financial Svcs",
+      "weight": 0.17573412499299637
+    },
+    {
+      "ticker": "MO",
+      "name": "ALTRIA GROUP INC",
+      "sector": "Cons Staples",
+      "weight": 0.17434819309994629
+    },
+    {
+      "ticker": "MDT",
+      "name": "MEDTRONIC PLC",
+      "sector": "Healthcare",
+      "weight": 0.17304038567997965
+    },
+    {
+      "ticker": "CVS",
+      "name": "CVS HEALTH",
+      "sector": "Healthcare",
+      "weight": 0.16970432004300368
+    },
+    {
+      "ticker": "VLO",
+      "name": "VALERO ENERGY CORP",
+      "sector": "Energy",
+      "weight": 0.16942474607213306
+    },
+    {
+      "ticker": "MPC",
+      "name": "MARATHON PETROLEUM",
+      "sector": "Energy",
+      "weight": 0.16519518553188794
+    },
+    {
+      "ticker": "FTNT",
+      "name": "FORTINET",
+      "sector": "Info Tech",
+      "weight": 0.16414188358256443
+    },
+    {
+      "ticker": "SBUX",
+      "name": "STARBUCKS CORP",
+      "sector": "Cons Discr",
+      "weight": 0.1640456496829104
+    },
+    {
+      "ticker": "ACN",
+      "name": "ACCENTURE PLC CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.1612661371417706
+    },
+    {
+      "ticker": "LOW",
+      "name": "LOWES COMPANIES INC",
+      "sector": "Cons Discr",
+      "weight": 0.15897639052116086
+    },
+    {
+      "ticker": "LMT",
+      "name": "LOCKHEED MARTIN CORP",
+      "sector": "Industrials",
+      "weight": 0.15894711588101243
+    },
+    {
+      "ticker": "ADP",
+      "name": "AUTOMATIC DATA PROCESSING INC",
+      "sector": "Industrials",
+      "weight": 0.15708215319851296
+    },
+    {
+      "ticker": "FCX",
+      "name": "FREEPORT MCMORAN INC",
+      "sector": "Materials",
+      "weight": 0.1560852777495211
+    },
+    {
+      "ticker": "PSX",
+      "name": "PHILLIPS 66",
+      "sector": "Energy",
+      "weight": 0.1528048484308596
+    },
+    {
+      "ticker": "BNY",
+      "name": "BANK OF NEW YORK MELLON CORP",
+      "sector": "Financial Svcs",
+      "weight": 0.15212116928235872
+    },
+    {
+      "ticker": "MCK",
+      "name": "MCKESSON CORP",
+      "sector": "Healthcare",
+      "weight": 0.15082850916071341
+    },
+    {
+      "ticker": "EQIX",
+      "name": "EQUINIX REIT",
+      "sector": "REITs",
+      "weight": 0.15066665593977935
+    },
+    {
+      "ticker": "TT",
+      "name": "TRANE TECHNOLOGIES PLC",
+      "sector": "Industrials",
+      "weight": 0.1502529905546427
+    },
+    {
+      "ticker": "PWR",
+      "name": "QUANTA SERVICES INC",
+      "sector": "Industrials",
+      "weight": 0.14624987349839963
+    },
+    {
+      "ticker": "SYK",
+      "name": "STRYKER",
+      "sector": "Healthcare",
+      "weight": 0.1451387321823688
+    },
+    {
+      "ticker": "SO",
+      "name": "SOUTHERN",
+      "sector": "Utilities",
+      "weight": 0.14308760321787717
+    },
+    {
+      "ticker": "CME",
+      "name": "CME GROUP CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.14295759394381466
+    },
+    {
+      "ticker": "VRT",
+      "name": "VERTIV HOLDINGS CLASS A",
+      "sector": "Industrials",
+      "weight": 0.1419041647007109
+    },
+    {
+      "ticker": "HOOD",
+      "name": "ROBINHOOD MARKETS CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.13907156697286335
+    },
+    {
+      "ticker": "ADBE",
+      "name": "ADOBE INC",
+      "sector": "Info Tech",
+      "weight": 0.1386874240993082
+    },
+    {
+      "ticker": "USB",
+      "name": "US BANCORP",
+      "sector": "Financial Svcs",
+      "weight": 0.13832723509576364
+    },
+    {
+      "ticker": "HWM",
+      "name": "HOWMET AEROSPACE",
+      "sector": "Industrials",
+      "weight": 0.13752671047558956
+    },
+    {
+      "ticker": "JCI",
+      "name": "JOHNSON CONTROLS INTERNATIONAL PLC",
+      "sector": "Industrials",
+      "weight": 0.1362215042846243
+    },
+    {
+      "ticker": "DDOG",
+      "name": "DATADOG INC CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.135918035019838
+    },
+    {
+      "ticker": "CDNS",
+      "name": "CADENCE DESIGN SYSTEMS",
+      "sector": "Info Tech",
+      "weight": 0.1359061023904312
+    },
+    {
+      "ticker": "PNC",
+      "name": "PNC FINANCIAL SERVICES GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.13477228747114248
+    },
+    {
+      "ticker": "EMR",
+      "name": "EMERSON ELECTRIC",
+      "sector": "Industrials",
+      "weight": 0.1342831255183957
+    },
+    {
+      "ticker": "DUK",
+      "name": "DUKE ENERGY CORP",
+      "sector": "Utilities",
+      "weight": 0.13356123173038748
+    },
+    {
+      "ticker": "MMM",
+      "name": "3M",
+      "sector": "Industrials",
+      "weight": 0.1320189473638047
+    },
+    {
+      "ticker": "CSX",
+      "name": "CSX",
+      "sector": "Industrials",
+      "weight": 0.1308364866293865
+    },
+    {
+      "ticker": "BX",
+      "name": "BLACKSTONE",
+      "sector": "Financial Svcs",
+      "weight": 0.12988258787597418
+    },
+    {
+      "ticker": "ICE",
+      "name": "INTERCONTINENTAL EXCHANGE INC",
+      "sector": "Financial Svcs",
+      "weight": 0.1296526560541735
+    },
+    {
+      "ticker": "CEG",
+      "name": "CONSTELLATION ENERGY CORP",
+      "sector": "Utilities",
+      "weight": 0.12961419420929532
+    },
+    {
+      "ticker": "ELV",
+      "name": "ELEVANCE HEALTH INC",
+      "sector": "Healthcare",
+      "weight": 0.12926495268041466
+    },
+    {
+      "ticker": "GD",
+      "name": "GENERAL DYNAMICS CORP",
+      "sector": "Industrials",
+      "weight": 0.12816336113125154
+    },
+    {
+      "ticker": "WMB",
+      "name": "WILLIAMS",
+      "sector": "Energy",
+      "weight": 0.1274405002322168
+    },
+    {
+      "ticker": "APP",
+      "name": "APPLOVIN CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.12614716300281217
+    },
+    {
+      "ticker": "HPE",
+      "name": "HEWLETT PACKARD ENTERPRISE",
+      "sector": "Info Tech",
+      "weight": 0.1252694641809876
+    },
+    {
+      "ticker": "LITE",
+      "name": "LUMENTUM HOLDINGS",
+      "sector": "Info Tech",
+      "weight": 0.12326156040539325
+    },
+    {
+      "ticker": "MRSH",
+      "name": "MARSH",
+      "sector": "Financial Svcs",
+      "weight": 0.12184172037066351
+    },
+    {
+      "ticker": "TMUS",
+      "name": "T MOBILE US INC",
+      "sector": "Comms Svcs",
+      "weight": 0.12135954896641199
+    },
+    {
+      "ticker": "SNPS",
+      "name": "SYNOPSYS",
+      "sector": "Info Tech",
+      "weight": 0.12077920985277757
+    },
+    {
+      "ticker": "AMT",
+      "name": "AMERICAN TOWER REIT",
+      "sector": "REITs",
+      "weight": 0.1182363217470887
+    },
+    {
+      "ticker": "WBD",
+      "name": "WARNER BROS. DISCOVERY SERIES A",
+      "sector": "Comms Svcs",
+      "weight": 0.11718180563995405
+    },
+    {
+      "ticker": "BE",
+      "name": "BLOOM ENERGY CLASS A",
+      "sector": "Industrials",
+      "weight": 0.11694773718884889
+    },
+    {
+      "ticker": "CMCSA",
+      "name": "COMCAST CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.11648343753909599
+    },
+    {
+      "ticker": "MDLZ",
+      "name": "MONDELEZ INTERNATIONAL CLASS A",
+      "sector": "Cons Staples",
+      "weight": 0.11601405583454823
+    },
+    {
+      "ticker": "WM",
+      "name": "WASTE MANAGEMENT INC",
+      "sector": "Industrials",
+      "weight": 0.11592211102561599
+    },
+    {
+      "ticker": "MAR",
+      "name": "MARRIOTT INTERNATIONAL CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.11580964988136824
+    },
+    {
+      "ticker": "SLB",
+      "name": "SLB",
+      "sector": "Energy",
+      "weight": 0.11542287846686208
+    },
+    {
+      "ticker": "ROST",
+      "name": "ROSS STORES INC",
+      "sector": "Cons Discr",
+      "weight": 0.11487510213529775
+    },
+    {
+      "ticker": "SHW",
+      "name": "SHERWIN WILLIAMS",
+      "sector": "Materials",
+      "weight": 0.11469284758239454
+    },
+    {
+      "ticker": "TRV",
+      "name": "TRAVELERS COMPANIES",
+      "sector": "Financial Svcs",
+      "weight": 0.11441225573137667
+    },
+    {
+      "ticker": "MSI",
+      "name": "MOTOROLA SOLUTIONS INC",
+      "sector": "Info Tech",
+      "weight": 0.11300786342981217
+    },
+    {
+      "ticker": "EOG",
+      "name": "EOG RESOURCES",
+      "sector": "Energy",
+      "weight": 0.11141505481895314
+    },
+    {
+      "ticker": "REGN",
+      "name": "REGENERON PHARMACEUTICALS",
+      "sector": "Healthcare",
+      "weight": 0.1114052092921375
+    },
+    {
+      "ticker": "INTU",
+      "name": "INTUIT",
+      "sector": "Info Tech",
+      "weight": 0.11131631655930696
+    },
+    {
+      "ticker": "MRNA",
+      "name": "MODERNA",
+      "sector": "Healthcare",
+      "weight": 0.11063121301294493
+    },
+    {
+      "ticker": "HLT",
+      "name": "HILTON WORLDWIDE HOLDINGS",
+      "sector": "Cons Discr",
+      "weight": 0.10886246251624432
+    },
+    {
+      "ticker": "TGT",
+      "name": "TARGET CORP",
+      "sector": "Cons Staples",
+      "weight": 0.10868197973984003
+    },
+    {
+      "ticker": "CI",
+      "name": "CIGNA",
+      "sector": "Healthcare",
+      "weight": 0.1084867250965261
+    },
+    {
+      "ticker": "CMI",
+      "name": "CUMMINS INC",
+      "sector": "Industrials",
+      "weight": 0.10768538939606603
+    },
+    {
+      "ticker": "ITW",
+      "name": "ILLINOIS TOOL INC",
+      "sector": "Industrials",
+      "weight": 0.10718550639469708
+    },
+    {
+      "ticker": "GM",
+      "name": "GENERAL MOTORS",
+      "sector": "Cons Discr",
+      "weight": 0.1068772188776701
+    },
+    {
+      "ticker": "ECL",
+      "name": "ECOLAB",
+      "sector": "Materials",
+      "weight": 0.1067815805554543
+    },
+    {
+      "ticker": "UPS",
+      "name": "UNITED PARCEL SERVICE INC CLASS B",
+      "sector": "Industrials",
+      "weight": 0.10667201212172554
+    },
+    {
+      "ticker": "NSC",
+      "name": "NORFOLK SOUTHERN CORP",
+      "sector": "Industrials",
+      "weight": 0.1061971645111744
+    },
+    {
+      "ticker": "ORLY",
+      "name": "OREILLY AUTOMOTIVE INC",
+      "sector": "Cons Discr",
+      "weight": 0.10570502975505852
+    },
+    {
+      "ticker": "CTAS",
+      "name": "CINTAS",
+      "sector": "Industrials",
+      "weight": 0.10427308361342896
+    },
+    {
+      "ticker": "CL",
+      "name": "COLGATE-PALMOLIVE",
+      "sector": "Cons Staples",
+      "weight": 0.10417533507354404
+    },
+    {
+      "ticker": "MCO",
+      "name": "MOODYS CORP",
+      "sector": "Financial Svcs",
+      "weight": 0.1034825664830694
+    },
+    {
+      "ticker": "NOC",
+      "name": "NORTHROP GRUMMAN CORP",
+      "sector": "Industrials",
+      "weight": 0.10199984088658566
+    },
+    {
+      "ticker": "DASH",
+      "name": "DOORDASH CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.10138292353166238
+    },
+    {
+      "ticker": "HON",
+      "name": "HONEYWELL INTERNATIONAL INC",
+      "sector": "Industrials",
+      "weight": 0.10126352495738197
+    },
+    {
+      "ticker": "MPWR",
+      "name": "MONOLITHIC POWER SYSTEMS INC",
+      "sector": "Info Tech",
+      "weight": 0.1002298217724247
+    },
+    {
+      "ticker": "SPG",
+      "name": "SIMON PROPERTY GROUP REIT INC",
+      "sector": "REITs",
+      "weight": 0.09996313510542768
+    },
+    {
+      "ticker": "ABNB",
+      "name": "AIRBNB CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.09890009681818344
+    },
+    {
+      "ticker": "URI",
+      "name": "UNITED RENTALS",
+      "sector": "Industrials",
+      "weight": 0.09813257444635122
+    },
+    {
+      "ticker": "KKR",
+      "name": "KKR AND CO INC",
+      "sector": "Financial Svcs",
+      "weight": 0.09734345602174843
+    },
+    {
+      "ticker": "AEP",
+      "name": "AMERICAN ELECTRIC POWER INC",
+      "sector": "Utilities",
+      "weight": 0.09719748437950175
+    },
+    {
+      "ticker": "BSX",
+      "name": "BOSTON SCIENTIFIC CORP",
+      "sector": "Healthcare",
+      "weight": 0.09655442795052577
+    },
+    {
+      "ticker": "HCA",
+      "name": "HCA HEALTHCARE",
+      "sector": "Healthcare",
+      "weight": 0.0961812748703739
+    },
+    {
+      "ticker": "FDX",
+      "name": "FEDEX CORP",
+      "sector": "Industrials",
+      "weight": 0.09615676794329554
+    },
+    {
+      "ticker": "TER",
+      "name": "TERADYNE",
+      "sector": "Info Tech",
+      "weight": 0.09477848932386046
+    },
+    {
+      "ticker": "DLR",
+      "name": "DIGITAL REALTY TRUST REIT",
+      "sector": "REITs",
+      "weight": 0.09408057060884377
+    },
+    {
+      "ticker": "TEL",
+      "name": "TE CONNECTIVITY PLC",
+      "sector": "Info Tech",
+      "weight": 0.09389387124258862
+    },
+    {
+      "ticker": "APD",
+      "name": "AIR PRODUCTS AND CHEMICALS",
+      "sector": "Materials",
+      "weight": 0.09375537930810873
+    },
+    {
+      "ticker": "KEYS",
+      "name": "KEYSIGHT TECHNOLOGIES",
+      "sector": "Info Tech",
+      "weight": 0.09285533942705368
+    },
+    {
+      "ticker": "TDG",
+      "name": "TRANSDIGM GROUP",
+      "sector": "Industrials",
+      "weight": 0.0926061325324034
+    },
+    {
+      "ticker": "RCL",
+      "name": "ROYAL CARIBBEAN GROUP",
+      "sector": "Cons Discr",
+      "weight": 0.0911339430752461
+    },
+    {
+      "ticker": "KMI",
+      "name": "KINDER MORGAN",
+      "sector": "Energy",
+      "weight": 0.0907138093423297
+    },
+    {
+      "ticker": "MNST",
+      "name": "MONSTER BEVERAGE",
+      "sector": "Cons Staples",
+      "weight": 0.09041364722036273
+    },
+    {
+      "ticker": "NXPI",
+      "name": "NXP SEMICONDUCTORS NV",
+      "sector": "Info Tech",
+      "weight": 0.09000431054305724
+    },
+    {
+      "ticker": "TRGP",
+      "name": "TARGA RESOURCES",
+      "sector": "Energy",
+      "weight": 0.08984633113890482
+    },
+    {
+      "ticker": "AJG",
+      "name": "ARTHUR J GALLAGHER",
+      "sector": "Financial Svcs",
+      "weight": 0.08883885063693396
+    },
+    {
+      "ticker": "PCAR",
+      "name": "PACCAR INC",
+      "sector": "Industrials",
+      "weight": 0.08876435317059422
+    },
+    {
+      "ticker": "FIX",
+      "name": "COMFORT SYSTEMS USA",
+      "sector": "Industrials",
+      "weight": 0.08794583821985366
+    },
+    {
+      "ticker": "COR",
+      "name": "CENCORA",
+      "sector": "Healthcare",
+      "weight": 0.08757873364172648
+    },
+    {
+      "ticker": "FAST",
+      "name": "FASTENAL",
+      "sector": "Industrials",
+      "weight": 0.08750892762546456
+    },
+    {
+      "ticker": "AON",
+      "name": "AON PLC CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.08718159582614977
+    },
+    {
+      "ticker": "AME",
+      "name": "AMETEK INC",
+      "sector": "Industrials",
+      "weight": 0.08715130315632992
+    },
+    {
+      "ticker": "TFC",
+      "name": "TRUIST FINANCIAL",
+      "sector": "Financial Svcs",
+      "weight": 0.08688863326141917
+    },
+    {
+      "ticker": "ALL",
+      "name": "ALLSTATE CORP",
+      "sector": "Financial Svcs",
+      "weight": 0.08611392329088617
+    },
+    {
+      "ticker": "BKR",
+      "name": "BAKER HUGHES CLASS A",
+      "sector": "Energy",
+      "weight": 0.0856410423196821
+    },
+    {
+      "ticker": "APO",
+      "name": "APOLLO GLOBAL MANAGEMENT",
+      "sector": "Financial Svcs",
+      "weight": 0.08491735333991589
+    },
+    {
+      "ticker": "OKE",
+      "name": "ONEOK",
+      "sector": "Energy",
+      "weight": 0.08437390141736278
+    },
+    {
+      "ticker": "CRH",
+      "name": "CRH PUBLIC LIMITED PLC",
+      "sector": "Materials",
+      "weight": 0.08416025918154132
+    },
+    {
+      "ticker": "NUE",
+      "name": "NUCOR",
+      "sector": "Materials",
+      "weight": 0.08379348145192982
+    },
+    {
+      "ticker": "COHR",
+      "name": "COHERENT",
+      "sector": "Info Tech",
+      "weight": 0.08360647401037209
+    },
+    {
+      "ticker": "GWW",
+      "name": "WW GRAINGER INC",
+      "sector": "Industrials",
+      "weight": 0.08217155975839353
+    },
+    {
+      "ticker": "D",
+      "name": "DOMINION ENERGY",
+      "sector": "Utilities",
+      "weight": 0.0800804689100549
+    },
+    {
+      "ticker": "O",
+      "name": "REALTY INCOME REIT",
+      "sector": "REITs",
+      "weight": 0.07910855048762089
+    },
+    {
+      "ticker": "CTVA",
+      "name": "CORTEVA",
+      "sector": "Materials",
+      "weight": 0.07834437813126639
+    },
+    {
+      "ticker": "DVN",
+      "name": "DEVON ENERGY",
+      "sector": "Energy",
+      "weight": 0.07764208753444618
+    },
+    {
+      "ticker": "CAH",
+      "name": "CARDINAL HEALTH",
+      "sector": "Healthcare",
+      "weight": 0.0773894041257346
+    },
+    {
+      "ticker": "MET",
+      "name": "METLIFE",
+      "sector": "Financial Svcs",
+      "weight": 0.07725234365186756
+    },
+    {
+      "ticker": "AFL",
+      "name": "AFLAC",
+      "sector": "Financial Svcs",
+      "weight": 0.07653041448666645
+    },
+    {
+      "ticker": "SRE",
+      "name": "SEMPRA",
+      "sector": "Utilities",
+      "weight": 0.07594137407089195
+    },
+    {
+      "ticker": "BDX",
+      "name": "BECTON DICKINSON",
+      "sector": "Healthcare",
+      "weight": 0.07563330848172123
+    },
+    {
+      "ticker": "EW",
+      "name": "EDWARDS LIFESCIENCES",
+      "sector": "Healthcare",
+      "weight": 0.07562312224595213
+    },
+    {
+      "ticker": "DAL",
+      "name": "DELTA AIR LINES",
+      "sector": "Industrials",
+      "weight": 0.07554369735320259
+    },
+    {
+      "ticker": "A",
+      "name": "AGILENT TECHNOLOGIES INC",
+      "sector": "Healthcare",
+      "weight": 0.07474818821105235
+    },
+    {
+      "ticker": "WAB",
+      "name": "WESTINGHOUSE AIR BRAKE TECHNOLOGIE",
+      "sector": "Industrials",
+      "weight": 0.07459415783547359
+    },
+    {
+      "ticker": "STT",
+      "name": "STATE STREET",
+      "sector": "Financial Svcs",
+      "weight": 0.07456879912694957
+    },
+    {
+      "ticker": "GRMN",
+      "name": "GARMIN",
+      "sector": "Cons Discr",
+      "weight": 0.07365819267613326
+    },
+    {
+      "ticker": "CIEN",
+      "name": "CIENA",
+      "sector": "Info Tech",
+      "weight": 0.07361237485360907
+    },
+    {
+      "ticker": "F",
+      "name": "FORD MOTOR CO",
+      "sector": "Cons Discr",
+      "weight": 0.07324017452223379
+    },
+    {
+      "ticker": "HONA",
+      "name": "HONEYWELL AEROSPACE INC",
+      "sector": "Industrials",
+      "weight": 0.07292485796103342
+    },
+    {
+      "ticker": "ROK",
+      "name": "ROCKWELL AUTOMATION INC",
+      "sector": "Industrials",
+      "weight": 0.07231313852288254
+    },
+    {
+      "ticker": "PSA",
+      "name": "PUBLIC STORAGE REIT",
+      "sector": "REITs",
+      "weight": 0.07223152475595208
+    },
+    {
+      "ticker": "AZO",
+      "name": "AUTOZONE",
+      "sector": "Cons Discr",
+      "weight": 0.07170071207100488
+    },
+    {
+      "ticker": "HUM",
+      "name": "HUMANA",
+      "sector": "Healthcare",
+      "weight": 0.07068316653506791
+    },
+    {
+      "ticker": "FITB",
+      "name": "FIFTH THIRD BANCORP",
+      "sector": "Financial Svcs",
+      "weight": 0.07064183690603007
+    },
+    {
+      "ticker": "PYPL",
+      "name": "PAYPAL HOLDINGS",
+      "sector": "Financial Svcs",
+      "weight": 0.07013635652046615
+    },
+    {
+      "ticker": "CARR",
+      "name": "CARRIER GLOBAL",
+      "sector": "Industrials",
+      "weight": 0.0695636119038534
+    },
+    {
+      "ticker": "ETR",
+      "name": "ENTERGY CORP",
+      "sector": "Utilities",
+      "weight": 0.06914694500330805
+    },
+    {
+      "ticker": "VTR",
+      "name": "VENTAS REIT",
+      "sector": "REITs",
+      "weight": 0.06743275032019941
+    },
+    {
+      "ticker": "IQV",
+      "name": "IQVIA HOLDINGS",
+      "sector": "Healthcare",
+      "weight": 0.06735633424688785
+    },
+    {
+      "ticker": "LHX",
+      "name": "L3HARRIS TECHNOLOGIES",
+      "sector": "Industrials",
+      "weight": 0.06685775293614056
+    },
+    {
+      "ticker": "VMRK",
+      "name": "VIVMARK RESIDENTIAL",
+      "sector": "REITs",
+      "weight": 0.06670368188658833
+    },
+    {
+      "ticker": "FERG",
+      "name": "FERGUSON ENTERPRISES INC",
+      "sector": "Industrials",
+      "weight": 0.06641307515790248
+    },
+    {
+      "ticker": "AMP",
+      "name": "AMERIPRISE FINANCE INC",
+      "sector": "Financial Svcs",
+      "weight": 0.06618781525968188
+    },
+    {
+      "ticker": "NKE",
+      "name": "NIKE CLASS B",
+      "sector": "Cons Discr",
+      "weight": 0.06602451374986891
+    },
+    {
+      "ticker": "ADSK",
+      "name": "AUTODESK",
+      "sector": "Info Tech",
+      "weight": 0.06602500187379878
+    },
+    {
+      "ticker": "VST",
+      "name": "VISTRA",
+      "sector": "Utilities",
+      "weight": 0.06577289472898634
+    },
+    {
+      "ticker": "CVNA",
+      "name": "CARVANA CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.06575195081343811
+    },
+    {
+      "ticker": "WAT",
+      "name": "WATERS CORP",
+      "sector": "Healthcare",
+      "weight": 0.06573280818389071
+    },
+    {
+      "ticker": "XEL",
+      "name": "XCEL ENERGY INC",
+      "sector": "Utilities",
+      "weight": 0.06546633849459353
+    },
+    {
+      "ticker": "P",
+      "name": "EVERPURE INC CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.06497229989135418
+    },
+    {
+      "ticker": "EBAY",
+      "name": "EBAY",
+      "sector": "Cons Discr",
+      "weight": 0.06491890603237994
+    },
+    {
+      "ticker": "KDP",
+      "name": "KEURIG DR PEPPER INC",
+      "sector": "Cons Staples",
+      "weight": 0.06466424033412455
+    },
+    {
+      "ticker": "COIN",
+      "name": "COINBASE GLOBAL INC CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.06452453143259143
+    },
+    {
+      "ticker": "MCHP",
+      "name": "MICROCHIP TECHNOLOGY INC",
+      "sector": "Info Tech",
+      "weight": 0.06395082732388843
+    },
+    {
+      "ticker": "VEEV",
+      "name": "VEEVA SYSTEMS CLASS A",
+      "sector": "Healthcare",
+      "weight": 0.06320550807523663
+    },
+    {
+      "ticker": "FLEX",
+      "name": "FLEX LTD",
+      "sector": "Info Tech",
+      "weight": 0.06306982512340238
+    },
+    {
+      "ticker": "RSG",
+      "name": "REPUBLIC SERVICES INC",
+      "sector": "Industrials",
+      "weight": 0.0630373336133889
+    },
+    {
+      "ticker": "IDXX",
+      "name": "IDEXX LABORATORIES",
+      "sector": "Healthcare",
+      "weight": 0.06297189539420195
+    },
+    {
+      "ticker": "EXC",
+      "name": "EXELON CORP",
+      "sector": "Utilities",
+      "weight": 0.06286316311437722
+    },
+    {
+      "ticker": "ILMN",
+      "name": "ILLUMINA INC",
+      "sector": "Healthcare",
+      "weight": 0.06202609688407127
+    },
+    {
+      "ticker": "OXY",
+      "name": "OCCIDENTAL PETROLEUM CORP",
+      "sector": "Energy",
+      "weight": 0.06183396653363657
+    },
+    {
+      "ticker": "NDAQ",
+      "name": "NASDAQ INC",
+      "sector": "Financial Svcs",
+      "weight": 0.061776966523142636
+    },
+    {
+      "ticker": "CMG",
+      "name": "CHIPOTLE MEXICAN GRILL",
+      "sector": "Cons Discr",
+      "weight": 0.06087703353827852
+    },
+    {
+      "ticker": "NTAP",
+      "name": "NETAPP INC",
+      "sector": "Info Tech",
+      "weight": 0.06059153770103061
+    },
+    {
+      "ticker": "PRU",
+      "name": "PRUDENTIAL FINANCIAL INC",
+      "sector": "Financial Svcs",
+      "weight": 0.06049429019399586
+    },
+    {
+      "ticker": "XYZ",
+      "name": "BLOCK CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.05988785696550907
+    },
+    {
+      "ticker": "IBKR",
+      "name": "INTERACTIVE BROKERS GROUP INC CLAS",
+      "sector": "Financial Svcs",
+      "weight": 0.059595530558171156
+    },
+    {
+      "ticker": "MSCI",
+      "name": "MSCI",
+      "sector": "Financial Svcs",
+      "weight": 0.0595872847213894
+    },
+    {
+      "ticker": "ADM",
+      "name": "ARCHER DANIELS MIDLAND",
+      "sector": "Cons Staples",
+      "weight": 0.05851077718105565
+    },
+    {
+      "ticker": "AIG",
+      "name": "AMERICAN INTERNATIONAL GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.05748022145729522
+    },
+    {
+      "ticker": "ED",
+      "name": "CONSOLIDATED EDISON",
+      "sector": "Utilities",
+      "weight": 0.05743687729813002
+    },
+    {
+      "ticker": "WDAY",
+      "name": "WORKDAY CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.05726722756848486
+    },
+    {
+      "ticker": "FANG",
+      "name": "DIAMONDBACK ENERGY",
+      "sector": "Energy",
+      "weight": 0.05720043752729882
+    },
+    {
+      "ticker": "YUM",
+      "name": "YUM BRANDS",
+      "sector": "Cons Discr",
+      "weight": 0.056995895081203604
+    },
+    {
+      "ticker": "SYY",
+      "name": "SYSCO",
+      "sector": "Cons Staples",
+      "weight": 0.05678768785425405
+    },
+    {
+      "ticker": "CBRE",
+      "name": "CBRE GROUP CLASS A",
+      "sector": "REITs",
+      "weight": 0.05610547620735565
+    },
+    {
+      "ticker": "UAL",
+      "name": "UNITED AIRLINES HOLDINGS",
+      "sector": "Industrials",
+      "weight": 0.054667209649460854
+    },
+    {
+      "ticker": "TTWO",
+      "name": "TAKE TWO INTERACTIVE SOFTWARE",
+      "sector": "Comms Svcs",
+      "weight": 0.05372103555386327
+    },
+    {
+      "ticker": "DHI",
+      "name": "D R HORTON",
+      "sector": "Cons Discr",
+      "weight": 0.053605733930608954
+    },
+    {
+      "ticker": "ROP",
+      "name": "ROPER TECHNOLOGIES",
+      "sector": "Info Tech",
+      "weight": 0.052869803932359134
+    },
+    {
+      "ticker": "AXON",
+      "name": "AXON ENTERPRISE",
+      "sector": "Industrials",
+      "weight": 0.05211403008942789
+    },
+    {
+      "ticker": "KVUE",
+      "name": "KENVUE",
+      "sector": "Cons Staples",
+      "weight": 0.05187421921681221
+    },
+    {
+      "ticker": "HIG",
+      "name": "HARTFORD INSURANCE GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.05156678414955867
+    },
+    {
+      "ticker": "KR",
+      "name": "KROGER",
+      "sector": "Cons Staples",
+      "weight": 0.051366548419913546
+    },
+    {
+      "ticker": "BIIB",
+      "name": "BIOGEN",
+      "sector": "Healthcare",
+      "weight": 0.05108294508973985
+    },
+    {
+      "ticker": "EME",
+      "name": "EMCOR GROUP",
+      "sector": "Industrials",
+      "weight": 0.051035481852236414
+    },
+    {
+      "ticker": "JBL",
+      "name": "JABIL",
+      "sector": "Info Tech",
+      "weight": 0.05048618433989134
+    },
+    {
+      "ticker": "PEG",
+      "name": "PUBLIC SERVICE ENTERPRISE GROUP",
+      "sector": "Utilities",
+      "weight": 0.05023663130244322
+    },
+    {
+      "ticker": "IRM",
+      "name": "IRON MOUNTAIN INC",
+      "sector": "REITs",
+      "weight": 0.049939293260532376
+    },
+    {
+      "ticker": "WEC",
+      "name": "WEC ENERGY GROUP",
+      "sector": "Utilities",
+      "weight": 0.049931867816447456
+    },
+    {
+      "ticker": "ODFL",
+      "name": "OLD DOMINION FREIGHT LINE",
+      "sector": "Industrials",
+      "weight": 0.049846896842153064
+    },
+    {
+      "ticker": "KMB",
+      "name": "KIMBERLY CLARK",
+      "sector": "Cons Staples",
+      "weight": 0.0495982482900235
+    },
+    {
+      "ticker": "DXCM",
+      "name": "DEXCOM INC",
+      "sector": "Healthcare",
+      "weight": 0.04940768568242372
+    },
+    {
+      "ticker": "ACGL",
+      "name": "ARCH CAPITAL GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.04870960671827236
+    },
+    {
+      "ticker": "RMD",
+      "name": "RESMED",
+      "sector": "Healthcare",
+      "weight": 0.04839999101086227
+    },
+    {
+      "ticker": "NTRS",
+      "name": "NORTHERN TRUST",
+      "sector": "Financial Svcs",
+      "weight": 0.0482344426658615
+    },
+    {
+      "ticker": "VMC",
+      "name": "VULCAN MATERIALS",
+      "sector": "Materials",
+      "weight": 0.048173579836541996
+    },
+    {
+      "ticker": "MTB",
+      "name": "M&T BANK",
+      "sector": "Financial Svcs",
+      "weight": 0.04809075715647404
+    },
+    {
+      "ticker": "PAYX",
+      "name": "PAYCHEX",
+      "sector": "Industrials",
+      "weight": 0.04801681500592326
+    },
+    {
+      "ticker": "EQT",
+      "name": "EQT",
+      "sector": "Energy",
+      "weight": 0.047118960153332695
+    },
+    {
+      "ticker": "STLD",
+      "name": "STEEL DYNAMICS INC",
+      "sector": "Materials",
+      "weight": 0.0468814469790445
+    },
+    {
+      "ticker": "MTD",
+      "name": "METTLER TOLEDO",
+      "sector": "Healthcare",
+      "weight": 0.046825487805189484
+    },
+    {
+      "ticker": "HBAN",
+      "name": "HUNTINGTON BANCSHARES INC",
+      "sector": "Financial Svcs",
+      "weight": 0.04669053551908762
+    },
+    {
+      "ticker": "CNC",
+      "name": "CENTENE CORP",
+      "sector": "Healthcare",
+      "weight": 0.046654094990695304
+    },
+    {
+      "ticker": "EXPE",
+      "name": "EXPEDIA GROUP",
+      "sector": "Cons Discr",
+      "weight": 0.045685609749763996
+    },
+    {
+      "ticker": "GEHC",
+      "name": "GE HEALTHCARE TECHNOLOGIES",
+      "sector": "Healthcare",
+      "weight": 0.04556098994879876
+    },
+    {
+      "ticker": "ZTS",
+      "name": "ZOETIS INC CLASS A",
+      "sector": "Healthcare",
+      "weight": 0.04458592560458725
+    },
+    {
+      "ticker": "MLM",
+      "name": "MARTIN MARIETTA MATERIALS",
+      "sector": "Materials",
+      "weight": 0.04453407742457027
+    },
+    {
+      "ticker": "ON",
+      "name": "ON SEMICONDUCTOR CORP",
+      "sector": "Info Tech",
+      "weight": 0.04448668736442389
+    },
+    {
+      "ticker": "HPQ",
+      "name": "HP INC",
+      "sector": "Info Tech",
+      "weight": 0.04326252564069161
+    },
+    {
+      "ticker": "CCI",
+      "name": "CROWN CASTLE INC",
+      "sector": "REITs",
+      "weight": 0.04312218163749711
+    },
+    {
+      "ticker": "TDY",
+      "name": "TELEDYNE TECHNOLOGIES INC",
+      "sector": "Info Tech",
+      "weight": 0.04277648583537871
+    },
+    {
+      "ticker": "CCL",
+      "name": "CARNIVAL CORP LTD",
+      "sector": "Cons Discr",
+      "weight": 0.04259522155389029
+    },
+    {
+      "ticker": "RJF",
+      "name": "RAYMOND JAMES",
+      "sector": "Financial Svcs",
+      "weight": 0.04213660291878848
+    },
+    {
+      "ticker": "EXR",
+      "name": "EXTRA SPACE STORAGE REIT",
+      "sector": "REITs",
+      "weight": 0.04201397066789938
+    },
+    {
+      "ticker": "AEE",
+      "name": "AMEREN",
+      "sector": "Utilities",
+      "weight": 0.0415552802306098
+    },
+    {
+      "ticker": "DG",
+      "name": "DOLLAR GENERAL CORP",
+      "sector": "Cons Staples",
+      "weight": 0.04143390031377198
+    },
+    {
+      "ticker": "CFG",
+      "name": "CITIZENS FINANCIAL GROUP INC",
+      "sector": "Financial Svcs",
+      "weight": 0.04122201544802194
+    },
+    {
+      "ticker": "LYV",
+      "name": "LIVE NATION ENTERTAINMENT",
+      "sector": "Comms Svcs",
+      "weight": 0.0411490026593077
+    },
+    {
+      "ticker": "WSM",
+      "name": "WILLIAMS SONOMA INC",
+      "sector": "Cons Discr",
+      "weight": 0.041082391338022786
+    },
+    {
+      "ticker": "WTW",
+      "name": "WILLIS TOWERS WATSON",
+      "sector": "Financial Svcs",
+      "weight": 0.04098088354972312
+    },
+    {
+      "ticker": "HAL",
+      "name": "HALLIBURTON",
+      "sector": "Energy",
+      "weight": 0.040809481389968094
+    },
+    {
+      "ticker": "ATO",
+      "name": "ATMOS ENERGY",
+      "sector": "Utilities",
+      "weight": 0.04008692322754325
+    },
+    {
+      "ticker": "ARES",
+      "name": "ARES MANAGEMENT CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.04003319209300777
+    },
+    {
+      "ticker": "WST",
+      "name": "WEST PHARMACEUTICAL SERVICES",
+      "sector": "Healthcare",
+      "weight": 0.03993841082296473
+    },
+    {
+      "ticker": "IR",
+      "name": "INGERSOLL RAND INC",
+      "sector": "Industrials",
+      "weight": 0.039836884653386556
+    },
+    {
+      "ticker": "PCG",
+      "name": "PG&E CORP",
+      "sector": "Utilities",
+      "weight": 0.039752229631600064
+    },
+    {
+      "ticker": "DGX",
+      "name": "QUEST DIAGNOSTICS INC",
+      "sector": "Healthcare",
+      "weight": 0.03961415386367432
+    },
+    {
+      "ticker": "CBOE",
+      "name": "CBOE GLOBAL MARKETS",
+      "sector": "Financial Svcs",
+      "weight": 0.039584307821427925
+    },
+    {
+      "ticker": "Q",
+      "name": "QNITY ELECTRONICS",
+      "sector": "Info Tech",
+      "weight": 0.03946750961751768
+    },
+    {
+      "ticker": "CPAY",
+      "name": "CORPAY",
+      "sector": "Financial Svcs",
+      "weight": 0.03929353863472759
+    },
+    {
+      "ticker": "DOV",
+      "name": "DOVER CORP",
+      "sector": "Industrials",
+      "weight": 0.03895030695474005
+    },
+    {
+      "ticker": "AWK",
+      "name": "AMERICAN WATER WORKS",
+      "sector": "Utilities",
+      "weight": 0.03869779332619644
+    },
+    {
+      "ticker": "CTSH",
+      "name": "COGNIZANT TECHNOLOGY SOLUTIONS CLA",
+      "sector": "Info Tech",
+      "weight": 0.03860993633825362
+    },
+    {
+      "ticker": "VICI",
+      "name": "VICI PPTYS INC",
+      "sector": "REITs",
+      "weight": 0.03856659699444646
+    },
+    {
+      "ticker": "OTIS",
+      "name": "OTIS WORLDWIDE",
+      "sector": "Industrials",
+      "weight": 0.038140130987544776
+    },
+    {
+      "ticker": "DTE",
+      "name": "DTE ENERGY",
+      "sector": "Utilities",
+      "weight": 0.03798158211151555
+    },
+    {
+      "ticker": "LH",
+      "name": "LABCORP HOLDINGS",
+      "sector": "Healthcare",
+      "weight": 0.03792058959149795
+    },
+    {
+      "ticker": "CINF",
+      "name": "CINCINNATI FINANCIAL",
+      "sector": "Financial Svcs",
+      "weight": 0.037536351540142565
+    },
+    {
+      "ticker": "FFIV",
+      "name": "F5",
+      "sector": "Info Tech",
+      "weight": 0.037189643250941984
+    },
+    {
+      "ticker": "HUBB",
+      "name": "HUBBELL INC",
+      "sector": "Industrials",
+      "weight": 0.03718193271523237
+    },
+    {
+      "ticker": "EXPD",
+      "name": "EXPEDITORS INTERNATIONAL OF WASHIN",
+      "sector": "Industrials",
+      "weight": 0.03701951042341815
+    },
+    {
+      "ticker": "FISV",
+      "name": "FISERV INC",
+      "sector": "Financial Svcs",
+      "weight": 0.03696186795059556
+    },
+    {
+      "ticker": "PPL",
+      "name": "PPL CORP",
+      "sector": "Utilities",
+      "weight": 0.036497526935886274
+    },
+    {
+      "ticker": "CNP",
+      "name": "CENTERPOINT ENERGY",
+      "sector": "Utilities",
+      "weight": 0.03643555612451189
+    },
+    {
+      "ticker": "HSY",
+      "name": "HERSHEY FOODS",
+      "sector": "Cons Staples",
+      "weight": 0.03633658631762099
+    },
+    {
+      "ticker": "ES",
+      "name": "EVERSOURCE ENERGY",
+      "sector": "Utilities",
+      "weight": 0.03599474875684948
+    },
+    {
+      "ticker": "PPG",
+      "name": "PPG INDUSTRIES",
+      "sector": "Materials",
+      "weight": 0.03593197320750612
+    },
+    {
+      "ticker": "SW",
+      "name": "SMURFIT WESTROCK PLC",
+      "sector": "Materials",
+      "weight": 0.03570661478644828
+    },
+    {
+      "ticker": "EL",
+      "name": "ESTEE LAUDER INC CLASS A",
+      "sector": "Cons Staples",
+      "weight": 0.0356930729812846
+    },
+    {
+      "ticker": "ULTA",
+      "name": "ULTA BEAUTY INC",
+      "sector": "Cons Discr",
+      "weight": 0.035660341776091696
+    },
+    {
+      "ticker": "XYL",
+      "name": "XYLEM INC",
+      "sector": "Industrials",
+      "weight": 0.03558392705982529
+    },
+    {
+      "ticker": "SMCI",
+      "name": "SUPER MICRO COMPUTER INC",
+      "sector": "Info Tech",
+      "weight": 0.035511417441477275
+    },
+    {
+      "ticker": "VLTO",
+      "name": "VERALTO CORP",
+      "sector": "Industrials",
+      "weight": 0.03542078476607088
+    },
+    {
+      "ticker": "SYF",
+      "name": "SYNCHRONY FINANCIAL",
+      "sector": "Financial Svcs",
+      "weight": 0.03515119725761152
+    },
+    {
+      "ticker": "RF",
+      "name": "REGIONS FINANCIAL",
+      "sector": "Financial Svcs",
+      "weight": 0.0350779718172036
+    },
+    {
+      "ticker": "CPRT",
+      "name": "COPART INC",
+      "sector": "Industrials",
+      "weight": 0.03463687934319063
+    },
+    {
+      "ticker": "VRSN",
+      "name": "VERISIGN",
+      "sector": "Info Tech",
+      "weight": 0.034621648524290775
+    },
+    {
+      "ticker": "CHD",
+      "name": "CHURCH AND DWIGHT INC",
+      "sector": "Cons Staples",
+      "weight": 0.03427862804153449
+    },
+    {
+      "ticker": "TPR",
+      "name": "TAPESTRY",
+      "sector": "Cons Discr",
+      "weight": 0.03417209353711004
+    },
+    {
+      "ticker": "FE",
+      "name": "FIRSTENERGY CORP",
+      "sector": "Utilities",
+      "weight": 0.033839766214452026
+    },
+    {
+      "ticker": "CASY",
+      "name": "CASEYS GENERAL STORES INC",
+      "sector": "Cons Staples",
+      "weight": 0.033842707789924015
+    },
+    {
+      "ticker": "DRI",
+      "name": "DARDEN RESTAURANTS INC",
+      "sector": "Cons Discr",
+      "weight": 0.03379188297600559
+    },
+    {
+      "ticker": "PFG",
+      "name": "PRINCIPAL FINANCIAL GROUP INC",
+      "sector": "Financial Svcs",
+      "weight": 0.033737466713777864
+    },
+    {
+      "ticker": "PHM",
+      "name": "PULTEGROUP",
+      "sector": "Cons Discr",
+      "weight": 0.03373374671092763
+    },
+    {
+      "ticker": "DLTR",
+      "name": "DOLLAR TREE INC",
+      "sector": "Cons Staples",
+      "weight": 0.03367206933507993
+    },
+    {
+      "ticker": "TROW",
+      "name": "T ROWE PRICE GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.03345094647282423
+    },
+    {
+      "ticker": "IFF",
+      "name": "INTERNATIONAL FLAVORS & FRAGRANCES",
+      "sector": "Materials",
+      "weight": 0.033036034180684105
+    },
+    {
+      "ticker": "VRSK",
+      "name": "VERISK ANALYTICS",
+      "sector": "Industrials",
+      "weight": 0.032974600870199614
+    },
+    {
+      "ticker": "INCY",
+      "name": "INCYTE CORP",
+      "sector": "Healthcare",
+      "weight": 0.03210427485315436
+    },
+    {
+      "ticker": "VTRS",
+      "name": "VIATRIS",
+      "sector": "Healthcare",
+      "weight": 0.03169626885830155
+    },
+    {
+      "ticker": "RDDT",
+      "name": "REDDIT CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.03157894757125655
+    },
+    {
+      "ticker": "PKG",
+      "name": "PACKAGING CORP OF AMERICA",
+      "sector": "Materials",
+      "weight": 0.031361324253183144
+    },
+    {
+      "ticker": "LUV",
+      "name": "SOUTHWEST AIRLINES",
+      "sector": "Industrials",
+      "weight": 0.03126124698983748
+    },
+    {
+      "ticker": "OMC",
+      "name": "OMNICOM GROUP INC",
+      "sector": "Comms Svcs",
+      "weight": 0.031119654776966824
+    },
+    {
+      "ticker": "STE",
+      "name": "STERIS",
+      "sector": "Healthcare",
+      "weight": 0.031083335751691338
+    },
+    {
+      "ticker": "KHC",
+      "name": "KRAFT HEINZ",
+      "sector": "Cons Staples",
+      "weight": 0.030805235850159242
+    },
+    {
+      "ticker": "NRG",
+      "name": "NRG ENERGY INC",
+      "sector": "Utilities",
+      "weight": 0.030799562771616943
+    },
+    {
+      "ticker": "DOW",
+      "name": "DOW",
+      "sector": "Materials",
+      "weight": 0.03040668912719918
+    },
+    {
+      "ticker": "TPL",
+      "name": "TEXAS PACIFIC LAND",
+      "sector": "Energy",
+      "weight": 0.029945145469631035
+    },
+    {
+      "ticker": "EIX",
+      "name": "EDISON INTERNATIONAL",
+      "sector": "Utilities",
+      "weight": 0.029915722938747426
+    },
+    {
+      "ticker": "AMCR",
+      "name": "AMCOR PLC",
+      "sector": "Materials",
+      "weight": 0.0298818992601016
+    },
+    {
+      "ticker": "EXE",
+      "name": "EXPAND ENERGY",
+      "sector": "Energy",
+      "weight": 0.029828645416922733
+    },
+    {
+      "ticker": "CMS",
+      "name": "CMS ENERGY",
+      "sector": "Utilities",
+      "weight": 0.02965095737758829
+    },
+    {
+      "ticker": "SNA",
+      "name": "SNAP ON INC",
+      "sector": "Industrials",
+      "weight": 0.028846881193545428
+    },
+    {
+      "ticker": "GPN",
+      "name": "GLOBAL PAYMENTS INC",
+      "sector": "Financial Svcs",
+      "weight": 0.0284381176899728
+    },
+    {
+      "ticker": "NI",
+      "name": "NISOURCE",
+      "sector": "Utilities",
+      "weight": 0.028321732049310672
+    },
+    {
+      "ticker": "FSLR",
+      "name": "FIRST SOLAR",
+      "sector": "Info Tech",
+      "weight": 0.028072324711842032
+    },
+    {
+      "ticker": "BR",
+      "name": "BROADRIDGE FINANCIAL SOLUTIONS INC",
+      "sector": "Industrials",
+      "weight": 0.028056830290886386
+    },
+    {
+      "ticker": "KEY",
+      "name": "KEYCORP",
+      "sector": "Financial Svcs",
+      "weight": 0.027949353071663595
+    },
+    {
+      "ticker": "FICO",
+      "name": "FAIR ISAAC",
+      "sector": "Info Tech",
+      "weight": 0.0274717914954153
+    },
+    {
+      "ticker": "IP",
+      "name": "INTERNATIONAL PAPER",
+      "sector": "Materials",
+      "weight": 0.027195866733362585
+    },
+    {
+      "ticker": "EVRG",
+      "name": "EVERGY",
+      "sector": "Utilities",
+      "weight": 0.027168434975254157
+    },
+    {
+      "ticker": "GIS",
+      "name": "GENERAL MILLS INC",
+      "sector": "Cons Staples",
+      "weight": 0.027125384209703556
+    },
+    {
+      "ticker": "BBY",
+      "name": "BEST BUY",
+      "sector": "Cons Discr",
+      "weight": 0.026906685837743433
+    },
+    {
+      "ticker": "FIS",
+      "name": "FIDELITY NATIONAL INFORMATION SERV",
+      "sector": "Financial Svcs",
+      "weight": 0.02672548415137853
+    },
+    {
+      "ticker": "DD",
+      "name": "DUPONT DE NEMOURS",
+      "sector": "Industrials",
+      "weight": 0.026712652694783786
+    },
+    {
+      "ticker": "GPC",
+      "name": "GENUINE PARTS",
+      "sector": "Cons Discr",
+      "weight": 0.026676151760890904
+    },
+    {
+      "ticker": "ZBRA",
+      "name": "ZEBRA TECHNOLOGIES CORP CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.026558026783678912
+    },
+    {
+      "ticker": "ESS",
+      "name": "ESSEX PROPERTY TRUST REIT",
+      "sector": "REITs",
+      "weight": 0.02652460423081469
+    },
+    {
+      "ticker": "NDSN",
+      "name": "NORDSON",
+      "sector": "Industrials",
+      "weight": 0.026499470541445906
+    },
+    {
+      "ticker": "CF",
+      "name": "CF INDUSTRIES HOLDINGS INC",
+      "sector": "Materials",
+      "weight": 0.026406976727324463
+    },
+    {
+      "ticker": "ZBH",
+      "name": "ZIMMER BIOMET HOLDINGS",
+      "sector": "Healthcare",
+      "weight": 0.026399271918843798
+    },
+    {
+      "ticker": "L",
+      "name": "LOEWS",
+      "sector": "Financial Svcs",
+      "weight": 0.026248805811024775
+    },
+    {
+      "ticker": "SBAC",
+      "name": "SBA COMMUNICATIONS REIT CORP CLASS",
+      "sector": "REITs",
+      "weight": 0.026230280996105325
+    },
+    {
+      "ticker": "BRO",
+      "name": "BROWN & BROWN INC",
+      "sector": "Financial Svcs",
+      "weight": 0.026184278599582066
+    },
+    {
+      "ticker": "CHRW",
+      "name": "CH ROBINSON WORLDWIDE",
+      "sector": "Industrials",
+      "weight": 0.026167488285464783
+    },
+    {
+      "ticker": "BG",
+      "name": "BUNGE GLOBAL SA",
+      "sector": "Cons Staples",
+      "weight": 0.025947225240446334
+    },
+    {
+      "ticker": "EFX",
+      "name": "EQUIFAX",
+      "sector": "Industrials",
+      "weight": 0.025867516495310324
+    },
+    {
+      "ticker": "IEX",
+      "name": "IDEX",
+      "sector": "Industrials",
+      "weight": 0.025744358893503183
+    },
+    {
+      "ticker": "STZ",
+      "name": "CONSTELLATION BRANDS CLASS A",
+      "sector": "Cons Staples",
+      "weight": 0.02562722591063229
+    },
+    {
+      "ticker": "RVTY",
+      "name": "REVVITY",
+      "sector": "Healthcare",
+      "weight": 0.02545802932418973
+    },
+    {
+      "ticker": "FTV",
+      "name": "FORTIVE",
+      "sector": "Industrials",
+      "weight": 0.025435883949057502
+    },
+    {
+      "ticker": "JBHT",
+      "name": "JB HUNT TRANSPORT SERVICES",
+      "sector": "Industrials",
+      "weight": 0.025333861897283802
+    },
+    {
+      "ticker": "TSCO",
+      "name": "TRACTOR SUPPLY",
+      "sector": "Cons Discr",
+      "weight": 0.02523873711697459
+    },
+    {
+      "ticker": "LNT",
+      "name": "ALLIANT ENERGY CORP",
+      "sector": "Utilities",
+      "weight": 0.024710208437565412
+    },
+    {
+      "ticker": "CDW",
+      "name": "CDW",
+      "sector": "Info Tech",
+      "weight": 0.02460398391034571
+    },
+    {
+      "ticker": "J",
+      "name": "JACOBS SOLUTIONS INC",
+      "sector": "Industrials",
+      "weight": 0.024463014977664666
+    },
+    {
+      "ticker": "LEN",
+      "name": "LENNAR A CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.023993057965266303
+    },
+    {
+      "ticker": "NVR",
+      "name": "NVR",
+      "sector": "Cons Discr",
+      "weight": 0.02367710707721163
+    },
+    {
+      "ticker": "AKAM",
+      "name": "AKAMAI TECHNOLOGIES INC",
+      "sector": "Info Tech",
+      "weight": 0.023655535462581367
+    },
+    {
+      "ticker": "HST",
+      "name": "HOST HOTELS & RESORTS REIT",
+      "sector": "REITs",
+      "weight": 0.02344889006659808
+    },
+    {
+      "ticker": "LDOS",
+      "name": "LEIDOS HOLDINGS",
+      "sector": "Industrials",
+      "weight": 0.02319410132354099
+    },
+    {
+      "ticker": "WRB",
+      "name": "WR BERKLEY",
+      "sector": "Financial Svcs",
+      "weight": 0.023140261370522736
+    },
+    {
+      "ticker": "PTC",
+      "name": "PTC",
+      "sector": "Info Tech",
+      "weight": 0.02289524078458358
+    },
+    {
+      "ticker": "BALL",
+      "name": "BALL CORP",
+      "sector": "Materials",
+      "weight": 0.022838878513946486
+    },
+    {
+      "ticker": "KIM",
+      "name": "KIMCO REALTY REIT CORP",
+      "sector": "REITs",
+      "weight": 0.022786710963888037
+    },
+    {
+      "ticker": "LYB",
+      "name": "LYONDELLBASELL INDUSTRIES CLASS A",
+      "sector": "Materials",
+      "weight": 0.022761645759988985
+    },
+    {
+      "ticker": "APA",
+      "name": "APA",
+      "sector": "Energy",
+      "weight": 0.02239984343932109
+    },
+    {
+      "ticker": "TSN",
+      "name": "TYSON FOODS INC CLASS A",
+      "sector": "Cons Staples",
+      "weight": 0.021683953529433843
+    },
+    {
+      "ticker": "INVH",
+      "name": "INVITATION HOMES",
+      "sector": "REITs",
+      "weight": 0.021546450783451278
+    },
+    {
+      "ticker": "WY",
+      "name": "WEYERHAEUSER REIT",
+      "sector": "REITs",
+      "weight": 0.021467960109808403
+    },
+    {
+      "ticker": "CRL",
+      "name": "CHARLES RIVER LABORATORIES INTERNA",
+      "sector": "Healthcare",
+      "weight": 0.02125134859802907
+    },
+    {
+      "ticker": "DOC",
+      "name": "HEALTHPEAK PROPERTIES INC",
+      "sector": "REITs",
+      "weight": 0.020934334073164536
+    },
+    {
+      "ticker": "MAA",
+      "name": "MID AMERICA APARTMENT COMMUNITIES",
+      "sector": "REITs",
+      "weight": 0.0207352149696574
+    },
+    {
+      "ticker": "MAS",
+      "name": "MASCO",
+      "sector": "Industrials",
+      "weight": 0.020358021599079134
+    },
+    {
+      "ticker": "RL",
+      "name": "RALPH LAUREN CLASS A",
+      "sector": "Cons Discr",
+      "weight": 0.02034350560201308
+    },
+    {
+      "ticker": "FDXF",
+      "name": "FEDEX FREIGHT HOLDING COMPANY INC",
+      "sector": "Industrials",
+      "weight": 0.020285329574832565
+    },
+    {
+      "ticker": "IVZ",
+      "name": "INVESCO LTD",
+      "sector": "Financial Svcs",
+      "weight": 0.02029256103735583
+    },
+    {
+      "ticker": "TRMB",
+      "name": "TRIMBLE INC",
+      "sector": "Info Tech",
+      "weight": 0.02025412296795397
+    },
+    {
+      "ticker": "SWK",
+      "name": "STANLEY BLACK & DECKER",
+      "sector": "Industrials",
+      "weight": 0.020243366457182013
+    },
+    {
+      "ticker": "TXT",
+      "name": "TEXTRON INC",
+      "sector": "Industrials",
+      "weight": 0.020101020157656153
+    },
+    {
+      "ticker": "ALLE",
+      "name": "ALLEGION PLC",
+      "sector": "Industrials",
+      "weight": 0.01995278595752828
+    },
+    {
+      "ticker": "EG",
+      "name": "EVEREST GROUP",
+      "sector": "Financial Svcs",
+      "weight": 0.01992964736127708
+    },
+    {
+      "ticker": "SWKS",
+      "name": "SKYWORKS SOLUTIONS",
+      "sector": "Info Tech",
+      "weight": 0.019922618278589873
+    },
+    {
+      "ticker": "AVY",
+      "name": "AVERY DENNISON CORP",
+      "sector": "Materials",
+      "weight": 0.01967777450272035
+    },
+    {
+      "ticker": "SOLV",
+      "name": "SOLVENTUM",
+      "sector": "Healthcare",
+      "weight": 0.019569572807159742
+    },
+    {
+      "ticker": "SJM",
+      "name": "JM SMUCKER",
+      "sector": "Cons Staples",
+      "weight": 0.019483116309068953
+    },
+    {
+      "ticker": "GL",
+      "name": "GLOBE LIFE",
+      "sector": "Financial Svcs",
+      "weight": 0.019355989492924722
+    },
+    {
+      "ticker": "ALB",
+      "name": "ALBEMARLE CORP",
+      "sector": "Materials",
+      "weight": 0.019136638760588767
+    },
+    {
+      "ticker": "HAS",
+      "name": "HASBRO",
+      "sector": "Cons Discr",
+      "weight": 0.019058252161434436
+    },
+    {
+      "ticker": "FOXA",
+      "name": "FOX CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.01899502347908331
+    },
+    {
+      "ticker": "AIZ",
+      "name": "ASSURANT INC",
+      "sector": "Financial Svcs",
+      "weight": 0.01888364139075943
+    },
+    {
+      "ticker": "CHTR",
+      "name": "CHARTER COMMUNICATIONS CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.018812849474399235
+    },
+    {
+      "ticker": "ECHO",
+      "name": "ECHOSTAR CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.01865573388838846
+    },
+    {
+      "ticker": "TYL",
+      "name": "TYLER TECHNOLOGIES",
+      "sector": "Info Tech",
+      "weight": 0.018636793944522008
+    },
+    {
+      "ticker": "MKC",
+      "name": "MCCORMICK & CO NON-VOTING",
+      "sector": "Cons Staples",
+      "weight": 0.0186141099629272
+    },
+    {
+      "ticker": "REG",
+      "name": "REGENCY CENTERS REIT CORP",
+      "sector": "REITs",
+      "weight": 0.018459922054569596
+    },
+    {
+      "ticker": "BAX",
+      "name": "BAXTER INTERNATIONAL",
+      "sector": "Healthcare",
+      "weight": 0.01834298360831221
+    },
+    {
+      "ticker": "GNRC",
+      "name": "GENERAC HOLDINGS",
+      "sector": "Industrials",
+      "weight": 0.018267563720549645
+    },
+    {
+      "ticker": "GDDY",
+      "name": "GODADDY CLASS A",
+      "sector": "Info Tech",
+      "weight": 0.01792214616819224
+    },
+    {
+      "ticker": "IT",
+      "name": "GARTNER",
+      "sector": "Info Tech",
+      "weight": 0.01772256402909912
+    },
+    {
+      "ticker": "LII",
+      "name": "LENNOX INTERNATIONAL",
+      "sector": "Industrials",
+      "weight": 0.017492372658253954
+    },
+    {
+      "ticker": "TECH",
+      "name": "BIO TECHNE",
+      "sector": "Healthcare",
+      "weight": 0.017174135228414104
+    },
+    {
+      "ticker": "GEN",
+      "name": "GEN DIGITAL",
+      "sector": "Info Tech",
+      "weight": 0.01696524149633749
+    },
+    {
+      "ticker": "PNW",
+      "name": "PINNACLE WEST",
+      "sector": "Utilities",
+      "weight": 0.016729872300464358
+    },
+    {
+      "ticker": "COO",
+      "name": "COOPER",
+      "sector": "Healthcare",
+      "weight": 0.01668413744913059
+    },
+    {
+      "ticker": "CSGP",
+      "name": "COSTAR GROUP",
+      "sector": "REITs",
+      "weight": 0.016537135439202662
+    },
+    {
+      "ticker": "TKO",
+      "name": "TKO GROUP HOLDINGS INC CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.016446825267048822
+    },
+    {
+      "ticker": "DECK",
+      "name": "DECKERS OUTDOOR",
+      "sector": "Cons Discr",
+      "weight": 0.01611855062833222
+    },
+    {
+      "ticker": "AES",
+      "name": "AES",
+      "sector": "Utilities",
+      "weight": 0.016041027149540057
+    },
+    {
+      "ticker": "LULU",
+      "name": "LULULEMON ATHLETICA",
+      "sector": "Cons Discr",
+      "weight": 0.01587530623665169
+    },
+    {
+      "ticker": "JKHY",
+      "name": "JACK HENRY AND ASSOCIATES INC",
+      "sector": "Financial Svcs",
+      "weight": 0.015860904691278373
+    },
+    {
+      "ticker": "NWSA",
+      "name": "NEWS CLASS A",
+      "sector": "Comms Svcs",
+      "weight": 0.015845447179005646
+    },
+    {
+      "ticker": "HII",
+      "name": "HUNTINGTON INGALLS INDUSTRIES",
+      "sector": "Industrials",
+      "weight": 0.015331825928293545
+    },
+    {
+      "ticker": "LVS",
+      "name": "LAS VEGAS SANDS",
+      "sector": "Cons Discr",
+      "weight": 0.015174012353246082
+    },
+    {
+      "ticker": "BXP",
+      "name": "BXP",
+      "sector": "REITs",
+      "weight": 0.015058253461281292
+    },
+    {
+      "ticker": "UDR",
+      "name": "UDR REIT",
+      "sector": "REITs",
+      "weight": 0.014936854128956099
+    },
+    {
+      "ticker": "CPT",
+      "name": "CAMDEN PROPERTY TRUST REIT",
+      "sector": "REITs",
+      "weight": 0.014939962257365979
+    },
+    {
+      "ticker": "CLX",
+      "name": "CLOROX",
+      "sector": "Cons Staples",
+      "weight": 0.014889449810773567
+    },
+    {
+      "ticker": "DPZ",
+      "name": "DOMINOS PIZZA",
+      "sector": "Cons Discr",
+      "weight": 0.014598992468064639
+    },
+    {
+      "ticker": "BEN",
+      "name": "FRANKLIN TEMPLETON",
+      "sector": "Financial Svcs",
+      "weight": 0.014546428552077441
+    },
+    {
+      "ticker": "ALGN",
+      "name": "ALIGN TECHNOLOGY",
+      "sector": "Healthcare",
+      "weight": 0.014465205290181244
+    },
+    {
+      "ticker": "FDS",
+      "name": "FACTSET RESEARCH SYSTEMS",
+      "sector": "Financial Svcs",
+      "weight": 0.014389378438397755
+    },
+    {
+      "ticker": "PODD",
+      "name": "INSULET",
+      "sector": "Healthcare",
+      "weight": 0.01396016881017116
+    },
+    {
+      "ticker": "UHS",
+      "name": "UNIVERSAL HEALTH SERVICES CLASS B",
+      "sector": "Healthcare",
+      "weight": 0.013856682416059552
+    },
+    {
+      "ticker": "ROL",
+      "name": "ROLLINS INC",
+      "sector": "Industrials",
+      "weight": 0.013783325233527205
+    },
+    {
+      "ticker": "APTV",
+      "name": "APTIV PLC",
+      "sector": "Cons Discr",
+      "weight": 0.013684564510139477
+    },
+    {
+      "ticker": "FRT",
+      "name": "FEDERAL REALTY INVESTMENT TRUST RE",
+      "sector": "REITs",
+      "weight": 0.01325721401111365
+    },
+    {
+      "ticker": "PNR",
+      "name": "PENTAIR",
+      "sector": "Industrials",
+      "weight": 0.012789102601642151
+    },
+    {
+      "ticker": "HSIC",
+      "name": "HENRY SCHEIN",
+      "sector": "Healthcare",
+      "weight": 0.012452189909510861
+    },
+    {
+      "ticker": "ARE",
+      "name": "ALEXANDRIA REAL ESTATE EQUITIES RE",
+      "sector": "REITs",
+      "weight": 0.011519742690357175
+    },
+    {
+      "ticker": "FOX",
+      "name": "FOX CLASS B",
+      "sector": "Comms Svcs",
+      "weight": 0.011476281793591796
+    },
+    {
+      "ticker": "MOS",
+      "name": "MOSAIC",
+      "sector": "Materials",
+      "weight": 0.010699392084578332
+    },
+    {
+      "ticker": "NCLH",
+      "name": "NORWEGIAN CRUISE LINE HOLDINGS",
+      "sector": "Cons Discr",
+      "weight": 0.009895201673128991
+    },
+    {
+      "ticker": "AOS",
+      "name": "A O SMITH",
+      "sector": "Industrials",
+      "weight": 0.009705009310037952
+    },
+    {
+      "ticker": "DVA",
+      "name": "DAVITA INC",
+      "sector": "Healthcare",
+      "weight": 0.009101736934223578
+    },
+    {
+      "ticker": "WYNN",
+      "name": "WYNN RESORTS",
+      "sector": "Cons Discr",
+      "weight": 0.00888121637799389
+    },
+    {
+      "ticker": "HRL",
+      "name": "HORMEL FOODS CORP",
+      "sector": "Cons Staples",
+      "weight": 0.008808910510120192
+    },
+    {
+      "ticker": "ERIE",
+      "name": "ERIE INDEMNITY CLASS A",
+      "sector": "Financial Svcs",
+      "weight": 0.008670210382485617
+    },
+    {
+      "ticker": "MGM",
+      "name": "MGM RESORTS INTERNATIONAL",
+      "sector": "Cons Discr",
+      "weight": 0.008474756170843182
+    },
+    {
+      "ticker": "PSKY",
+      "name": "PARAMOUNT SKYDANCE CORP CLASS B",
+      "sector": "Comms Svcs",
+      "weight": 0.008465721734508363
+    },
+    {
+      "ticker": "BF B",
+      "name": "BROWN FORMAN CLASS B",
+      "sector": "Cons Staples",
+      "weight": 0.006965082905293717
+    },
+    {
+      "ticker": "NWS",
+      "name": "NEWS CLASS B",
+      "sector": "Comms Svcs",
+      "weight": 0.005802503495150319
+    },
+    {
+      "ticker": "HOLX",
+      "name": "HOLOGIC INC",
+      "sector": "Healthcare",
+      "weight": 0.000003220873034968265
+    }
+  ]
+}

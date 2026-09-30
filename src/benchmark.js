@@ -10,7 +10,7 @@ export const SECTOR_NAMES = {
   'Information Technology': 'Info Tech', 'Consumer Staples': 'Cons Staples',
   'Health Care': 'Healthcare', 'Utilities': 'Utilities',
 };
-export const normalizeTicker = ticker => ticker.trim().toUpperCase().replace(/[./]/g, '-');
+export const normalizeTicker = ticker => ticker.trim().toUpperCase().replace(/[./\s]+/g, '-');
 
 // RFC 4180 quoting, including escaped quotes, commas and newlines in fields.
 export function parseCsv(text, delimiter = ',') {
