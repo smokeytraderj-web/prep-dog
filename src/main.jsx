@@ -587,6 +587,17 @@ function App() {
                       <div className="flex gap-3 flex-wrap">
                         <button className="secondary" disabled={benchmark.loading} onClick={benchmark.refresh}>Refresh benchmark</button>
                         <button className="secondary" onClick={() => equityFile.current.click()}><Upload size={14} /> Import sector data</button>
+                        {/* The example book is ETF-heavy, and the app will not guess
+                            ETF look-through, so the matching sector file is one click
+                            away rather than a download the advisor has to find. */}
+                        <button className="text-button" onClick={async () => {
+                          try {
+                            const response = await fetch("/example-sectors.json");
+                            if (!response.ok) throw Error("The example sector file could not be loaded.");
+                            setEquity(validateEquity(await response.json()));
+                            setEquityError("");
+                          } catch (error) { setEquityError(error.message || "The example sector file could not be loaded."); }
+                        }}>Load example sectors</button>
                         <button className="text-button" onClick={() => setShowExample(true)}>Layout example</button>
                         {importedEquity && <button className="text-button" onClick={() => setEquity(null)}>Use daily benchmark</button>}
                       </div>

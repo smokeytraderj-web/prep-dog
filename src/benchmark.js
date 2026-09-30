@@ -44,19 +44,32 @@ export function parseBenchmark(csv, retrievedAt = new Date().toISOString()) {
   if (header < 0) throw Error('The provider changed its holdings format.');
   const columns = rows[header];
   const at = (r, name) => r[columns.indexOf(name)];
-  const constituents = rows.slice(header + 1).filter(r => at(r, 'Asset Class') === 'Equity').map(r => {
+  // The provider occasionally files a constituent under a sector outside the
+  // eleven GICS names -- "Other" is the current example. Throwing the whole file
+  // away over one row left the benchmark permanently stale, so a handful are
+  // dropped and disclosed instead. A larger number means the format changed, and
+  // that still fails loudly.
+  const unclassified = [];
+  const equityRows = rows.slice(header + 1).filter(r => at(r, 'Asset Class') === 'Equity');
+  const constituents = equityRows.map(r => {
     const sector = SECTOR_NAMES[at(r, 'Sector')];
     const value = Number(at(r, 'Market Value')?.replace(/,/g, ''));
     const ticker = normalizeTicker(at(r, 'Ticker') || '');
-    if (!sector || !ticker || !Number.isFinite(value) || value <= 0) throw Error('The provider returned incomplete equity classifications.');
+    if (!ticker || !Number.isFinite(value) || value <= 0) throw Error('The provider returned incomplete equity classifications.');
+    if (!sector) { unclassified.push(ticker); return null; }
     return { ticker, name: at(r, 'Name'), sector, value };
-  });
+  }).filter(Boolean);
+  if (unclassified.length > Math.max(5, equityRows.length * 0.01))
+    throw Error('The provider returned incomplete equity classifications.');
   if (constituents.length < 450 || constituents.length > 550) throw Error('The benchmark does not contain a complete S&P 500 equity universe.');
   if (new Set(constituents.map(h => h.ticker)).size !== constituents.length) throw Error('Duplicate benchmark holdings were returned.');
   const total = constituents.reduce((n, h) => n + h.value, 0);
   const sectors = SECTOR_ORDER.map(name => ({name, weight: constituents.filter(h => h.sector === name).reduce((n, h) => n + h.value, 0) / total * 100}));
   if (sectors.some(s => s.weight <= 0)) throw Error('All 11 equity sectors are required.');
-  return { asOf, retrievedAt, source: 'iShares IVV daily holdings', sourceUrl: BENCHMARK_PAGE,
+  const warning = unclassified.length
+    ? `${unclassified.length} constituent${unclassified.length === 1 ? '' : 's'} (${unclassified.join(', ')}) ${unclassified.length === 1 ? 'carries' : 'carry'} no standard sector from the provider and ${unclassified.length === 1 ? 'is' : 'are'} excluded from the benchmark weights.`
+    : undefined;
+  return { asOf, retrievedAt, source: 'iShares IVV daily holdings', sourceUrl: BENCHMARK_PAGE, unclassified, ...(warning ? {warning} : {}),
     basis: 'IVV equity holdings, normalized to 100%; cash and derivatives excluded.',
     sectors, constituents: constituents.map(({value, ...h}) => ({...h, weight: value / total * 100})) };
 }

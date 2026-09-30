@@ -78,27 +78,7 @@
   aspect-ratio: auto;
 }
 
-/* --- Equity exposure ----------------------------------------------------
-   Sector weights run full width above the over/underweight chart, so the
-   board is one SVG and the type is set here rather than per element. */
-.equity-slide { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-/* workspace.css caps every svg on this slide at 190px for the old two-column
-   layout; the board is the layout now, so it sets its own height. */
-.slide .equity-slide .equity-board { max-height: none; }
-.equity-board { width: 100%; height: auto; display: block; margin: 14px 0 0; flex: 0 1 auto; min-height: 0; }
-.equity-slide .equity-source { margin-top: auto; padding-top: 10px; }
-.eq-kicker { font-size: 8px; font-weight: 600; letter-spacing: 1.1px; fill: var(--c-466887, #466887); }
-.eq-sector { font-size: 11px; fill: var(--c-254562, #254562); }
-.eq-num { font-size: 11px; fill: var(--c-254562, #254562); font-variant-numeric: tabular-nums; }
-.eq-diff { font-weight: 500; }
-.eq-diff.is-over { fill: var(--c-254e7a, #254e7a); }
-.eq-diff.is-under { fill: var(--c-6f879b, #6f879b); }
-.eq-axis { font-size: 8px; letter-spacing: 1px; fill: var(--c-547796, #547796); }
-.eq-rule-strong { stroke: var(--c-a9bcd0, #a9bcd0); stroke-width: 1; }
-.eq-zeroline { stroke: var(--c-a9bcd0, #a9bcd0); stroke-width: 1; }
-.eq-zebra { fill: var(--c-f5f8fb, #f5f8fb); }
-.eq-bar-over { fill: var(--c-254e7a, #254e7a); }
-.eq-bar-under { fill: var(--c-91b2d2, #91b2d2); }
+
 
 /* --- Risk snapshot range -------------------------------------------------
    The range reads as three anchors -- downside, today, upside -- over a scale
@@ -124,3 +104,14 @@
    text on a dark page. */
 .equity-slide .equity-heading > span { color: var(--c-315574, #315574); }
 .equity-slide .equity-source { color: var(--c-315574, #315574); }
+
+/* The deck slide is the same component the example modal shows, but the modal
+   scales its type up. Match that here so the deck page is as legible as the
+   example, which is the layout the deck spec calls for. */
+.slide .equity-slide .equity-heading h2 { font-size: 26px; }
+.slide .equity-slide .equity-heading > span { font-size: 11px; }
+.slide .equity-slide .chart-caption { font-size: 11px; }
+.slide .equity-slide .equity-table-panel .slide-kicker { font-size: 9px; }
+.slide .equity-slide .equity-table-panel .sector-table th { font-size: 10px; }
+.slide .equity-slide .equity-table-panel .sector-table td { font-size: 11px; padding: 7px 4px; }
+.slide .equity-slide .equity-source { font-size: 10px; }

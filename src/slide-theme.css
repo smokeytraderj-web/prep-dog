@@ -189,6 +189,17 @@
   --c-7594af18: #ffffff14;
   --c-7d9dc333: #ffffff14;
 
+  /* Chart colours that live in JSX rather than CSS, and so are not covered by
+     the stylesheet token sweep. Axis labels and gridlines on a dark page. */
+  --c-526c86: #bcc3e4;
+  --c-365873: #c6cbe8;
+  --c-9baec2: #4a5695;
+  --c-dce5ef: #2c3670;
+  --c-254562: #dfe3f6;
+  --c-254c75: #eceefa;
+  --c-547796: #bcc3e4;
+  --c-a9bcd0: #3a4685;
+
   /* Data series: brand blue lightened for a dark page, with the seal's
      gold carrying the leading series so the deck reads as GSWM. */
   --series-1: #c0a860;

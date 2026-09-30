@@ -38,3 +38,29 @@ test('endpoint exposes failure and disallows mutation',async()=>{
  const res=await benchmarkResponse(new Request('https://example.com'),async()=>new Response('Provider unavailable',{status:503}));
  assert.equal(res.status,502);assert.equal(res.headers.get('cache-control'),'no-store');
 });
+
+test('a constituent with no standard sector is dropped and disclosed, not fatal', () => {
+  // The provider files the odd name under "Other"; one such row used to throw
+  // the whole file away and leave the benchmark permanently stale.
+  const lines = fixture.split('\r\n');
+  lines.splice(lines.length - 1, 0, 'DASH,"DOORDASH CLASS A",Other,Equity,"1,000.00",0.22');
+  const result = parseBenchmark(lines.join('\r\n'), '2026-09-29T15:00:00Z');
+  assert.equal(result.constituents.length, 451);
+  assert.ok(!result.constituents.some(c => c.ticker === 'DASH'));
+  assert.deepEqual(result.unclassified, ['DASH']);
+  assert.match(result.warning, /DASH/);
+  assert.match(result.warning, /carries no standard sector/);
+  assert.ok(Math.abs(result.sectors.reduce((n, s) => n + s.weight, 0) - 100) < 0.0001);
+});
+
+test('a clean file carries no unclassified warning', () => {
+  const result = snapshot();
+  assert.deepEqual(result.unclassified, []);
+  assert.equal(result.warning, undefined);
+});
+
+test('a wholesale sector-format change still fails loudly', () => {
+  // Beyond a handful, an unmapped sector means the format moved, not a stray row.
+  assert.throws(() => parseBenchmark(fixture.replaceAll(',Materials,', ',Mystery,'), '2026-09-29T15:00:00Z'),
+    /incomplete equity classifications/);
+});
