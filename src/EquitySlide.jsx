@@ -1,28 +1,77 @@
 import React from 'react';
-export default function EquitySlide({data, example=false}) {
-  const diffs = data.sectors.map(sector => sector.portfolio-sector.benchmark);
-  const extent = Math.max(1, ...diffs.map(Math.abs));
-  const scale = 155/extent, zero=350;
+
+// Matches the firm's Equity Sector Exposure page: an allocation table reading
+// across the page with the eleven GICS sectors as columns grouped into
+// Cyclical / Sensitive / Defensive, over a vertical relative-weight chart.
+// SECTOR_ORDER is already in that grouping order, so the spans are positional.
+const GROUPS = [
+  {name: 'Cyclical', span: 4},
+  {name: 'Sensitive', span: 4},
+  {name: 'Defensive', span: 3},
+];
+
+// Zones are fixed so a deep negative bar and its value label can never reach
+// the sector names: bars are capped at maxBar, the label sits 14 below that,
+// and the names start below the deepest possible label.
+const CHART = {w: 1160, h: 234, zero: 100, maxBar: 70, labelGap: 14, names: 206};
+
+export default function EquitySlide({data, example = false}) {
+  const diffs = data.sectors.map(sector => sector.portfolio - sector.benchmark);
+  const extent = Math.max(0.5, ...diffs.map(Math.abs));
+  const scale = CHART.maxBar / extent;
+  const step = CHART.w / data.sectors.length;
+  const portfolioLabel = data.portfolio_label || 'Portfolio';
+  const benchmarkLabel = data.benchmark_label || 'Benchmark';
+
   return <div className="equity-slide">
     <div className="equity-heading"><h2>Equity Sector Exposure</h2><span>{data.as_of}</span></div>
+    <div className="equity-rule"/>
     {example && <p className="example-banner">EXAMPLE ONLY · Supplied sample data, not your portfolio</p>}
-    <div className="equity-visual-layout">
-      <div className="equity-chart-panel"><p className="chart-caption">Relative weight vs. {data.benchmark_short || data.benchmark_label} · percentage points</p>
-        <svg viewBox="0 0 570 366" role="img" aria-label="Sector over and underweights versus the benchmark in percentage points">
-          <text x="265" y="17" textAnchor="middle" fontSize="11" fill="var(--c-547796, #547796)">UNDERWEIGHT</text><text x="435" y="17" textAnchor="middle" fontSize="11" fill="var(--c-254c75, #254c75)">OVERWEIGHT</text>
-          <line x1={zero} x2={zero} y1="27" y2="358" stroke="var(--c-a9bcd0, #a9bcd0)"/>
-          {data.sectors.map((sector,i)=>{const value=diffs[i], width=Math.abs(value)*scale, y=32+i*29;return <g key={sector.name}>
-            <text x="0" y={y+15} fontSize="13" fill="var(--c-254562, #254562)">{sector.name}</text>
-            <rect x={value<0 ? zero-width : zero} y={y} width={width} height="20" rx="2" fill={value<0?'var(--ramp-2, #91b2d2)':'var(--ramp-1, #254e7a)'}/>
-            <text x={value<0?zero-width-7:zero+width+7} y={y+15} textAnchor={value<0?'end':'start'} fontSize="12" fill="var(--c-254562, #254562)">{value>0?'+':''}{value.toFixed(2)}</text>
-          </g>;})}
-        </svg>
-      </div>
-      <div className="equity-table-panel"><span className="slide-kicker">SECTOR WEIGHTS</span><table className="sector-table sector-table-compact">
-        <thead><tr><th>Sector</th><th>Portfolio</th><th>{data.benchmark_short || 'Benchmark'}</th></tr></thead>
-        <tbody>{data.sectors.map(sector=><tr key={sector.name}><td>{sector.name}</td><td>{sector.portfolio.toFixed(2)}%</td><td>{sector.benchmark.toFixed(2)}%</td></tr>)}</tbody>
-      </table></div>
-    </div>
-    <p className="equity-source">{data.source_note}</p>
+
+    <p className="equity-caption">Allocation (%)</p>
+    <table className="equity-allocation">
+      <thead>
+        <tr className="equity-groups">
+          <th/>
+          {GROUPS.map(group => <th key={group.name} colSpan={group.span}>{group.name}</th>)}
+        </tr>
+        <tr className="equity-sectors">
+          <th/>
+          {data.sectors.map(sector => <th key={sector.name}>{sector.name}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">{portfolioLabel}</th>
+          {data.sectors.map(sector => <td key={sector.name}>{sector.portfolio.toFixed(2)}</td>)}
+        </tr>
+        <tr>
+          <th scope="row">{benchmarkLabel}</th>
+          {data.sectors.map(sector => <td key={sector.name}>{sector.benchmark.toFixed(2)}</td>)}
+        </tr>
+      </tbody>
+    </table>
+
+    <p className="equity-caption">Portfolio relative to {benchmarkLabel} (percentage points)</p>
+    <svg className="equity-diff" viewBox={`0 0 ${CHART.w} ${CHART.h}`} role="img"
+      aria-label={`Portfolio weight relative to ${benchmarkLabel} by sector, in percentage points`}>
+      <line x1="0" x2={CHART.w} y1={CHART.zero} y2={CHART.zero} className="eq-zero"/>
+      {data.sectors.map((sector, i) => {
+        const value = diffs[i];
+        const height = Math.abs(value) * scale;
+        const x = i * step + step / 2;
+        const up = value >= 0;
+        return <g key={sector.name}>
+          <rect x={x - 26} y={up ? CHART.zero - height : CHART.zero} width="52" height={height}
+            className={up ? 'eq-up' : 'eq-down'}/>
+          <text x={x} y={up ? CHART.zero - height - 8 : CHART.zero + height + CHART.labelGap} textAnchor="middle"
+            className="eq-value">{up ? '+' : ''}{value.toFixed(2)}</text>
+          {sector.name.split(' ').map((word, w) =>
+            <text key={word + w} x={x} y={CHART.names + w * 11} textAnchor="middle" className="eq-label">{word}</text>)}
+        </g>;
+      })}
+    </svg>
+
+    <p className="equity-source">{data.source_note}{data.firm ? ` ${data.firm}` : ''}</p>
   </div>;
 }

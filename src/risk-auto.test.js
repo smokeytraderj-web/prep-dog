@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildRiskInput, createAutoRiskSnapshot } from './risk-auto.js';
-import { classifyHoldings, suppliedClass } from './asset-class.js';
+import { classifyHoldings, classifyRegion, enrichPositions, suppliedClass } from './asset-class.js';
 
 const PERIODS = 60;
 const dates = Array.from({length: PERIODS}, (_, i) => `${2021 + Math.floor(i / 12)}-${String((i % 12) + 1).padStart(2, '0')}-01`);
@@ -159,4 +159,33 @@ test('tax drag and advisory fee stay omitted, never defaulted to zero', () => {
   assert.equal(s.costs.est_tax_drag_pct, null);
   assert.equal(s.costs.advisory_fees_pct, null);
   assert.ok(s.warnings.some(w => /omitted, not treated as zero/.test(w)));
+});
+
+// --- filling in what a pasted list cannot carry ----------------------------
+test('region comes from the fund table or the benchmark, never from a guess', () => {
+  const constituents = new Set(['AAPL']);
+  assert.equal(classifyRegion('VEA', constituents), 'International developed');
+  assert.equal(classifyRegion('VWO', constituents), 'Emerging markets');
+  assert.equal(classifyRegion('QQQ', constituents), 'U.S. growth');
+  assert.equal(classifyRegion('AAPL', constituents), 'U.S. large cap');
+  // A bond fund has no equity region, and an unknown ticker gets none.
+  assert.equal(classifyRegion('AGG', constituents), '');
+  assert.equal(classifyRegion('ZZZQ', constituents), '');
+});
+
+test('enrichment fills blanks only, and leaves the unresolvable blank', () => {
+  const enriched = enrichPositions([
+    {ticker: 'AAPL', value: 1},
+    {ticker: 'AGG', value: 1},
+    {ticker: 'VEA', value: 1},
+    {ticker: 'ZZZQ', value: 1},
+  ], benchmark);
+  assert.deepEqual(enriched.map(p => p.assetClass), ['Equity', 'Fixed income', 'Equity', undefined]);
+  assert.deepEqual(enriched.map(p => p.region), ['U.S. large cap', undefined, 'International developed', undefined]);
+});
+
+test('a supplied asset class or region is never overwritten', () => {
+  const [position] = enrichPositions([{ticker: 'AAPL', value: 1, assetClass: 'Fixed income', region: 'Custom'}], benchmark);
+  assert.equal(position.assetClass, 'Fixed income');
+  assert.equal(position.region, 'Custom');
 });

@@ -59,3 +59,46 @@ export function classifyHoldings(holdings, benchmark, positions) {
   });
   return {classified, unclassified};
 }
+
+// Region for the attribution slide. The market snapshot's own region labels are
+// the only ones that slide can match, so these are exactly those strings. An
+// individual equity in the benchmark is U.S. large cap; everything else has to
+// be listed or it stays unmapped rather than being guessed from a ticker.
+export const FUND_REGIONS = {
+  'U.S. large cap': ['IVV','VOO','SPY','SPLG','SPTM','VTI','ITOT','SCHB','SCHX','DIA','IWM','IWB','IWD','IJH','IJR','MDY','VO','VB','RSP','SPYV','IVE','VTV','VYM','SCHD','DGRO','NOBL','HDV','DVY','SDY','USMV','VLUE'],
+  'U.S. growth': ['QQQ','QQQM','IWF','VUG','SPYG','IVW','MTUM','VGT','XLK'],
+  'International developed': ['VEA','IEFA','EFA','SCHF','SPDW','VGK','VPL','EWJ','IDEV','EFG','EFV'],
+  'Emerging markets': ['VWO','IEMG','EEM','SCHE','SPEM','MCHI','FXI','INDA','EWZ','EWY','EWT'],
+};
+const REGION_LOOKUP = new Map();
+for (const [region, tickers] of Object.entries(FUND_REGIONS))
+  for (const ticker of tickers) REGION_LOOKUP.set(ticker, region);
+
+export function classifyRegion(ticker, constituentTickers) {
+  const symbol = normalize(ticker);
+  if (REGION_LOOKUP.has(symbol)) return REGION_LOOKUP.get(symbol);
+  if (constituentTickers?.has(symbol)) return 'U.S. large cap';
+  return '';
+}
+
+// Fills in asset class and region for positions that arrived without them, so a
+// pasted list still drives the account and regional slides. A supplied value
+// always wins, and anything that cannot be resolved is left blank rather than
+// guessed, which is what keeps those slides honest about coverage.
+export function enrichPositions(positions, benchmark) {
+  const constituents = new Set((benchmark?.constituents || []).map(c => normalize(c.ticker)));
+  const CLASS_LABELS = {stocks: 'Equity', bonds: 'Fixed income', cash: 'Cash', other: 'Other'};
+  return (positions || []).map(position => {
+    const next = {...position};
+    if (!String(position.assetClass || '').trim()) {
+      const symbol = normalize(position.ticker);
+      const known = CASH_PATTERN.test(symbol) || constituents.has(symbol) || LOOKUP.has(symbol);
+      if (known) next.assetClass = CLASS_LABELS[classifyHolding(position.ticker, constituents)];
+    }
+    if (!String(position.region || '').trim()) {
+      const region = classifyRegion(position.ticker, constituents);
+      if (region) next.region = region;
+    }
+    return next;
+  });
+}

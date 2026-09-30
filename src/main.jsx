@@ -33,6 +33,7 @@ import "./slide-theme.css";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
+import { enrichPositions } from "./asset-class";
 import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 import HoldingsImport from "./HoldingsImport";
@@ -168,6 +169,14 @@ function App() {
   const assetReady = positions.length > 0 && positions.every(p => p.assetClass);
   const accountsReady = positions.length > 0 && positions.every(p => p.account);
   const benchmark = useBenchmark();
+  // A pasted list carries ticker and value only, which left the account and
+  // regional slides showing placeholders. Fill in what the benchmark and the
+  // fund tables can establish; anything unresolved stays blank, so those slides
+  // still report their real coverage rather than a guess.
+  const enrichedPositions = React.useMemo(
+    () => enrichPositions(positions, benchmark.snapshot),
+    [positions, benchmark.snapshot],
+  );
   async function refreshMarketIndexes() {
     setMarketLoading(true); setMarketError("");
     try {
@@ -312,9 +321,9 @@ function App() {
           </span>
         </div>
       );
-    if (slide.id === "account-summary") return <AccountSummarySlide positions={positions} source={importSource}/>;
+    if (slide.id === "account-summary") return <AccountSummarySlide positions={deckMarket.positions || enrichedPositions} source={importSource}/>;
     if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
-    if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={positions} data={deckMarket.marketIndexes}/>;
+    if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={deckMarket.positions || enrichedPositions} data={deckMarket.marketIndexes}/>;
     if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot}/>;
     if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
     if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
@@ -628,7 +637,7 @@ function App() {
                     return (
                       <details className={needsAction ? "data-drawer" : "hidden"} open={needsAction}>
                         <summary><span>Risk snapshot</span><small>Unavailable</small><ChevronRight size={16}/></summary>
-                        <RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/>
+                        <RiskSnapshotStatus holdings={holdings} positions={enrichedPositions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/>
                       </details>
                     );
                   })()}
@@ -668,7 +677,7 @@ function App() {
                       (selected.includes("equity") && !equity) ||
                       (selected.includes("risk") && !supporting.risk && !riskSnapshot && riskStatus.busy)
                     }
-                    onClick={() => { setDeckEquity(equity); setDeckMarket({riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
+                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>

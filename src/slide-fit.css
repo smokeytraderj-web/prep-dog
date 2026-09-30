@@ -105,13 +105,34 @@
 .equity-slide .equity-heading > span { color: var(--c-315574, #315574); }
 .equity-slide .equity-source { color: var(--c-315574, #315574); }
 
-/* The deck slide is the same component the example modal shows, but the modal
-   scales its type up. Match that here so the deck page is as legible as the
-   example, which is the layout the deck spec calls for. */
-.slide .equity-slide .equity-heading h2 { font-size: 26px; }
-.slide .equity-slide .equity-heading > span { font-size: 11px; }
-.slide .equity-slide .chart-caption { font-size: 11px; }
-.slide .equity-slide .equity-table-panel .slide-kicker { font-size: 9px; }
-.slide .equity-slide .equity-table-panel .sector-table th { font-size: 10px; }
-.slide .equity-slide .equity-table-panel .sector-table td { font-size: 11px; padding: 7px 4px; }
-.slide .equity-slide .equity-source { font-size: 10px; }
+
+
+/* --- Equity Sector Exposure ---------------------------------------------
+   The firm's page: an allocation table across the width with the sectors as
+   columns grouped Cyclical / Sensitive / Defensive, over a vertical
+   relative-weight chart. */
+.equity-slide { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.equity-slide .equity-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+.equity-slide .equity-heading h2 { font-size: 27px; }
+.equity-slide .equity-heading > span { font-size: 12px; font-style: italic; white-space: nowrap; }
+.equity-rule { height: 2px; background: var(--c-bfa775, #bfa775); margin: 9px 0 16px; }
+.equity-caption { font-size: 11px; font-style: italic; font-weight: 600; margin: 0 0 7px; color: var(--c-1b2a4a, #1b2a4a); }
+
+.equity-allocation { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 0 18px; }
+.equity-allocation th:first-child, .equity-allocation td:first-child { width: 168px; }
+.equity-allocation .equity-groups th { background: var(--c-1b2a4a, #1b2a4a); color: var(--c-ffffff, #ffffff); font-size: 11px; font-weight: 600; padding: 7px 4px; text-align: center; border-right: 2px solid var(--c-ffffff, #ffffff); }
+.equity-allocation .equity-groups th:first-child { background: transparent; border-right: 0; }
+.equity-allocation .equity-sectors th { background: var(--c-e9eff5, #e9eff5); font-size: 9.5px; font-weight: 600; line-height: 1.25; padding: 6px 3px; text-align: center; color: var(--c-1b2a4a, #1b2a4a); }
+.equity-allocation tbody th { text-align: left; font-size: 11px; font-weight: 700; padding: 8px 8px 8px 0; line-height: 1.25; white-space: pre-line; }
+.equity-allocation tbody td { text-align: center; font-size: 11px; padding: 8px 3px; font-variant-numeric: tabular-nums; }
+.equity-allocation tbody tr:nth-child(2) th, .equity-allocation tbody tr:nth-child(2) td { background: var(--c-f1f5f9, #f1f5f9); font-weight: 400; }
+
+.equity-diff { width: 100%; height: auto; display: block; flex: 0 1 auto; min-height: 0; max-height: none; }
+.slide .equity-slide .equity-diff { max-height: none; }
+.eq-zero { stroke: var(--c-1b2a4a, #1b2a4a); stroke-width: 1; }
+.eq-up { fill: var(--ramp-1, #1b2a4a); }
+.eq-down { fill: var(--ramp-2, #b9cce4); }
+.eq-value { font-size: 11px; font-weight: 600; fill: var(--c-1b2a4a, #1b2a4a); }
+.eq-label { font-size: 10px; fill: var(--c-42617e, #42617e); }
+.equity-slide .equity-source { font-size: 9.5px; font-style: italic; margin-top: auto; padding-top: 10px; }
+@media (max-width: 760px) { .equity-allocation { font-size: 9px; } }
