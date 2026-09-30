@@ -59,6 +59,26 @@ Sites is the primary publication. Vercel Git deployments are disabled in `vercel
 
 Drop PNG, JPG, or WEBP snippets into Source data (up to 8 MB per image). Each image creates its own slide with an editable title and optional takeaway. Images remain in browser memory and are included in print/PDF output; this does not extract or invent data from the images. The logo returns to the holdings screen without clearing the current work. The YTD slide includes a daily return graph when history is available, or a comparison bar chart for manually supplied returns.
 
+## Example data
+
+`Load example` fills the paste box with a balanced book — US and international
+equity, investment-grade and municipal bonds, Treasuries, cash and real assets —
+so the allocation and risk slides have all four asset classes to show. Pasting
+only carries ticker and value, so the classification comes from the fund table
+and the benchmark constituents.
+
+Two files in `public/` exercise the parts that need more than ticker and value:
+
+| File | What it unlocks |
+| --- | --- |
+| `example-holdings.csv` | 15 positions across 4 accounts with Account, Asset Class and Region columns. Populates the account summary's equities-vs-fixed-income split and the regional attribution slide, which are both blocked without them. |
+| `example-sectors.json` | Sector exposure for the equity sleeve of that file. The app refuses to guess ETF look-through, so the equity slide stays blocked until sector data is imported. |
+
+The **Example file** link beside the upload button downloads the holdings CSV;
+import the sector JSON from the Equity benchmark panel. Benchmark weights in the
+sector file come from the IVV daily holdings file; the fund sleeves use published
+sector mixes. Both files are illustrative, not a client portfolio.
+
 ## Slide sizing
 
 The deck prints at 13.333in x 7.5in (1280x720 at 96dpi). The preview renders each

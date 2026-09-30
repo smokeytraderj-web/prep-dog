@@ -1,0 +1,66 @@
+{
+  "title": "Equity Sector Exposure",
+  "as_of": "As of 2026-09-28",
+  "portfolio_label": "Example Client\nPortfolio",
+  "benchmark_label": "S&P 500 (IVV proxy)",
+  "benchmark_short": "S&P 500 (IVV proxy)",
+  "source_note": "Example data. Equity sleeve of example-holdings.csv: benchmark weights are the iShares IVV daily holdings file as of 2026-09-28; fund sleeves use published sector mixes. Illustrative only, not a client portfolio.",
+  "firm": "Gottfried & Somberg Wealth Management, LLC",
+  "sectors": [
+    {
+      "name": "Materials",
+      "portfolio": 2.09,
+      "benchmark": 1.72
+    },
+    {
+      "name": "Cons Discr",
+      "portfolio": 8.1,
+      "benchmark": 8.55
+    },
+    {
+      "name": "Financial Svcs",
+      "portfolio": 15.28,
+      "benchmark": 11.53
+    },
+    {
+      "name": "REITs",
+      "portfolio": 1.13,
+      "benchmark": 1.71
+    },
+    {
+      "name": "Comms Svcs",
+      "portfolio": 7.23,
+      "benchmark": 9.87
+    },
+    {
+      "name": "Energy",
+      "portfolio": 2.23,
+      "benchmark": 3.41
+    },
+    {
+      "name": "Industrials",
+      "portfolio": 5.85,
+      "benchmark": 8.1
+    },
+    {
+      "name": "Info Tech",
+      "portfolio": 42.57,
+      "benchmark": 39.42
+    },
+    {
+      "name": "Cons Staples",
+      "portfolio": 3.33,
+      "benchmark": 4.45
+    },
+    {
+      "name": "Healthcare",
+      "portfolio": 10.86,
+      "benchmark": 9.38
+    },
+    {
+      "name": "Utilities",
+      "portfolio": 1.33,
+      "benchmark": 1.86
+    }
+  ]
+}

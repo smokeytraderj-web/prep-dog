@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 // Embed this small static app in the Worker, so local preview and Sites share the same APIs
 // without depending on a platform-specific asset binding or a second public origin.
 const assets = {};
-const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.json':'application/json','.png':'image/png'};
+const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.json':'application/json','.png':'image/png','.csv':'text/csv; charset=utf-8'};
 async function walk(dir, prefix='') {
  for(const entry of await readdir(dir,{withFileTypes:true})) {
   if(entry.name==='server' || entry.name==='.openai') continue;

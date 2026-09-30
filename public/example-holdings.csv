@@ -1,0 +1,16 @@
+Ticker,Security Name,Account,Asset Class,Region,Market Value
+IVV,iShares Core S&P 500 ETF,Joint Taxable,Equity,U.S. large cap,420000
+AAPL,Apple Inc.,Joint Taxable,Equity,U.S. large cap,95000
+MSFT,Microsoft Corporation,John IRA,Equity,U.S. large cap,110000
+JPM,JPMorgan Chase & Co.,Joint Taxable,Equity,U.S. large cap,78000
+LLY,Eli Lilly and Company,Jane Roth IRA,Equity,U.S. large cap,64000
+QQQ,Invesco QQQ Trust,John IRA,Equity,U.S. growth,180000
+VEA,Vanguard FTSE Developed Markets ETF,John IRA,Equity,International developed,165000
+VWO,Vanguard FTSE Emerging Markets ETF,Jane Roth IRA,Equity,Emerging markets,92000
+AGG,iShares Core U.S. Aggregate Bond ETF,John IRA,Fixed income,U.S. fixed income,300000
+MUB,iShares National Muni Bond ETF,Joint Taxable,Fixed income,U.S. fixed income,180000
+VCIT,Vanguard Intermediate-Term Corporate Bond ETF,Family Trust,Fixed income,U.S. fixed income,120000
+TLT,iShares 20+ Year Treasury Bond ETF,Family Trust,Fixed income,U.S. fixed income,85000
+SGOV,iShares 0-3 Month Treasury Bond ETF,Joint Taxable,Cash,U.S. cash,95000
+GLD,SPDR Gold Shares,Family Trust,Other,Global real assets,85000
+VNQ,Vanguard Real Estate ETF,Family Trust,Other,U.S. real estate,70000
