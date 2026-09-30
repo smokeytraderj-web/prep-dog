@@ -48,7 +48,21 @@ export function RiskSnapshotSlide({data:s}) {
     <div className="snapshot-lede"><div><span className="slide-kicker">{s.portfolio_label}</span><strong>{usd(s.total_value)}</strong><p>{s.client_label}</p></div><div className="snapshot-outcomes"><div><strong>{pct(r.downside_pct)}</strong><span>Lower outcome</span><p>{usd(r.downside_value)}</p></div><div><strong>{pct(r.upside_pct)}</strong><span>Upper outcome</span><p>{usd(r.upside_value)}</p></div></div>
       <svg viewBox="0 0 120 120" role="img" aria-label={`In-house risk score ${s.risk_score} of 99`}><circle cx="60" cy="60" r="50" fill="none" stroke="var(--c-e7eef5, #e7eef5)" strokeWidth="7"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--ramp-1, #142f49)" strokeWidth="7" strokeDasharray={`${(s.risk_score-1)/98*314.16} 314.16`} transform="rotate(-90 60 60)"/><text x="60" y="42" textAnchor="middle" fontSize="8" fill="var(--c-385875, #385875)">RISK SCORE</text><text x="60" y="77" textAnchor="middle" fontSize="34" fill="var(--c-142f49, #142f49)">{s.risk_score}</text><text x="60" y="92" textAnchor="middle" fontSize="9" fill="var(--c-385875, #385875)">of 99</text></svg>
     </div>
-    <div className="snapshot-grid"><div><h3>Six-month modeled range</h3><div className="snapshot-endpoints"><b>{usd(s.total_value+r.downside_value)}<small>5th percentile</small></b><b>{usd(s.total_value+r.upside_value)}<small>95th percentile</small></b></div><div className="snapshot-range-track"><i style={{left:`${(r.downside_pct-min)/span*100}%`,width:`${(r.upside_pct-r.downside_pct)/span*100}%`}}/><em style={{left:`${zero}%`}}/></div><p className="snapshot-explain">90% central coverage under the model. Outcomes may fall outside this range; it is not a guarantee or maximum loss.</p><h3>Allocation</h3><div className="snapshot-allocation">{allocation.map((a,i)=><i key={a.name} style={{width:`${a.percent}%`,background:ramp[i]}}/>)}</div><div className="snapshot-legend">{allocation.map((a,i)=><span key={a.name}><i style={{background:ramp[i]}}/>{a.name} <b>{a.percent.toFixed(1)}%</b></span>)}</div></div>
+    <div className="snapshot-grid"><div><h3>Six-month modeled range</h3>
+      {/* Three anchors rather than one gradient: where the portfolio stands
+          today, and how far the model puts each side of it. */}
+      <div className="range-anchors">
+        <div className="range-anchor is-down"><span>Downside</span><b>{usd(s.total_value+r.downside_value)}</b><small>{pct(r.downside_pct)}</small></div>
+        <div className="range-anchor is-today"><span>Today</span><b>{usd(s.total_value)}</b><small>Starting value</small></div>
+        <div className="range-anchor is-up"><span>Upside</span><b>{usd(s.total_value+r.upside_value)}</b><small>{pct(r.upside_pct)}</small></div>
+      </div>
+      <div className="range-scale">
+        <div className="range-band is-down" style={{width:`${(0-r.downside_pct)/span*100}%`}}/>
+        <div className="range-today" style={{left:`${zero}%`}}/>
+        <div className="range-band is-up" style={{left:`${zero}%`,width:`${r.upside_pct/span*100}%`}}/>
+      </div>
+      <div className="range-ticks"><span>5th percentile</span><span>{usd(s.total_value)}</span><span>95th percentile</span></div>
+      <p className="snapshot-explain">90% central coverage under the model. Outcomes may fall outside this range; it is not a guarantee or maximum loss.</p><h3>Allocation</h3><div className="snapshot-allocation">{allocation.map((a,i)=><i key={a.name} style={{width:`${a.percent}%`,background:ramp[i]}}/>)}</div><div className="snapshot-legend">{allocation.map((a,i)=><span key={a.name}><i style={{background:ramp[i]}}/>{a.name} <b>{a.percent.toFixed(1)}%</b></span>)}</div></div>
       <div><h3>Portfolio measures</h3><dl className="snapshot-measures">{measures.map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value.toFixed(2)}%</dd></div>)}{s.metrics.grade!=null && <div><dt>Risk-adjusted grade</dt><dd>{s.metrics.grade.toFixed(1)} / 4.3</dd></div>}</dl><p className="snapshot-costs">{[['Tax drag',s.costs.est_tax_drag_pct],['Expense ratio',s.costs.expense_ratio_pct],['Advisory fee',s.costs.advisory_fees_pct]].filter(([,v])=>v!=null).map(([k,v])=>`${k} ${v.toFixed(2)}%`).join(' · ')}</p></div></div>
     <p className="context-source">{s.basis.method} Six-month modeled 90% range; not a guarantee or maximum loss. {s.basis.covariance}. {s.basis.drawdown_basis} {s.basis.risk_free_pct!=null?`Risk-free rate ${s.basis.risk_free_pct.toFixed(2)}%.`:''} {s.warnings.join(' ')}</p>
   </div>;

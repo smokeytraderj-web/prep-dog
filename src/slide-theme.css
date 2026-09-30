@@ -9,207 +9,209 @@
 
 .slide[data-slide-theme="dark"] {
   /* surface */
-  --c-eef5fc: #16283c;
-  --c-eff5fb: #17293d;
-  --c-f0f5fa: #172a3f;
-  --c-f1f5f9: #182b40;
-  --c-eff6fc: #192c41;
-  --c-f1f6fb: #192d43;
-  --c-f4f7fa: #1a2e44;
-  --c-f5f8fb: #1b2f45;
-  --c-f5f8fc: #1b3047;
-  --c-f5f9fd: #1c3148;
-  --c-f8fafc: #1d3249;
-  --c-f8fbfd: #1d334b;
-  --c-fff: #1e344c;
+  --c-eef5fc: #151b3f;
+  --c-eff5fb: #161c41;
+  --c-f0f5fa: #161d42;
+  --c-f1f5f9: #171e44;
+  --c-eff6fc: #181e45;
+  --c-f1f6fb: #181f47;
+  --c-f4f7fa: #192048;
+  --c-f5f8fb: #1a214a;
+  --c-f5f8fc: #1a224c;
+  --c-f5f9fd: #1b224d;
+  --c-f8fafc: #1c234f;
+  --c-f8fbfd: #1c2450;
+  --c-fff: #1d2552;
   /* panel */
-  --c-dce6ef: #1a2e44;
-  --c-dfe7ee: #1a2f45;
-  --c-e1e9f1: #1b2f46;
-  --c-e3ebf2: #1b3047;
-  --c-e3ebf3: #1c3148;
-  --c-e5ebf0: #1c3249;
-  --c-e6ebf0: #1d324a;
-  --c-e6edf3: #1d334b;
-  --c-e7edf2: #1e344c;
-  --c-e4eef6: #1e344c;
-  --c-e7eef5: #1f354d;
-  --c-e9eff5: #1f364e;
-  --c-eaf1f7: #20364f;
-  --c-eef1f5: #203750;
-  --c-eaf2fa: #213851;
-  --c-eff2f5: #213952;
-  --c-edf3f8: #223953;
-  --c-edf3fa: #223a54;
+  --c-dce6ef: #192049;
+  --c-dfe7ee: #1a214a;
+  --c-e1e9f1: #1a214b;
+  --c-e3ebf2: #1b224c;
+  --c-e3ebf3: #1b234d;
+  --c-e5ebf0: #1c234f;
+  --c-e6ebf0: #1c2450;
+  --c-e6edf3: #1d2551;
+  --c-e7edf2: #1d2552;
+  --c-e4eef6: #1e2653;
+  --c-e7eef5: #1e2654;
+  --c-e9eff5: #1f2755;
+  --c-eaf1f7: #1f2856;
+  --c-eef1f5: #202858;
+  --c-eaf2fa: #202959;
+  --c-eff2f5: #212a5a;
+  --c-edf3f8: #212a5b;
+  --c-edf3fa: #222b5c;
   /* border */
-  --c-c6d6e6: #2b435e;
-  --c-c9d9e8: #2c445f;
-  --c-c9d9e9: #2c4460;
-  --c-cbd9e7: #2d4560;
-  --c-d0dae3: #2d4661;
-  --c-cbdbe8: #2e4662;
-  --c-ccdbe9: #2e4763;
-  --c-cedce9: #2f4864;
-  --c-cfdeea: #2f4964;
-  --c-d3dee7: #304965;
-  --c-d4dfeb: #304a66;
-  --c-d7dfe7: #314b67;
-  --c-d4e1ec: #314b68;
-  --c-d5e1ed: #324c68;
-  --c-d7e2ed: #334d69;
-  --c-d7e3ed: #334d6a;
-  --c-d8e3ed: #344e6b;
-  --c-d9e4ed: #344f6c;
-  --c-dce4eb: #354f6d;
-  --c-dce4ec: #35506d;
-  --c-d9e5ee: #36516e;
-  --c-dbe5ed: #36526f;
-  --c-dbe5ef: #375270;
-  --c-dce5ed: #375371;
-  --c-dce5ee: #385471;
-  --c-dde5ec: #385472;
-  --c-dce6ee: #395573;
+  --c-c6d6e6: #2c3670;
+  --c-c9d9e8: #2d3771;
+  --c-c9d9e9: #2d3772;
+  --c-cbd9e7: #2e3872;
+  --c-d0dae3: #2e3873;
+  --c-cbdbe8: #2f3974;
+  --c-ccdbe9: #2f3a75;
+  --c-cedce9: #303a76;
+  --c-cfdeea: #303b76;
+  --c-d3dee7: #313c77;
+  --c-d4dfeb: #313c78;
+  --c-d7dfe7: #323d79;
+  --c-d4e1ec: #323d7a;
+  --c-d5e1ed: #333e7a;
+  --c-d7e2ed: #343f7b;
+  --c-d7e3ed: #343f7c;
+  --c-d8e3ed: #35407d;
+  --c-d9e4ed: #35407e;
+  --c-dce4eb: #36417f;
+  --c-dce4ec: #36427f;
+  --c-d9e5ee: #374280;
+  --c-dbe5ed: #374381;
+  --c-dbe5ef: #384482;
+  --c-dce5ed: #384483;
+  --c-dce5ee: #394583;
+  --c-dde5ec: #394584;
+  --c-dce6ee: #3a4685;
   /* muted */
-  --c-6c879f: #94afca;
-  --c-6f879b: #95b0cb;
-  --c-6288ae: #96b0cb;
-  --c-74899a: #96b1cc;
-  --c-7a8997: #97b2cc;
-  --c-728ba0: #98b2cd;
-  --c-738b9f: #99b3cd;
-  --c-7c8b99: #99b3ce;
-  --c-718eab: #9ab4ce;
-  --c-7c8f9f: #9bb5cf;
-  --c-7d91a1: #9cb5cf;
-  --c-7792a7: #9cb6d0;
-  --c-7892a7: #9db7d0;
-  --c-7594af: #9eb7d1;
-  --c-8093a3: #9fb8d1;
-  --c-8093a4: #9fb9d2;
-  --c-8094a4: #a0b9d2;
-  --c-8494a2: #a1bad3;
-  --c-8195a6: #a2bad3;
-  --c-8096a7: #a3bbd4;
-  --c-8296a7: #a3bcd4;
-  --c-7298b8: #a4bcd5;
-  --c-8a98a5: #a5bdd5;
-  --c-759bbf: #a6bed6;
-  --c-819bb0: #a6bed6;
-  --c-8c9aa8: #a7bfd7;
-  --c-8a9caa: #a8c0d7;
-  --c-8b9dac: #a9c0d8;
-  --c-8b9eae: #a9c1d8;
-  --c-8aa3b7: #aac2d9;
-  --c-96a2ac: #abc2d9;
-  --c-8aa4ba: #acc3da;
-  --c-99a5af: #adc3da;
-  --c-8ea7bb: #adc4db;
-  --c-8aa8c5: #aec5db;
-  --c-98a7b5: #afc5dc;
-  --c-99a7b3: #b0c6dc;
-  --c-8aa9c8: #b0c7dd;
-  --c-9aa8b2: #b1c7dd;
-  --c-91abc0: #b2c8de;
-  --c-7aadd8: #b3c9de;
-  --c-9cb7d0: #b3c9df;
-  --c-a8bdd1: #b4cadf;
-  --c-aac0d5: #b5cae0;
-  --c-b7c3cf: #b6cbe0;
-  --c-b8c8d5: #b6cce1;
-  --c-bacddd: #b7cce1;
-  --c-b6cee5: #b8cde2;
+  --c-6c879f: #bcc3e4;
+  --c-6f879b: #bdc4e4;
+  --c-6288ae: #bdc4e5;
+  --c-74899a: #bec5e5;
+  --c-7a8997: #bec5e5;
+  --c-728ba0: #bfc6e5;
+  --c-738b9f: #c0c6e6;
+  --c-7c8b99: #c0c7e6;
+  --c-718eab: #c1c7e6;
+  --c-7c8f9f: #c1c8e6;
+  --c-7d91a1: #c2c8e7;
+  --c-7792a7: #c3c9e7;
+  --c-7892a7: #c3c9e7;
+  --c-7594af: #c4cae8;
+  --c-8093a3: #c4cae8;
+  --c-8093a4: #c5cbe8;
+  --c-8094a4: #c6cce8;
+  --c-8494a2: #c6cce9;
+  --c-8195a6: #c7cde9;
+  --c-8096a7: #c7cde9;
+  --c-8296a7: #c8ceea;
+  --c-7298b8: #c9ceea;
+  --c-8a98a5: #c9cfea;
+  --c-759bbf: #cacfea;
+  --c-819bb0: #cad0eb;
+  --c-8c9aa8: #cbd0eb;
+  --c-8a9caa: #cbd1eb;
+  --c-8b9dac: #ccd1eb;
+  --c-8b9eae: #cdd2ec;
+  --c-8aa3b7: #cdd2ec;
+  --c-96a2ac: #ced3ec;
+  --c-8aa4ba: #ced3ed;
+  --c-99a5af: #cfd4ed;
+  --c-8ea7bb: #d0d5ed;
+  --c-8aa8c5: #d0d5ed;
+  --c-98a7b5: #d1d6ee;
+  --c-99a7b3: #d1d6ee;
+  --c-8aa9c8: #d2d7ee;
+  --c-9aa8b2: #d3d7ef;
+  --c-91abc0: #d3d8ef;
+  --c-7aadd8: #d4d8ef;
+  --c-9cb7d0: #d4d9ef;
+  --c-a8bdd1: #d5d9f0;
+  --c-aac0d5: #d6daf0;
+  --c-b7c3cf: #d6daf0;
+  --c-b8c8d5: #d7dbf0;
+  --c-bacddd: #d7dbf1;
+  --c-b6cee5: #d8dcf1;
   /* accent */
-  --c-365e80: #5f9fd9;
-  --c-315d8c: #61a0da;
-  --c-914735: #63a1db;
-  --c-345f8e: #64a3db;
-  --c-436078: #66a4dc;
-  --c-42617e: #68a5dd;
-  --c-456480: #6aa6de;
-  --c-486480: #6ba7de;
-  --c-426889: #6da9df;
-  --c-456888: #6faae0;
-  --c-466887: #71abe1;
-  --c-2c729b: #72ace1;
-  --c-536f87: #74ade2;
-  --c-54718a: #76afe3;
-  --c-55728b: #78b0e4;
-  --c-527594: #79b1e4;
-  --c-49779e: #7bb2e5;
-  --c-3976b6: #7db4e6;
-  --c-587b99: #7fb5e7;
-  --c-8a7652: #80b6e7;
-  --c-557d9f: #82b7e8;
-  --c-617d94: #84b8e9;
-  --c-8c7853: #86baea;
-  --c-587fa9: #87bbea;
-  --c-658096: #89bceb;
-  --c-a38a57: #8bbdec;
-  --c-a78d58: #8dbeed;
-  --c-b59a63: #8ec0ed;
-  --c-b39c70: #90c1ee;
-  --c-bca674: #92c2ef;
+  --c-365e80: #8d9aee;
+  --c-315d8c: #8e9bee;
+  --c-914735: #909cee;
+  --c-345f8e: #919def;
+  --c-436078: #929fef;
+  --c-42617e: #93a0ef;
+  --c-456480: #95a1ef;
+  --c-486480: #96a2f0;
+  --c-426889: #97a3f0;
+  --c-456888: #98a4f0;
+  --c-466887: #9aa5f0;
+  --c-2c729b: #9ba7f1;
+  --c-536f87: #9ca8f1;
+  --c-54718a: #9ea9f1;
+  --c-55728b: #9faaf1;
+  --c-527594: #a0abf2;
+  --c-49779e: #a1acf2;
+  --c-3976b6: #a3adf2;
+  --c-587b99: #a4aef2;
+  --c-8a7652: #a5b0f3;
+  --c-557d9f: #a7b1f3;
+  --c-617d94: #a8b2f3;
+  --c-8c7853: #a9b3f3;
+  --c-587fa9: #aab4f4;
+  --c-658096: #acb5f4;
+  --c-a38a57: #adb6f4;
+  --c-a78d58: #aeb8f4;
+  --c-b59a63: #afb9f5;
+  --c-b39c70: #b1baf5;
+  --c-bca674: #b2bbf5;
   /* ink */
-  --c-1b2a4a: #e4eefa;
-  --c-112e48: #e5eefa;
-  --c-142f49: #e5effa;
-  --c-173451: #e6effa;
-  --c-163653: #e7f0fb;
-  --c-153753: #e7f0fb;
-  --c-173b5a: #e8f1fb;
-  --c-233f58: #e9f1fb;
-  --c-244460: #e9f1fb;
-  --c-29475f: #eaf2fb;
-  --c-23476b: #ebf2fb;
-  --c-254969: #ebf3fc;
-  --c-2e4b68: #ecf3fc;
-  --c-264c6b: #edf4fc;
-  --c-254d6d: #edf4fc;
-  --c-244e70: #eef4fc;
-  --c-365168: #eff5fc;
-  --c-315574: #eff5fc;
-  --c-385875: #f0f6fd;
-  --c-31597a: #f1f6fd;
-  --c-365b7b: #f1f7fd;
-  --c-285f70: #f2f7fd;
-  /* brand gold and status tones keep their hue */
-  --c-bfa775: #d9c08d;
-  --c-e0caae: #7a6440;
-  --c-fff8ef: #3a2f1d;
-  --c-694d35: #e8cfa9;
+  --c-1b2a4a: #eceefa;
+  --c-112e48: #edeefa;
+  --c-142f49: #edeffa;
+  --c-173451: #eeeffa;
+  --c-163653: #eef0fb;
+  --c-153753: #eff0fb;
+  --c-173b5a: #eff1fb;
+  --c-233f58: #f0f1fb;
+  --c-244460: #f0f2fb;
+  --c-29475f: #f1f2fb;
+  --c-23476b: #f1f3fb;
+  --c-254969: #f2f3fc;
+  --c-2e4b68: #f2f4fc;
+  --c-264c6b: #f3f4fc;
+  --c-254d6d: #f3f5fc;
+  --c-244e70: #f4f5fc;
+  --c-365168: #f4f6fc;
+  --c-315574: #f5f6fc;
+  --c-385875: #f5f7fd;
+  --c-31597a: #f6f7fd;
+  --c-365b7b: #f6f8fd;
+  --c-285f70: #f7f8fd;
+  /* the seal's gold, and status tones, keep their hue */
+  --c-bfa775: #c0a860;
+  --c-e0caae: #8a7340;
+  --c-fff8ef: #2a2415;
+  --c-694d35: #e8d3a2;
   --c-8a3d32: #f0a294;
-  --c-fff0ed: #3c2420;
+  --c-fff0ed: #33211d;
   /* shadows and tints */
-  --c-0c2639a8: #00000055;
-  --c-15324e04: #00000055;
-  --c-15324e0c: #00000055;
-  --c-15324e12: #00000055;
-  --c-17344b06: #00000055;
-  --c-18354c06: #00000055;
+  --c-0c2639a8: #00000066;
+  --c-15324e04: #00000066;
+  --c-15324e0c: #00000066;
+  --c-15324e12: #00000066;
+  --c-17344b06: #00000066;
+  --c-18354c06: #00000066;
   --c-7594af18: #ffffff14;
   --c-7d9dc333: #ffffff14;
-  /* Chart series and allocation ramp, read by the SVG components. */
-  --series-1: #7fb2e6;
-  --series-2: #4d8fd6;
-  --series-3: #8fd0c4;
-  --series-4: #b9a2e8;
-  --ramp-1: #7fb2e6;
-  --ramp-2: #4d8fd6;
-  --ramp-3: #35618f;
-  --ramp-4: #24405e;
+
+  /* Data series: brand blue lightened for a dark page, with the seal's
+     gold carrying the leading series so the deck reads as GSWM. */
+  --series-1: #c0a860;
+  --series-2: #9aa6f2;
+  --series-3: #6f7de0;
+  --series-4: #c3c8ef;
+  --ramp-1: #c0a860;
+  --ramp-2: #9aa6f2;
+  --ramp-3: #5b6bd6;
+  --ramp-4: #333d7a;
 }
 
 /* --- structural treatment, not a recolour ------------------------------- */
 .slide[data-slide-theme="dark"] {
-  background: #0e1e31;
-  border-color: #2b435e;
-  box-shadow: 0 10px 34px #00000059;
-  color: #e9f1fa;
+  background: #111740;
+  border-color: #2c3670;
+  box-shadow: 0 10px 34px #00000066;
+  color: #eceefa;
 }
 .slide.cover[data-slide-theme="dark"] {
-  background: #0e1e31;
-  /* The cover's navy spine reads as absence on a navy page; brighten it. */
-  border-left-color: #6fa8dc;
+  background: #111740;
+  /* The spine carries the seal's gold on a navy page. */
+  border-left-color: #c0a860;
 }
 /* Hairlines vanish on a dark page, so rules carry a little more weight.
    Only the side each element actually draws is widened: the CSS reset leaves
@@ -220,13 +222,13 @@
 [data-slide-theme="dark"] .overview-stats,
 [data-slide-theme="dark"] .account-summary-head,
 [data-slide-theme="dark"] .regional-table-head { border-bottom-width: 1.5px; }
-[data-slide-theme="dark"] .gold-rule { height: 3px; width: 72px; }
+[data-slide-theme="dark"] .gold-rule { height: 3px; width: 72px; background: #c0a860; }
 /* Panels need a visible edge once their fill is close to the page. */
 [data-slide-theme="dark"] .index-card,
 [data-slide-theme="dark"] .earnings-metric,
 [data-slide-theme="dark"] .sensitivity-scenario,
-[data-slide-theme="dark"] .risk-account { border: 1px solid #33506f; }
-[data-slide-theme="dark"] .data-pending { border: 1px dashed #3d5c7d; }
+[data-slide-theme="dark"] .risk-account { border: 1px solid #2c3670; }
+[data-slide-theme="dark"] .data-pending { border: 1px dashed #3a4685; }
 /* The seal is a full-colour mark with navy lettering on transparency, so it
    sits on a light chip rather than being filtered -- the brand colours stay
    exact and the outer ring stays readable. */
@@ -234,7 +236,7 @@
   background: #f2f6fb;
   border-radius: 50%;
   padding: 2px;
-  box-shadow: 0 0 0 1px #33506f;
+  box-shadow: 0 0 0 1px #3a4685;
 }
 /* The wordmark beside it is set in the slide's own ink, which already flips. */
 

@@ -77,3 +77,50 @@
   height: var(--page-h);
   aspect-ratio: auto;
 }
+
+/* --- Equity exposure ----------------------------------------------------
+   Sector weights run full width above the over/underweight chart, so the
+   board is one SVG and the type is set here rather than per element. */
+.equity-slide { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+/* workspace.css caps every svg on this slide at 190px for the old two-column
+   layout; the board is the layout now, so it sets its own height. */
+.slide .equity-slide .equity-board { max-height: none; }
+.equity-board { width: 100%; height: auto; display: block; margin: 14px 0 0; flex: 0 1 auto; min-height: 0; }
+.equity-slide .equity-source { margin-top: auto; padding-top: 10px; }
+.eq-kicker { font-size: 8px; font-weight: 600; letter-spacing: 1.1px; fill: var(--c-466887, #466887); }
+.eq-sector { font-size: 11px; fill: var(--c-254562, #254562); }
+.eq-num { font-size: 11px; fill: var(--c-254562, #254562); font-variant-numeric: tabular-nums; }
+.eq-diff { font-weight: 500; }
+.eq-diff.is-over { fill: var(--c-254e7a, #254e7a); }
+.eq-diff.is-under { fill: var(--c-6f879b, #6f879b); }
+.eq-axis { font-size: 8px; letter-spacing: 1px; fill: var(--c-547796, #547796); }
+.eq-rule-strong { stroke: var(--c-a9bcd0, #a9bcd0); stroke-width: 1; }
+.eq-zeroline { stroke: var(--c-a9bcd0, #a9bcd0); stroke-width: 1; }
+.eq-zebra { fill: var(--c-f5f8fb, #f5f8fb); }
+.eq-bar-over { fill: var(--c-254e7a, #254e7a); }
+.eq-bar-under { fill: var(--c-91b2d2, #91b2d2); }
+
+/* --- Risk snapshot range -------------------------------------------------
+   The range reads as three anchors -- downside, today, upside -- over a scale
+   split at today's value, rather than one gradient bar the eye cannot measure. */
+.range-anchors { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; margin: 0 0 9px; }
+.range-anchor { display: flex; flex-direction: column; gap: 2px; }
+.range-anchor span { font-size: 8px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; color: var(--c-466887, #466887); }
+.range-anchor b { font-size: 16px; font-weight: 400; letter-spacing: -.3px; }
+.range-anchor small { font-size: 9px; color: var(--c-385875, #385875); }
+.range-anchor.is-today { text-align: center; }
+.range-anchor.is-up { text-align: right; }
+.range-anchor.is-up small, .range-anchor.is-down small { font-weight: 500; }
+.range-scale { position: relative; height: 12px; background: var(--c-e7eef5, #e7eef5); border-radius: 2px; overflow: hidden; }
+.range-band { position: absolute; top: 0; height: 100%; }
+.range-band.is-down { left: 0; background: var(--c-91b2d2, #91b2d2); }
+.range-band.is-up { background: var(--c-254e7a, #254e7a); }
+.range-today { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--c-142f49, #142f49); z-index: 1; }
+.range-ticks { display: flex; justify-content: space-between; font-size: 8px; color: var(--c-385875, #385875); margin: 5px 0 9px; }
+.range-ticks span:nth-child(2) { font-weight: 500; }
+
+/* These two sat just under 4.5:1 against white at 8-10px. Use a token the dark
+   theme actually defines, or the override survives into the navy deck as dark
+   text on a dark page. */
+.equity-slide .equity-heading > span { color: var(--c-315574, #315574); }
+.equity-slide .equity-source { color: var(--c-315574, #315574); }

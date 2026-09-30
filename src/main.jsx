@@ -366,7 +366,10 @@ function App() {
           <span>
             {slide.snippet ? "Source: uploaded image" : slide.id === "cover"
               ? "PORTFOLIO REVIEW"
-              : ["market-indexes", "regional-attribution", "risk", "attribution", "account-summary"].includes(slide.id) ? "Source and reporting basis shown above"
+              // The market-indexes slide carries neither a footer label nor a
+              // source note: both were removed as redundant on that page.
+              : slide.id === "market-indexes" ? ""
+              : ["regional-attribution", "risk", "attribution", "account-summary"].includes(slide.id) ? "Source and reporting basis shown above"
               : slide.id === "equity"
                 ? "Benchmark methodology and source shown above"
                 : "Source: supplied portfolio position values"}
@@ -559,8 +562,8 @@ function App() {
                   <div className="component-grid optional-components">
                     {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
                   </div>
-                  {selected.includes("equity") && (
-                    <details className="data-drawer"><summary><span>Equity benchmark</span><small>{equity ? "Ready" : "Review needed"}</small><ChevronRight size={16}/></summary><div className="equity-input">
+                  {selected.includes("equity") && !equity && (
+                    <details className="data-drawer" open><summary><span>Equity benchmark</span><small>Review needed</small><ChevronRight size={16}/></summary><div className="equity-input">
                       <div>
                         <h3>Portfolio vs. S&P 500</h3>
                         <p>{benchmark.loading && !benchmark.snapshot ? "Loading daily benchmark…" : benchmark.snapshot ? `IVV equity proxy · As of ${benchmark.snapshot.asOf}` : "Benchmark unavailable. Retry or import sector data."}</p>
@@ -593,7 +596,18 @@ function App() {
                       )}
                     </div></details>
                   )}
-                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk snapshot</span><small>{riskSnapshot || supporting.risk ? "Ready" : riskStatus.busy ? "Building" : riskStatus.error ? "Unavailable" : "Building"}</small><ChevronRight size={16}/></summary><RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/></details>}
+                  {/* The snapshot builds itself, so this row is only shown when it failed and
+                      there is something to act on. It stays mounted either way -- swapping
+                      the element would remount it and refire the price-history fetch. */}
+                  {selected.includes("risk") && (() => {
+                    const needsAction = !!riskStatus.error && !riskSnapshot && !supporting.risk;
+                    return (
+                      <details className={needsAction ? "data-drawer" : "hidden"} open={needsAction}>
+                        <summary><span>Risk snapshot</span><small>Unavailable</small><ChevronRight size={16}/></summary>
+                        <RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/>
+                      </details>
+                    );
+                  })()}
                   <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
                   {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
                 </section>
