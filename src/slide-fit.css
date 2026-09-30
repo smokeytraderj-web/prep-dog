@@ -1,0 +1,79 @@
+/* Slides are a fixed 16:9 box with overflow:hidden, so anything taller than the
+   body is silently clipped -- which read as the content "shifting down" off the
+   bottom. Two causes, fixed here:
+   1. Flex and grid children default to min-height:auto, so they refuse to shrink
+      below their content and push the footer out instead of fitting.
+   2. The chart panel and index cards were sized without a ceiling, so a tall
+      right column set the height of the whole row. */
+
+/* Let every slide's content column actually shrink to the space it has. */
+.slide-body > * { min-height: 0; }
+.indexes-slide > *,
+.risk-snapshot-slide > *,
+.account-summary-slide > *,
+.regional-attribution-slide > * { min-width: 0; }
+
+/* --- YTD market snapshot ------------------------------------------------ */
+.index-chart-layout { flex: 1; min-height: 0; align-items: stretch; }
+.index-chart-panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* The chart's own viewBox is sized to fit this share, so the cap is a
+   backstop rather than the thing that decides its height. */
+.index-chart-panel svg { flex: 0 1 auto; min-height: 0; max-height: 200px; }
+.index-chart-layout .index-grid { min-height: 0; align-content: center; }
+.index-chart-layout .index-card { padding: 7px 12px; }
+.index-chart-layout .index-card b { font-size: 18px; }
+.index-chart-layout .index-card span { font-size: 10px; }
+.index-chart-layout .index-card p { font-size: 9px; margin: 3px 0 5px; }
+.index-chart-panel h3 { margin: 0 0 6px; }
+.index-legend { margin: 5px 0 0 25px; gap: 4px 12px; }
+.index-readout { padding-top: 12px; }
+
+/* --- Risk snapshot ------------------------------------------------------
+   The grid gets a fixed share of the slide, and grid items overflow rather
+   than shrink, so the column content is trimmed to fit inside that share
+   instead of spilling over the basis line below it. */
+.snapshot-lede { padding-bottom: 9px; margin-bottom: 11px; }
+.snapshot-lede strong { font-size: 26px; }
+.snapshot-lede > svg { max-height: 88px; }
+.snapshot-outcomes strong { font-size: 21px; }
+.snapshot-outcomes span { margin-top: 5px; }
+.snapshot-grid { min-height: 0; gap: 28px; }
+.snapshot-grid h3 { margin: 0 0 8px; }
+.snapshot-endpoints b { font-size: 16px; }
+.snapshot-endpoints small { margin: 3px 0; }
+.snapshot-range-track { height: 12px; margin: 6px 0 8px; }
+.snapshot-explain { margin: 0 0 9px; }
+.snapshot-allocation { height: 15px; }
+.snapshot-legend { margin-top: 6px; gap: 5px 15px; }
+.snapshot-measures > div { padding: 5px 0; }
+.snapshot-costs { margin-top: 7px; }
+.risk-snapshot-slide .context-source { margin: 8px 0 4px; }
+
+/* The mobile breakpoint drops the fixed ratio, so the caps above must not
+   squash the chart when the slide is free to grow. */
+@media (max-width: 760px) {
+  .index-chart-panel svg { max-height: none; }
+  .snapshot-lede > svg { max-height: 110px; }
+}
+
+/* The preview renders the slide at its true page size and scales it down to the
+   stage (see SlideFrame in main.jsx), so what you review is a faithful miniature
+   of the printed page rather than a differently sized re-layout. That removes the
+   whole class of "fits at one window width, overflows at another" bugs. */
+.slide-frame { width: 100%; position: relative; }
+.slide-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+.slide-page > .slide {
+  width: var(--page-w);
+  height: var(--page-h);
+  aspect-ratio: auto;
+}

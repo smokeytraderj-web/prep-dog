@@ -16,6 +16,8 @@ import {
   Plus,
   X,
   FileText,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
@@ -23,9 +25,11 @@ import "./workspace.css";
 import "./report.css";
 import "./slide-updates.css";
 import EquitySlide from "./EquitySlide";
-import { RiskSnapshotInput, RiskSnapshotSlide } from "./RiskSnapshot";
+import { RiskSnapshotStatus, RiskSnapshotSlide } from "./RiskSnapshot";
 import "./risk-snapshot.css";
 import "./data-drawers.css";
+import "./slide-fit.css";
+import "./slide-theme.css";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -75,8 +79,48 @@ const sections = [
     description: "Sector weights versus the current S&P 500 proxy.",
     icon: ChartNoAxesColumnIncreasing,
   },
-  { id: "risk", name: "Risk snapshot", description: "Build the in-house model or import a sourced Riskalyze report.", icon: ShieldCheck },
+  { id: "risk", name: "Risk snapshot", description: "Risk score, modeled range, and allocation from the confirmed holdings.", icon: ShieldCheck },
 ];
+// The deck prints at 13.333in x 7.5in (96dpi), so the preview renders a slide at
+// exactly that pixel size and scales it to the stage. Reviewing a true miniature
+// of the page means the preview and the PDF cannot disagree about what fits.
+const PAGE_W = 1280;
+const PAGE_H = 720;
+// Below this the slide stylesheets drop the fixed ratio and reflow for reading,
+// which is more useful on a phone than a faithful but unreadable thumbnail.
+const SCALED_PREVIEW_MIN = 761;
+
+function SlideFrame({ children }) {
+  const frame = useRef(null);
+  const [scale, setScale] = useState(null);
+  useEffect(() => {
+    const element = frame.current;
+    if (!element || typeof ResizeObserver === "undefined") return;
+    const measure = (width) =>
+      setScale(window.innerWidth < SCALED_PREVIEW_MIN || !width ? null : width / PAGE_W);
+    const observer = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
+    observer.observe(element);
+    measure(element.getBoundingClientRect().width);
+    return () => observer.disconnect();
+  }, []);
+  // The frame is always rendered so it can be measured; the page inside it is
+  // only scaled once that measurement exists.
+  return (
+    <div className="slide-frame" ref={frame} style={scale ? { height: PAGE_H * scale } : undefined}>
+      {scale ? (
+        <div
+          className="slide-page"
+          style={{ transform: `scale(${scale})`, "--page-w": `${PAGE_W}px`, "--page-h": `${PAGE_H}px` }}
+        >
+          {children}
+        </div>
+      ) : (
+        children
+      )}
+    </div>
+  );
+}
+
 function App() {
   const [step, setStep] = useState(0),
     [text, setText] = useState(""),
@@ -89,6 +133,15 @@ function App() {
     [page, setPage] = useState(0),
     [done, setDone] = useState(false),
     [drag, setDrag] = useState(false);
+  // Slides only: the app chrome keeps its own palette. Persisted so an advisor
+  // who works in one theme is not flipped back on every deck.
+  const [slideTheme, setSlideTheme] = useState(() => {
+    try { return localStorage.getItem("prepdog.slideTheme") === "dark" ? "dark" : "light"; }
+    catch { return "light"; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("prepdog.slideTheme", slideTheme); } catch { /* private window */ }
+  }, [slideTheme]);
   const [importedEquity, setEquity] = useState(null),
     [equityError, setEquityError] = useState(""),
     [showExample, setShowExample] = useState(false);
@@ -300,6 +353,7 @@ function App() {
   function renderSlide({ slide, index, print = false }) {
     return (
       <article
+        data-slide-theme={slideTheme}
         className={`slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
       >
         <div className="slide-brand">
@@ -537,7 +591,7 @@ function App() {
                       )}
                     </div></details>
                   )}
-                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk inputs</span><small>{riskSnapshot || supporting.risk ? "Ready" : "Inputs needed"}</small><ChevronRight size={16}/></summary><RiskSnapshotInput holdings={holdings} positions={positions} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/></details>}
+                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk snapshot</span><small>{riskSnapshot || supporting.risk ? "Ready" : "Building"}</small><ChevronRight size={16}/></summary><RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/></details>}
                   <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
                   {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
                 </section>
@@ -627,11 +681,25 @@ function App() {
                   ))}
                 </aside>
                 <div className="preview-stage">
-                  {renderSlide({ slide: slides[page], index: page })}
+                  <SlideFrame>{renderSlide({ slide: slides[page], index: page })}</SlideFrame>
                   <div className="preview-controls">
                     <span>
                       {page + 1} / {slides.length}
                     </span>
+                    <div className="theme-toggle" role="group" aria-label="Slide theme">
+                      {["light", "dark"].map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          className={slideTheme === option ? "current" : ""}
+                          aria-pressed={slideTheme === option}
+                          onClick={() => setSlideTheme(option)}
+                        >
+                          {option === "light" ? <Sun size={13} /> : <Moon size={13} />}
+                          {option === "light" ? "Light" : "Navy"}
+                        </button>
+                      ))}
+                    </div>
                     <div className="flex gap-2">
                       <button
                         aria-label="Previous slide"

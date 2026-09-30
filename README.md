@@ -11,7 +11,7 @@ npm test
 npm run build
 ```
 
-The Vite dev server and Sites Worker expose `/api/benchmark/sp500`. The server only fetches public benchmark data; user holdings remain in browser memory. No accounts, database or API keys are required. `npm run build:site` packages the app and benchmark endpoint for Sites.
+The Vite dev server and Sites Worker expose `/api/benchmark/sp500`, `/api/market/ytd` and `/api/history`. The server only fetches public benchmark data; user holdings remain in browser memory. No accounts, database or API keys are required. `npm run build:site` packages the app and benchmark endpoint for Sites.
 
 ## Holdings and deck flow
 
@@ -37,7 +37,7 @@ The first market slide loads year-to-date returns automatically from Yahoo Finan
 
 The equity slide uses the supplied 11-sector layout, with actual portfolio-minus-benchmark differences. Navy is overweight; light blue is underweight.
 
-Draft app-module specifications are in `docs/slide-skills/attribution-report.md` and `docs/slide-skills/riskalyze.md`. Each defines one core slide, up to two optional slides, required report data and validation rules. They are not yet executable or selectable components. An anonymized report for each is the next input needed to finalize the layouts and extraction contracts.
+Draft app-module specifications are in `docs/slide-skills/attribution-report.md` and `docs/slide-skills/riskalyze.md`. Each defines one core slide, up to two optional slides, required report data and validation rules. They are not yet executable or selectable components. An anonymized report for each is the next input needed to finalize the layouts and extraction contracts. The Riskalyze draft covers importing a vendor report; it is not the Risk snapshot component, which needs no import.
 
 ## Deployment
 
@@ -49,7 +49,7 @@ Checks: parser and benchmark tests, actual provider/API fetch, browser paste/upl
 
 The report flow is driven by the uploaded file. Workbook imports inspect all worksheets, locate a holdings header below preamble rows, detect ticker/symbol, market value, quantity, price, currency, account, asset class and security name columns, and show a review table before accepting the data. Market value is preferred; quantity × price is available when a market value column is absent. A price-only export is blocked because a share price is not a position value. Non-USD rows, invalid tickers, totals, negative values and ambiguous rows are surfaced for correction.
 
-The upload review preserves per-row account and asset-class detail. This powers the personalized asset allocation and account summary slides. Historical performance, Riskalyze metrics, earnings expectations and attribution are never invented from a current holdings snapshot. They require a sourced supporting report JSON using `public/report-data-template.json`. The deck builder only enables those components after validation of dates, units, source, periods and reported values.
+The upload review preserves per-row account and asset-class detail. This powers the personalized asset allocation and account summary slides, and asset classes supplied there take priority in the risk snapshot. Historical performance, vendor risk scores, earnings expectations and attribution are never invented from a current holdings snapshot. They require a sourced supporting report JSON using `public/report-data-template.json`. The deck builder only enables those components after validation of dates, units, source, periods and reported values.
 
 The Max Bender reference informs the report structure: a client cover, portfolio overview, asset allocation, account summary, market context, risk metrics and performance contribution. The supplied Bloom pages 5 and 8 informed the sector-performance and earnings layouts. Their fixed example values are not shipped as production data.
 
@@ -59,9 +59,43 @@ Sites is the primary publication. Vercel Git deployments are disabled in `vercel
 
 Drop PNG, JPG, or WEBP snippets into Source data (up to 8 MB per image). Each image creates its own slide with an editable title and optional takeaway. Images remain in browser memory and are included in print/PDF output; this does not extract or invent data from the images. The logo returns to the holdings screen without clearing the current work. The YTD slide includes a daily return graph when history is available, or a comparison bar chart for manually supplied returns.
 
+## Slide sizing
+
+The deck prints at 13.333in x 7.5in (1280x720 at 96dpi). The preview renders each
+slide at exactly that pixel size and scales it to the stage with a CSS transform,
+so what you review is a true miniature of the printed page. A slide that fits in
+the preview fits in the PDF, at any window width — the two cannot disagree. Below
+the 760px breakpoint the slides reflow for reading instead of scaling.
+
+## Slide theme
+
+The deck preview carries a **Light / Navy** toggle that themes the slides only; the
+surrounding app keeps its own palette. The choice persists per browser and is what
+prints, so a navy deck saves as a navy PDF.
+
+Every colour in the slide stylesheets is written as `var(--c-<hex>, #<hex>)`. With no
+token defined the light deck renders exactly as it always did; `src/slide-theme.css`
+defines those tokens on a dark slide and repaints the subtree. On top of the palette
+swap the navy deck gets its own accent ramp and chart series, heavier rules, bordered
+panels and a light chip behind the brand seal, so it reads as a deliberate dark deck
+rather than an inverted light one. Both themes pass WCAG AA contrast for slide text.
+
 ## Risk snapshot skill
 
-The supplied skill is versioned in `docs/slide-skills/risk-snapshot/`, including its methodology, renderer, example inputs, calibration helper and tests. Select **Risk snapshot**, download the current portfolio’s template, fill sourced asset classes and risk inputs, then upload the JSON. The app uses the same pure model as the CLI. A generated snapshot containing `model_input` can also be uploaded; it is recomputed and checked against the active holdings. Existing sourced Riskalyze report imports remain supported separately.
+The supplied skill is versioned in `docs/slide-skills/risk-snapshot/`, including its methodology, renderer, example inputs, calibration helper and tests. Select **Risk snapshot** and the slide builds itself from the confirmed holdings — there is nothing to download, fill in or upload. The app uses the same pure model as the CLI.
+
+Inputs are derived the way the equity slide derives sector exposure:
+
+- **Asset class** comes from the fund table in `src/asset-class.js` (equity, bond, cash and commodity/REIT funds), the IVV constituent file for individual equities, and an asset class supplied in an imported holdings file wins over both. An unmatched ticker is grouped as `other` and named in a slide warning rather than guessed.
+- **Return, volatility, covariance and drawdown** come from 60 months of aligned adjusted closes fetched per holding from `/api/history`, so the model takes its blended-portfolio path rather than the class-correlation fallback.
+- **Dividend yield** is each holding's trailing twelve-month distributions over its latest unadjusted close, from the same request. A holding that paid nothing in the window is a measured zero.
+- **The risk-free rate** is the 13-week Treasury bill (`^IRX`), which is what lets the slide show a risk-adjusted grade.
+- **Expense ratio** comes from the published-rate table in `src/fund-costs.js`. An individual equity identified from the constituent file carries none, which is a fact rather than an assumption. A fund with no rate on file omits the measure for the whole portfolio and names itself in a warning.
+- **Tax drag and the advisory fee** stay omitted. Neither is derivable from market data — tax drag needs a tax rate and the fee is a firm input — so they are absent rather than guessed at zero.
+
+A holding with no usable history blocks the slide with a named error instead of being dropped from the portfolio.
+
+`src/fund-costs.js` is a maintained list, not live data. Check a rate before it goes on a client deck if the fund has recently repriced.
 
 Integration corrections: the original 1.645 normal quantile defines a 5th–95th percentile interval with **90% central coverage**; its formula and score anchors are preserved with corrected labels. Unknown costs, yield, risk-free rates, and drawdown are omitted instead of silently defaulted or estimated. History requires shared ordered dates. The model is explicitly in-house and is never branded as a Riskalyze Risk Number or GPA.
 

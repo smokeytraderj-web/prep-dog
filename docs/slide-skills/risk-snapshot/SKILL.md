@@ -98,4 +98,29 @@ history helps more than retuning anchors ever will.
 
 ## Prep Dog integration
 
-The app imports `scripts/model.mjs` directly; the CLI delegates to the same model. In the Risk snapshot component, download the portfolio-specific input template, fill sourced asset classes and aligned history (or return/volatility), then upload it. The app checks tickers and values against the confirmed holdings. Missing costs, yield, drawdown, or risk-free inputs stay missing. The 1.645 formula and score anchors are unchanged: its 5th–95th percentile interval is labeled **90% central coverage**, not 95%. Positive lower returns map to the minimum downside score. The app adapts this layout to its current deck dimensions and navy/blue theme.
+The app imports `scripts/model.mjs` directly; the CLI delegates to the same model.
+
+In the app there is **no input step**. Selecting the Risk snapshot component builds
+the slide from the confirmed holdings, assembling this skill's `input` contract
+automatically:
+
+| Contract field | How the app fills it |
+| --- | --- |
+| `holdings[].asset_class` | An asset class supplied in an imported holdings file; else the IVV constituent file (equities); else the fund table in `src/asset-class.js`; else `other`, named in a warning. |
+| `holdings[].history`, `history_dates` | 60 months of aligned adjusted closes per holding from the app's `/api/history` endpoint, so the aligned-history path is taken and covariance and drawdown are real. |
+| `periods_per_year` | 12, matching the monthly bars. |
+| `holdings[].yield_pct` | Trailing twelve-month distributions over the latest unadjusted close, from the same request. No distribution in the window is a measured zero. |
+| `risk_free_pct` | The 13-week Treasury bill (`^IRX`), which is what produces the grade. |
+| `holdings[].expense_ratio_pct` | The published-rate table in `src/fund-costs.js`. An individual equity identified from the constituent file carries none. A fund with no rate on file omits the measure for the whole portfolio. |
+| `tax_drag_pct`, `advisory_fee_pct` | Left unset. Tax drag needs a tax rate and the fee is a firm input, so both stay omitted rather than defaulting to zero. |
+
+A holding with no usable history raises a named error rather than being dropped,
+so the slide never models a portfolio smaller than the one confirmed.
+
+The CLI path in "Step 1" above is unchanged and remains the way to supply sourced
+costs, yields and a risk-free rate, which the app deliberately does not invent.
+
+The 1.645 formula and score anchors are unchanged: its 5th–95th percentile interval
+is labeled **90% central coverage**, not 95%. Positive lower returns map to the
+minimum downside score. The app adapts this layout to its current deck dimensions,
+and the slide follows the deck's light or navy theme.
