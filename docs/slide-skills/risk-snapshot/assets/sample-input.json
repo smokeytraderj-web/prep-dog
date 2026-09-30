@@ -1,0 +1,83 @@
+{
+  "as_of": "2026-09-29",
+  "portfolio_label": "Proposal",
+  "client_label": "Sample Client",
+  "page_number": "06",
+  "risk_free_pct": 4.0,
+  "advisory_fee_pct": 0.0,
+  "holdings": [
+    {
+      "ticker": "IVV",
+      "name": "iShares Core S&P 500",
+      "value": 3200000,
+      "asset_class": "stocks",
+      "annual_return_pct": 9.4,
+      "annual_vol_pct": 15.8,
+      "yield_pct": 1.28,
+      "expense_ratio_pct": 0.03,
+      "tax_drag_pct": 0.35,
+      "max_drawdown_pct": -18.2
+    },
+    {
+      "ticker": "VXUS",
+      "name": "Vanguard Total International Stock",
+      "value": 1044328,
+      "asset_class": "stocks",
+      "annual_return_pct": 7.1,
+      "annual_vol_pct": 16.4,
+      "yield_pct": 3.05,
+      "expense_ratio_pct": 0.05,
+      "tax_drag_pct": 0.62,
+      "max_drawdown_pct": -20.4
+    },
+    {
+      "ticker": "AGG",
+      "name": "iShares Core US Aggregate Bond",
+      "value": 1400000,
+      "asset_class": "bonds",
+      "annual_return_pct": 4.3,
+      "annual_vol_pct": 5.6,
+      "yield_pct": 3.85,
+      "expense_ratio_pct": 0.03,
+      "tax_drag_pct": 0.71,
+      "max_drawdown_pct": -6.9
+    },
+    {
+      "ticker": "MUB",
+      "name": "iShares National Muni Bond",
+      "value": 619000,
+      "asset_class": "bonds",
+      "annual_return_pct": 3.6,
+      "annual_vol_pct": 4.8,
+      "yield_pct": 3.02,
+      "expense_ratio_pct": 0.07,
+      "tax_drag_pct": 0.05,
+      "max_drawdown_pct": -5.4
+    },
+    {
+      "ticker": "GLD",
+      "name": "SPDR Gold Shares",
+      "value": 153600,
+      "asset_class": "other",
+      "annual_return_pct": 6.8,
+      "annual_vol_pct": 14.2,
+      "yield_pct": 0.0,
+      "expense_ratio_pct": 0.4,
+      "tax_drag_pct": 0.9,
+      "max_drawdown_pct": -16.1
+    },
+    {
+      "ticker": "CASH",
+      "name": "Money market",
+      "value": 380980,
+      "asset_class": "cash",
+      "annual_return_pct": 4.1,
+      "annual_vol_pct": 0.2,
+      "yield_pct": 4.1,
+      "expense_ratio_pct": 0.0,
+      "tax_drag_pct": 1.05,
+      "max_drawdown_pct": 0
+    }
+  ],
+  "periods_per_year": 12
+}

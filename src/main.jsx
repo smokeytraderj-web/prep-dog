@@ -23,6 +23,8 @@ import "./workspace.css";
 import "./report.css";
 import "./slide-updates.css";
 import EquitySlide from "./EquitySlide";
+import { RiskSnapshotInput, RiskSnapshotSlide } from "./RiskSnapshot";
+import "./risk-snapshot.css";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -71,7 +73,7 @@ const sections = [
     description: "Sector weights versus the current S&P 500 proxy.",
     icon: ChartNoAxesColumnIncreasing,
   },
-  { id: "risk", name: "Riskalyze", description: "Add sourced Riskalyze scores and modeled ranges.", icon: ShieldCheck },
+  { id: "risk", name: "Risk snapshot", description: "Build the in-house model or import a sourced Riskalyze report.", icon: ShieldCheck },
 ];
 function App() {
   const [step, setStep] = useState(0),
@@ -89,6 +91,7 @@ function App() {
     [equityError, setEquityError] = useState(""),
     [showExample, setShowExample] = useState(false);
   const [deckEquity, setDeckEquity] = useState(null);
+  const [riskSnapshot, setRiskSnapshot] = useState(null);
   const [snippetImages, setSnippetImages] = useState([]);
   const [importBook, setImportBook] = useState(null), [importBusy, setImportBusy] = useState(false), [importSource, setImportSource] = useState("");
   const [marketIndexes, setMarketIndexes] = useState(emptyMarketIndexes), [sectorPerformance, setSectorPerformance] = useState(emptySectorPerformance), [earnings, setEarnings] = useState(emptyEarnings);
@@ -126,7 +129,7 @@ function App() {
     ...sections
       .filter((s) => selected.includes(s.id))
       .flatMap((s) =>
-        s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
+        s.id === "risk" && riskSnapshot ? [{...s, name:"Risk snapshot"}] : s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
         : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
         : [s],
       ),
@@ -149,7 +152,7 @@ function App() {
     );
     if (r.holdings.length && !r.errors.length) {
       setImportSource("");
-      setPositions(r.holdings); setSupporting({}); setSupportError("");
+      setRiskSnapshot(null); setPositions(r.holdings); setSupporting({}); setSupportError("");
       setHoldings(r.holdings);
       setEquity(null);
       setEquityError("");
@@ -186,6 +189,7 @@ function App() {
   }
 
   function reset() {
+    setRiskSnapshot(null);
     setSnippetImages([]);
     setText("");
     setImportBook(null); setImportSource(""); setPositions([]); setSupporting({}); setSupportError(""); setPreparedFor(""); setAdvisor("");
@@ -218,6 +222,7 @@ function App() {
       if (f.size > 2 * 1024 * 1024) throw Error("Choose a report data file smaller than 2 MB.");
       const data = validateSupporting(JSON.parse(await f.text()));
       setSupporting(v => ({...v, ...data}));
+      if (data.risk) setRiskSnapshot(null);
       if (data.marketIndexes) setMarketIndexes(data.marketIndexes);
       if (data.sectorPerformance) setSectorPerformance(data.sectorPerformance);
       if (data.earnings) setEarnings(data.earnings);
@@ -244,6 +249,7 @@ function App() {
     if (slide.id === "account-summary") return <AccountSummarySlide positions={positions} source={importSource}/>;
     if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
     if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={positions} data={deckMarket.marketIndexes}/>;
+    if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot}/>;
     if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
     if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
     if (slide.id === "overview") return <PortfolioOverview holdings={holdings} equity={deckEquity}/>;
@@ -353,7 +359,7 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
+              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
                 <section
                   aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -529,6 +535,7 @@ function App() {
                       )}
                     </div>
                   )}
+                  {selected.includes("risk") && <RiskSnapshotInput holdings={holdings} positions={positions} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/>}
                   <MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/>
                   {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <section className="supporting-upload"><h3>Source data</h3><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section>}
                 </section>
@@ -562,13 +569,13 @@ function App() {
                     disabled={
                       !selected.length ||
                       (selected.includes("equity") && !equity) ||
-                      (selected.includes("risk") && !supporting.risk)
+                      (selected.includes("risk") && !supporting.risk && !riskSnapshot)
                     }
-                    onClick={() => { setDeckEquity(equity); setDeckMarket({marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
+                    onClick={() => { setDeckEquity(equity); setDeckMarket({riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>
-                  {selected.includes("risk") && !supporting.risk && <p className="helper">Upload Riskalyze data to add this optional slide.</p>}
+                  {selected.includes("risk") && !supporting.risk && !riskSnapshot && <p className="helper">Upload risk model inputs or a sourced Riskalyze report to include this slide.</p>}
                   {selected.includes("equity") && !equity && <p className="helper">Complete the sector comparison to preview this component.</p>}
                   {selected.includes("notes") && !notes.trim() && (
                     <p className="helper">

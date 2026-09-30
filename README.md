@@ -58,3 +58,11 @@ Sites is the primary publication. Vercel Git deployments are disabled in `vercel
 ## Image source slides
 
 Drop PNG, JPG, or WEBP snippets into Source data (up to 8 MB per image). Each image creates its own slide with an editable title and optional takeaway. Images remain in browser memory and are included in print/PDF output; this does not extract or invent data from the images. The logo returns to the holdings screen without clearing the current work. The YTD slide includes a daily return graph when history is available, or a comparison bar chart for manually supplied returns.
+
+## Risk snapshot skill
+
+The supplied skill is versioned in `docs/slide-skills/risk-snapshot/`, including its methodology, renderer, example inputs, calibration helper and tests. Select **Risk snapshot**, download the current portfolio’s template, fill sourced asset classes and risk inputs, then upload the JSON. The app uses the same pure model as the CLI. A generated snapshot containing `model_input` can also be uploaded; it is recomputed and checked against the active holdings. Existing sourced Riskalyze report imports remain supported separately.
+
+Integration corrections: the original 1.645 normal quantile defines a 5th–95th percentile interval with **90% central coverage**; its formula and score anchors are preserved with corrected labels. Unknown costs, yield, risk-free rates, and drawdown are omitted instead of silently defaulted or estimated. History requires shared ordered dates. The model is explicitly in-house and is never branded as a Riskalyze Risk Number or GPA.
+
+From the skill directory: `node scripts/snapshot.mjs assets/sample-input.json snapshot.json`, then `node scripts/render.mjs snapshot.json slide.html`. The sample is for testing only and never prepopulates a client deck. `npm test` includes the skill and portfolio-integration tests.

@@ -1,0 +1,7 @@
+{
+  "note": "Observed (six-month 95% downside %, vendor Risk Number) pairs read off real reports. Each pair must come from a report whose downside percentage is printed on the same page as the score. More pairs across the range means a tighter fit. Never add a guessed pair.",
+  "source": "Add the report identifier and date for each observation.",
+  "observations": [
+    { "downside_pct": -10.27, "score": 52, "source": "reference proposal page, 95% range -10.27%/+18.33%" }
+  ]
+}
