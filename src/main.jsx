@@ -147,6 +147,7 @@ function App() {
     [showExample, setShowExample] = useState(false);
   const [deckEquity, setDeckEquity] = useState(null);
   const [riskSnapshot, setRiskSnapshot] = useState(null);
+  const [riskStatus, setRiskStatus] = useState({busy: false, error: "", retry: null});
   const [snippetImages, setSnippetImages] = useState([]);
   const [importBook, setImportBook] = useState(null), [importBusy, setImportBusy] = useState(false), [importSource, setImportSource] = useState("");
   const [marketIndexes, setMarketIndexes] = useState(emptyMarketIndexes), [sectorPerformance, setSectorPerformance] = useState(emptySectorPerformance), [earnings, setEarnings] = useState(emptyEarnings);
@@ -185,6 +186,7 @@ function App() {
       .filter((s) => selected.includes(s.id))
       .flatMap((s) =>
         s.id === "risk" && riskSnapshot ? [{...s, name:"Risk snapshot"}] : s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
+        : s.id === "risk" ? []
         : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
         : [s],
       ),
@@ -591,7 +593,7 @@ function App() {
                       )}
                     </div></details>
                   )}
-                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk snapshot</span><small>{riskSnapshot || supporting.risk ? "Ready" : "Building"}</small><ChevronRight size={16}/></summary><RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot}/></details>}
+                  {selected.includes("risk") && <details className="data-drawer"><summary><span>Risk snapshot</span><small>{riskSnapshot || supporting.risk ? "Ready" : riskStatus.busy ? "Building" : riskStatus.error ? "Unavailable" : "Building"}</small><ChevronRight size={16}/></summary><RiskSnapshotStatus holdings={holdings} positions={positions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/></details>}
                   <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
                   {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
                 </section>
@@ -626,13 +628,15 @@ function App() {
                       !selected.length ||
                       (marketLoading && !validMarketIndexes(marketIndexes)) ||
                       (selected.includes("equity") && !equity) ||
-                      (selected.includes("risk") && !supporting.risk && !riskSnapshot)
+                      (selected.includes("risk") && !supporting.risk && !riskSnapshot && riskStatus.busy)
                     }
                     onClick={() => { setDeckEquity(equity); setDeckMarket({riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>
-                  {selected.includes("risk") && !supporting.risk && !riskSnapshot && <p className="helper">Upload risk model inputs or a sourced Riskalyze report to include this slide.</p>}
+                  {selected.includes("risk") && !supporting.risk && !riskSnapshot && (riskStatus.busy
+                    ? <p className="helper">Building the risk snapshot from your holdings&hellip;</p>
+                    : <p className="helper">{riskStatus.error || "The risk snapshot is unavailable."} This slide will be left out of the deck.{riskStatus.retry && <> <button className="text-button inline" onClick={riskStatus.retry}>Try again</button></>}</p>)}
                   {selected.includes("equity") && !equity && <p className="helper">Complete the sector comparison to preview this component.</p>}
                   {selected.includes("notes") && !notes.trim() && (
                     <p className="helper">

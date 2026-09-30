@@ -7,7 +7,7 @@ const ramp=['var(--ramp-1, #142f49)','var(--ramp-2, #385875)','var(--ramp-3, #78
 // The snapshot is derived from the confirmed holdings the same way the equity
 // slide is: asset class from the benchmark constituents, and return, volatility,
 // covariance and drawdown from aligned monthly price history. Nothing is uploaded.
-export function RiskSnapshotStatus({holdings, positions, benchmark, asOf, client, data, onChange}) {
+export function RiskSnapshotStatus({holdings, positions, benchmark, asOf, client, data, onChange, onStatus}) {
   const [busy,setBusy]=useState(false), [error,setError]=useState(''), [attempt,setAttempt]=useState(0);
   // Rebuild whenever the portfolio, its classifications or the report date change.
   const key=JSON.stringify([holdings.map(h=>[h.ticker,h.value]),asOf,client,positions.map(p=>[p.ticker,p.assetClass||''])]);
@@ -28,6 +28,7 @@ export function RiskSnapshotStatus({holdings, positions, benchmark, asOf, client
     return () => { cancelled=true; };
   }, [key, benchmark, attempt]);
   function retry() { built.current=''; setError(''); onChange(null); setAttempt(n=>n+1); }
+  useEffect(() => { onStatus?.({busy, error, retry}); }, [busy, error]);
   return <section className="market-editor"><div className="editor-heading"><div><h3>Risk snapshot</h3><p>Modeled from the confirmed holdings and their price history.</p></div></div>
     {busy && <p className="live-status">Building the model from {holdings.length} holdings&hellip;</p>}
     {error && <div><p className="errors" role="alert">{error}</p><button className="secondary" onClick={retry}>Try again</button></div>}
