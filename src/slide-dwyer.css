@@ -1,0 +1,193 @@
+/* The light deck, rebuilt on the Dwyer template's geometry.
+   ---------------------------------------------------------------------------
+   Measured from "Dwyer Portfolio Presentation 1.pptx", which is 13.333 x 7.5in
+   — 1280x720, the size this deck already renders at, so every position below is
+   the file's own pixel value rather than a conversion:
+
+     margins      58px left and right, 40px top, footer baseline at 672
+     kicker       10pt Calibri, caps, 4pt tracking, gold,      at x58  y40
+     title        28pt Georgia, white on navy,                 at x58  y67
+     as of        12pt Georgia, gold, right-aligned to 1222
+     band label   10pt Calibri, caps, 3pt tracking, gold
+     labels       12.5pt Calibri
+     figures      26pt Georgia
+     footer       8pt Calibri caps gold, page number 9pt right
+     source       8.5pt Calibri, muted
+
+   The template is navy-on-dark throughout. This deck stays light, so the same
+   structure is reproduced on white and the palette is re-derived: the file's
+   gold (#d3bb81) and green (#86c79a) are set for a dark ground and reach only
+   1.9:1 and 2.2:1 on white, so text uses darkened equivalents that clear
+   4.5:1 while reading as the same colours. The originals are kept for rules and
+   fills, where contrast minimums do not apply.
+
+   Everything here is scoped away from .navy-slide, which keeps its own design. */
+
+.slide:not(.navy-slide) {
+  --dw-ink: #17233f;        /* the template's ground, used here as the ink */
+  --dw-ink-2: #32436a;
+  --dw-muted: #5f6e8c;
+  --dw-gold: #8a6b25;       /* text gold, 5.0:1 on white */
+  --dw-gold-rule: #d3bb81;  /* the file's gold, for rules and fills */
+  --dw-up: #1c7a47;
+  --dw-down: #9b2c2c;
+  --dw-hair: #dfe4ed;
+  --dw-panel: #f4f6fa;
+  --dw-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --dw-serif: Georgia, "Iowan Old Style", serif;
+
+  background: #ffffff;
+  color: var(--dw-ink);
+  padding: 40px 58px 30px;
+  font-family: var(--dw-sans);
+}
+
+/* The template carries no logo lockup on a content slide: the firm name sits
+   in the footer instead, so the top of the page is kicker, title, as-of. */
+.slide:not(.navy-slide):not(.cover) .slide-brand { display: none; }
+.slide:not(.navy-slide) .slide-body { padding-top: 0; }
+
+/* --- kicker, title, as-of ----------------------------------------------- */
+.slide:not(.navy-slide) .slide-kicker,
+.slide:not(.navy-slide) .board-head .slide-kicker {
+  display: block;
+  font-family: var(--dw-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dw-gold);
+  margin: 0 0 9px;
+}
+.slide:not(.navy-slide) h2,
+.slide:not(.navy-slide) .report-heading h2,
+.slide:not(.navy-slide) .board-head h2 {
+  font-family: var(--dw-serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  line-height: 1.15;
+  color: var(--dw-ink);
+  margin: 0;
+}
+.slide:not(.navy-slide) .report-heading,
+.slide:not(.navy-slide) .board-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: 22px;
+}
+.slide:not(.navy-slide) .report-heading > span,
+.slide:not(.navy-slide) .board-meta {
+  font-family: var(--dw-serif);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--dw-gold);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* --- band labels, the small caps strip over each block ------------------- */
+.slide:not(.navy-slide) .board-head + * .navy-eyebrow,
+.slide:not(.navy-slide) .attrib-label,
+.slide:not(.navy-slide) .account-summary-label,
+.slide:not(.navy-slide) .allocation-kicker {
+  font-family: var(--dw-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dw-gold);
+}
+
+/* --- figures ------------------------------------------------------------ */
+.slide:not(.navy-slide) .attrib-headline,
+.slide:not(.navy-slide) .board-value,
+.slide:not(.navy-slide) .contents-name {
+  font-family: var(--dw-serif);
+}
+.slide:not(.navy-slide) .attrib-headline {
+  font-size: 46px;
+  font-weight: 400;
+  letter-spacing: -1px;
+}
+
+/* --- footer: firm name left, page number right -------------------------- */
+.slide:not(.navy-slide) footer {
+  border-top: 0;
+  padding-top: 14px;
+  margin-top: auto;
+  font-family: var(--dw-sans);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dw-gold);
+}
+.slide:not(.navy-slide) footer span:last-child {
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+/* --- source notes ------------------------------------------------------- */
+.slide:not(.navy-slide) .context-source,
+.slide:not(.navy-slide) .board-source,
+.slide:not(.navy-slide) .regional-note,
+.slide:not(.navy-slide) .equity-source,
+.slide:not(.navy-slide) .composition-note {
+  font-family: var(--dw-sans);
+  font-size: 8.5px;
+  line-height: 1.65;
+  color: var(--dw-muted);
+}
+
+/* --- charts take the template's palette --------------------------------- */
+.slide:not(.navy-slide) .context-board {
+  --board-ink: var(--dw-ink);
+  --board-muted: var(--dw-muted);
+  --board-rule: var(--dw-gold-rule);
+  --board-grid: var(--dw-hair);
+  --board-bar: var(--dw-ink-2);
+  --board-bar-down: #93a0ba;
+  --board-bar-estimate: #9cb0d4;
+  --board-growth: var(--dw-up);
+}
+.slide:not(.navy-slide) .board-head {
+  border-bottom: 1px solid var(--dw-gold-rule);
+  padding-bottom: 13px;
+}
+
+/* The cover keeps the template's dark panel: it is the one page the file sets
+   as a full navy field, and the light deck already did the same. */
+.slide:not(.navy-slide).cover {
+  background: var(--dw-ink);
+  border-color: var(--dw-ink);
+  color: #ffffff;
+}
+.slide.cover:not(.navy-slide) .cover-content h2 {
+  font-family: var(--dw-serif);
+  color: #ffffff;
+}
+.slide.cover:not(.navy-slide) .eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--dw-gold-rule);
+}
+.slide.cover:not(.navy-slide) .cover-client,
+.slide.cover:not(.navy-slide) .cover-sub,
+.slide.cover:not(.navy-slide) .cover-date { color: #e6eaf1; }
+.slide.cover:not(.navy-slide) .gold-rule { background: var(--dw-gold-rule); }
+/* The cover is the one light slide on a navy ground, so its brand lockup has
+   to invert with it: left dark, it sat at 1.09:1. */
+.slide.cover:not(.navy-slide) .slide-brand { color: #ffffff; }
+.slide.cover:not(.navy-slide) .slide-brand span { color: var(--dw-gold-rule); }
+.slide.cover:not(.navy-slide) footer { color: var(--dw-gold-rule); }
+
+@media (max-width: 760px) {
+  .slide:not(.navy-slide) { padding: 6%; }
+  .slide:not(.navy-slide) h2 { font-size: 24px; }
+}

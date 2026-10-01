@@ -36,6 +36,7 @@ import "./context-board.css";
 import { SectorYtdSlide, EarningsExpectationsSlide, ContentsSlide, AttributionSlide as PositionAttributionSlide } from "./ContextSlides";
 import { computeAttribution } from "./attribution";
 import { SP500_EARNINGS } from "./earnings-data";
+import "./slide-dwyer.css";
 import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
@@ -562,17 +563,9 @@ function App() {
         </div>
         <div className="slide-body">{slideContent(slide)}</div>
         <footer>
-          <span>
-            {slide.snippet ? "Source: uploaded image" : slide.id === "cover"
-              ? "ACCOUNT REVIEW"
-              // The market-indexes slide carries neither a footer label nor a
-              // source note: both were removed as redundant on that page.
-              : slide.id === "market-indexes" ? ""
-              : ["regional-attribution", "risk", "attribution", "account-summary"].includes(slide.id) ? "Source and reporting basis shown above"
-              : slide.id === "equity"
-                ? "Benchmark methodology and source shown above"
-                : "Source: supplied portfolio position values"}
-          </span>
+          {/* The Dwyer template puts the firm name in the footer and the
+              source note inside the slide, where the figures are. */}
+          <span>GOTTFRIED &amp; SOMBERG WEALTH MANAGEMENT, LLC</span>
           <span>{String(index + 1).padStart(2, "0")}</span>
         </footer>
       </article>
