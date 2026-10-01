@@ -39,7 +39,7 @@ import { enrichPositions } from "./asset-class";
 import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 import HoldingsImport from "./HoldingsImport";
-import { textToSheets } from "./holding-import";
+import { textToSheets, detectTable, extractHoldings } from "./holding-import";
 import { fetchMarketJson } from "./market-fetch";
 import { PortfolioOverview, PortfolioAllocation, ConcentrationSlide } from "./PortfolioSlides";
 import { MarketIndexesSlide, MarketIndexesEditor, SectorPerformanceEditor, EarningsEditor, SectorPerformanceSlide, EarningsSlide } from "./MarketContext";
@@ -281,6 +281,43 @@ function App() {
     } finally { setImportBusy(false); }
   }
 
+  // "Load example" used to paste ticker-and-value lines, which parseHoldings is
+  // the only thing that reads. That format cannot carry an account, an asset
+  // class or a region, so the account summary fell back to largest positions
+  // and the regional slide had nothing to match on. The example now comes from
+  // the same CSV the Example file link offers, through the same import path a
+  // real custodian export takes, so the deck demonstrates every slide.
+  async function loadExample() {
+    setImportBusy(true);
+    try {
+      const response = await fetch("/example-holdings.csv");
+      if (!response.ok) throw Error("not found");
+      const sheets = textToSheets(await response.text(), "Example holdings");
+      const rows = sheets[0].data;
+      const result = extractHoldings(rows, detectTable(rows));
+      if (!result.holdings.length) throw Error("empty");
+      setRiskSnapshot(null);
+      setHoldings(result.holdings);
+      setPositions(result.positions);
+      setText(result.holdings.map(h => `${h.ticker} ${h.value}`).join("\n"));
+      setImportSource("Example holdings");
+      setSupporting({}); setSupportError(""); setEquity(null); setEquityError("");
+      setErrors([]);
+      // Go straight to the review step, the way a confirmed file import does.
+      // Returning to the paste box would send these rows back through parse(),
+      // which rebuilds positions from the textarea and so drops the account,
+      // asset class and region the CSV carries.
+      setReviewed(true);
+      setSelected(["account-summary", "market-indexes", "regional-attribution"]);
+    } catch {
+      // The sample still works without the file; it just has no account column.
+      setText(sample);
+      setPositions([]);
+      setImportSource("");
+      setErrors([]);
+    } finally { setImportBusy(false); }
+  }
+
   function reset() {
     setRiskSnapshot(null);
     setSnippetImages([]);
@@ -517,10 +554,8 @@ function App() {
                     <label htmlFor="holdings">Holdings</label>
                     <button
                       className="text-button"
-                      onClick={() => {
-                        setText(sample);
-                        setErrors([]);
-                      }}
+                      disabled={importBusy}
+                      onClick={loadExample}
                     >
                       Load example
                     </button>
