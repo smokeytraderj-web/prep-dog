@@ -386,6 +386,9 @@ function App() {
       ),
   ];
   slides.push(...snippetImages.map(image => ({id:`snippet-${image.id}`, name:image.title || 'Source image', snippet:image})));
+  useEffect(() => {
+    if (page > slides.length - 1) setPage(Math.max(0, slides.length - 1));
+  }, [slides.length, page]);
   const navigate = (n) => {
     setStep(n);
     setDone(false);
@@ -1073,17 +1076,51 @@ function App() {
               </div>
               <div className="preview-layout">
                 <aside className="slide-list">
-                  {slides.map((s, i) => (
-                    <button
+                  {slides.map((s, i) => {
+                    // The cover and contents open every deck, so they are not
+                    // draggable and have nothing to remove. A section slide
+                    // moves by reordering `selected`; an image slide is removed
+                    // from the images themselves.
+                    const sectionId = sections.some((x) => x.id === s.id) ? s.id : null;
+                    const snippetId = s.snippet?.id || null;
+                    const movable = Boolean(sectionId);
+                    return <div
                       key={`${s.id}${i}`}
-                      aria-current={page === i ? "page" : undefined}
-                      className={page === i ? "current" : ""}
-                      onClick={() => setPage(i)}
+                      className={`slide-row ${page === i ? "current" : ""} ${dragId && dragId === sectionId ? "is-dragging" : ""}`}
+                      draggable={movable}
+                      onDragStart={movable ? (e) => { setDragId(sectionId); e.dataTransfer.effectAllowed = "move"; } : undefined}
+                      onDragEnd={movable ? () => setDragId(null) : undefined}
+                      onDragOver={movable ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; } : undefined}
+                      onDrop={movable ? (e) => {
+                        e.preventDefault();
+                        moveSlide(selected.indexOf(dragId), selected.indexOf(sectionId));
+                        setDragId(null);
+                      } : undefined}
                     >
-                      <span>{String(i + 1).padStart(2, "0")}</span>
-                      <div>{s.name}</div>
-                    </button>
-                  ))}
+                      <button
+                        aria-current={page === i ? "page" : undefined}
+                        className="slide-row-open"
+                        onClick={() => setPage(i)}
+                      >
+                        <span>{String(i + 1).padStart(2, "0")}</span>
+                        <div>{s.name}</div>
+                      </button>
+                      {(sectionId || snippetId) && <span className="slide-row-tools">
+                        {movable && <>
+                          <button type="button" aria-label={`Move ${s.name} up`}
+                            disabled={selected.indexOf(sectionId) === 0}
+                            onClick={() => moveSlide(selected.indexOf(sectionId), selected.indexOf(sectionId) - 1)}>↑</button>
+                          <button type="button" aria-label={`Move ${s.name} down`}
+                            disabled={selected.indexOf(sectionId) === selected.length - 1}
+                            onClick={() => moveSlide(selected.indexOf(sectionId), selected.indexOf(sectionId) + 1)}>↓</button>
+                        </>}
+                        <button type="button" aria-label={`Remove ${s.name}`} onClick={() => {
+                          if (sectionId) setSelected((v) => v.filter((x) => x !== sectionId));
+                          else setSnippetImages((v) => v.filter((img) => img.id !== snippetId));
+                        }}><X size={13}/></button>
+                      </span>}
+                    </div>;
+                  })}
                 </aside>
                 <div className="preview-stage">
                   <SlideFrame>{renderSlide({ slide: slides[page], index: page })}</SlideFrame>

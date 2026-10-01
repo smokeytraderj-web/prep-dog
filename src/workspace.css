@@ -187,3 +187,39 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
 }
 .theme-toggle .draft-reveal:hover { color: #486480; background: #e8eef5; }
 .theme-toggle button.is-draft { font-style: italic; }
+
+/* The preview slide list carries the same quiet controls as the deck order
+   list on step 2: drag a row to move it, arrows and a remove button fading in
+   on the row under the cursor. The highlight moved from the button to the row
+   wrapper, since the row now holds the controls as well. */
+.slide-list .slide-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+.slide-list .slide-row[draggable="true"] { cursor: grab; }
+.slide-list .slide-row.is-dragging { opacity: .4; }
+.slide-list .slide-row.current { background: #eaf1f7; border-color: #d9e5ee; }
+.slide-list .slide-row.current .slide-row-open { color: #264c6b; }
+.slide-list button.slide-row-open { flex: 1; min-width: 0; border: 0; background: none; }
+.slide-list .slide-row:hover { background: #f5f8fb; }
+.slide-list .slide-row.current:hover { background: #eaf1f7; }
+.slide-row-tools {
+  display: flex; gap: 1px; padding-right: 7px;
+  opacity: 0; transition: opacity .12s;
+}
+.slide-row:hover .slide-row-tools,
+.slide-row:focus-within .slide-row-tools { opacity: 1; }
+.slide-row-tools button {
+  border: 0; background: none; color: #5c7a94;
+  font-size: 11px; line-height: 1; padding: 5px 5px;
+  border-radius: 4px; cursor: pointer;
+}
+.slide-row-tools button:hover:not(:disabled) { background: #dde7f0; color: #173b5a; }
+.slide-row-tools button:disabled { opacity: .25; cursor: default; }
+
+/* report.css loads after this file and gives .slide-list button its own hover,
+   which lit the open button alone and made the hovered row read as a floating
+   card next to its controls. The row owns the hover now. */
+.slide-list .slide-row button.slide-row-open:hover { background: transparent; }
