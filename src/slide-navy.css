@@ -376,14 +376,18 @@
 }
 
 /* --- equity sector table ------------------------------------------------ */
-.navy-lede-equity { align-items: flex-end; }
-.navy-lede-equity .navy-lede-note { max-width: 290px; }
+/* The chart is the slide, so its label line carries the legend and the bars
+   take everything below it. */
+.navy-bars-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
 .navy-legend {
-  margin-left: auto;
   display: flex;
   gap: 20px;
   flex-shrink: 0;
-  padding-bottom: 10px;
 }
 .navy-legend span {
   display: flex;
@@ -397,9 +401,9 @@
 .navy-legend i.navy-under { background: var(--navy-under); }
 rect.navy-over { fill: var(--navy-over); }
 rect.navy-under { fill: var(--navy-under); }
-.navy-bar-value { fill: var(--navy-ink-2); font-size: 10px; font-family: "IBM Plex Mono", monospace; }
+.navy-bar-value { fill: var(--navy-ink-2); font-size: 13px; font-family: "IBM Plex Mono", monospace; }
 
-.navy-sector-table { margin-top: 26px; }
+.navy-sector-table { margin-top: 30px; }
 .navy-sector-groups,
 .navy-sector-names,
 .navy-sector-row { display: grid; gap: 0 4px; }
@@ -439,13 +443,18 @@ rect.navy-under { fill: var(--navy-under); }
   color: var(--navy-ink);
 }
 .navy-bars {
-  margin-top: 20px;
+  margin-top: 26px;
   flex-grow: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
-.navy-bars svg { width: 100%; flex-grow: 1; min-height: 0; margin-top: 6px; }
+.navy-bars svg {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 0;
+  margin-top: 10px;
+}
 
 /* --- risk --------------------------------------------------------------- */
 .navy-section {

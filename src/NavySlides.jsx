@@ -242,7 +242,11 @@ export function NavyRegional({positions, data}) {
 }
 
 const GROUPS = [{name: 'Cyclical', span: 4}, {name: 'Sensitive', span: 4}, {name: 'Defensive', span: 3}];
-const BARS = {w: 1068, h: 170, zero: 84, max: 52, labels: 150};
+// The page is a fixed 1280x720, so the space under the table is deterministic:
+// the viewBox is sized to that box's aspect ratio rather than letterboxing a
+// short chart inside a tall one. Zero sits below centre because the deeper
+// deviations are underweights.
+const BARS = {w: 1068, h: 340, zero: 176, max: 128, labels: 150};
 
 export function NavyEquity({data}) {
   const diffs = data.sectors.map(s => s.portfolio - s.benchmark);
@@ -251,26 +255,12 @@ export function NavyEquity({data}) {
   const cols = data.sectors.length;
   const track = (BARS.w - BARS.labels - (cols - 1) * 4) / cols;
   const centre = i => BARS.labels + 4 + i * (track + 4) + track / 2;
-  const top = diffs.indexOf(Math.max(...diffs));
-  const bottom = diffs.indexOf(Math.min(...diffs));
   const style = {gridTemplateColumns: `${BARS.labels}px repeat(${cols}, minmax(0, 1fr))`};
 
   return <div className="navy-slide-body">
     <div className="navy-head">
       <h2>Equity sector exposure</h2>
-      {data.as_of && <span className="navy-meta">AS OF {data.as_of}</span>}
-    </div>
-
-    <div className="navy-lede navy-lede-equity">
-      <div>
-        <div className="navy-eyebrow is-gold">LARGEST OVERWEIGHT · {data.sectors[top].name.toUpperCase()}</div>
-        <Display value={signed2(diffs[top])} unit="pp" gold className="is-compact"/>
-      </div>
-      <p className="navy-lede-note">{data.sectors[bottom].name} is the largest underweight at {signed2(diffs[bottom])}pp.</p>
-      <div className="navy-legend">
-        <span><i className="navy-over"/>Overweight</span>
-        <span><i className="navy-under"/>Underweight</span>
-      </div>
+      {data.as_of && <span className="navy-meta">{data.as_of}</span>}
     </div>
 
     <div className="navy-sector-table">
@@ -293,7 +283,13 @@ export function NavyEquity({data}) {
     </div>
 
     <div className="navy-bars">
-      <span className="navy-eyebrow">RELATIVE TO {(data.benchmark_short || data.benchmark_label || 'BENCHMARK').toUpperCase()} — PERCENTAGE POINTS</span>
+      <div className="navy-bars-head">
+        <span className="navy-eyebrow">RELATIVE TO {(data.benchmark_short || data.benchmark_label || 'BENCHMARK').toUpperCase()} — PERCENTAGE POINTS</span>
+        <div className="navy-legend">
+          <span><i className="navy-over"/>Overweight</span>
+          <span><i className="navy-under"/>Underweight</span>
+        </div>
+      </div>
       <svg viewBox={`0 0 ${BARS.w} ${BARS.h}`} preserveAspectRatio="xMidYMid meet" role="img"
         aria-label="Portfolio sector weight relative to the benchmark, in percentage points">
         <line x1={BARS.labels} x2={BARS.w} y1={BARS.zero} y2={BARS.zero} className="navy-zero"/>
@@ -302,7 +298,7 @@ export function NavyEquity({data}) {
           return <g key={s.name}>
             <rect x={cx - track / 2} y={up ? BARS.zero - h : BARS.zero} width={track} height={h}
               className={up ? 'navy-over' : 'navy-under'}/>
-            <text x={cx} y={up ? BARS.zero - h - 7 : BARS.zero + h + 13} textAnchor="middle" className="navy-bar-value">
+            <text x={cx} y={up ? BARS.zero - h - 9 : BARS.zero + h + 17} textAnchor="middle" className="navy-bar-value">
               {signed2(v)}</text>
           </g>;
         })}
