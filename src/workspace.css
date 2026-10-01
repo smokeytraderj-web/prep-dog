@@ -113,3 +113,9 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
 .saved-as strong { color:#173b5a; font-weight:600; }
 @media(max-width:760px) { .saved-as { white-space:normal; width:100%; margin:0 0 4px; } }
 @media print { .saved-as { display:none; } }
+
+/* The optional add-ons lead the components step: that is the only section the
+   advisor acts on, so it reads first and the fixed core deck sits underneath
+   as reference. The 32px separator belongs to whichever section is second. */
+.builder-layout .optional-heading { margin-top: 0; }
+.builder-layout .auto-flow-note { margin-top: 32px; }

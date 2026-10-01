@@ -191,3 +191,78 @@
   .slide:not(.navy-slide) { padding: 6%; }
   .slide:not(.navy-slide) h2 { font-size: 24px; }
 }
+
+/* ===========================================================================
+   The Dwyer deck on white.
+   ---------------------------------------------------------------------------
+   The light and dark decks are now the same slides; only the palette differs.
+   Everything here redefines slide-navy.css's variables, so the geometry, the
+   spine, the hairlines and the promoted figures all stay exactly as they are.
+
+   The template's own colours are built for a navy ground and cannot simply be
+   moved to white: its gold #d3bb81 reaches 1.9:1 on white and its muted blue
+   #a9b4c8 only 1.8:1. So text takes darkened equivalents that clear 4.5:1 and
+   still read as the same colours, while the file's originals stay on rules,
+   fills and chart bars, where contrast minimums do not apply. The ink is the
+   template's own ground #17233f, which is what makes this read as the same
+   design inverted rather than a different deck.
+   =========================================================================== */
+
+.slide.navy-slide.navy-light {
+  --navy-ground: #ffffff;
+  --navy-ink: #17233f;        /* the template's ground, serving as the ink */
+  --navy-ink-2: #32436a;      /* 8.9:1 */
+  --navy-ink-3: #5f6e8c;      /* 4.9:1, the muted blue darkened for white */
+  --navy-index: #667494;      /* 4.6:1, the page numbers and axis labels */
+  --navy-gold: #8a6b25;       /* 5.0:1, the gold at text weight */
+  --navy-gold-bright: #b08d3e;/* 3.4:1 — large display figures only */
+  --navy-hair: rgba(23, 35, 63, 0.11);
+  --navy-rule: rgba(23, 35, 63, 0.26);
+  --navy-over: #32436a;       /* overweight stays the dense navy */
+  --navy-under: #a9b4c8;      /* underweight is the template's light blue */
+  --navy-series-1: #17233f;
+  --navy-series-2: #8a6b25;
+  --navy-series-3: #4a5d8f;
+  --navy-series-4: #8e9bbd;
+}
+
+/* On navy the slide edge is invisible because page and ground match. On white
+   the page needs an edge, or it dissolves into the workspace behind it. */
+.slide.navy-slide.navy-light,
+.slide.navy-slide.navy-light.cover {
+  border-color: #dfe4ed;
+}
+
+/* The cover's radial gradient is the one place navy is painted rather than
+   inherited, and it is painted on .navy-shell inside the article, so setting
+   the article's background does not reach it. White keeps the cover's
+   structure — the gold rule, the panel beside it — and drops the wash, which
+   is the whole point of the light deck. */
+.slide.navy-slide.navy-light.cover,
+.navy-light .navy-shell.is-cover { background: #ffffff; }
+
+/* The allocation ramp and the risk range run light-to-dark on navy. On white
+   they have to run the other way or the smallest slice is the loudest.
+   Equities is the widest band on most books, and the template's gold at text
+   weight turns olive across that much area, so the ramp is navy throughout and
+   gold stays where the template actually uses it: kickers, rules and figures. */
+.navy-light .navy-fill-equities { background: #32436a; }
+.navy-light .navy-fill-fixed { background: #6f85bc; }
+.navy-light .navy-fill-other { background: #93a6d0; }
+.navy-light .navy-fill-cash  { background: #c2cce3; }
+.navy-light .navy-range-down { background: #a9b4c8; }
+
+/* The context boards carry a second palette of their own (--board-*), set for
+   navy whenever .is-navy is on. The light deck renders those same boards, so
+   that set needs a white reading too — without it --board-ink is literally
+   white on white and the earnings bullets disappear. */
+.navy-light .context-board.is-navy {
+  --board-ink: #17233f;
+  --board-muted: #5f6e8c;
+  --board-rule: #d3bb81;
+  --board-grid: rgba(23, 35, 63, 0.1);
+  --board-bar: #32436a;        /* reported periods */
+  --board-bar-down: #a9b4c8;
+  --board-bar-estimate: #b08d3e;/* estimates stay the gold, darkened for white */
+  --board-growth: #8a6b25;
+}

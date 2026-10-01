@@ -553,15 +553,20 @@ function App() {
     return null;
   }
   function renderSlide({ slide, index }) {
-    const navy = slideTheme === "dark" ? navyContent(slide) : null;
-    if (navy)
+    // These are the Dwyer slides: the spine, the promoted figure, the gold
+    // rules. That design is not navy's alone, so both themes render it and the
+    // palette is what changes — light serves it on white. The theme is on the
+    // article, which is where slide-dwyer.css redefines the colours; the
+    // components below are the same ones in either theme.
+    const dwyer = navyContent(slide);
+    if (dwyer)
       return (
         <article
-          data-slide-theme="dark"
-          className={`slide navy-slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
+          data-slide-theme={slideTheme}
+          className={`slide navy-slide ${slideTheme === "light" ? "navy-light" : ""} slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
         >
-          <NavyFrame label={navy.label} page={String(index + 1).padStart(2, "0")} cover={slide.id === "cover"}>
-            {navy.body}
+          <NavyFrame label={dwyer.label} page={String(index + 1).padStart(2, "0")} cover={slide.id === "cover"}>
+            {dwyer.body}
           </NavyFrame>
         </article>
       );
@@ -760,12 +765,9 @@ function App() {
               </div>
               <div className="builder-layout">
                 <section>
-                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>A cover and contents page open every deck. These slides always follow, built from the confirmed holdings and live market data.</p></div>
-                  <div className="component-grid auto-components">
-                    {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
-                  </div>
                   <div className="optional-heading"><span className="slide-kicker">OPTIONAL ADD-ONS</span><p>Add only the specialist slides you want reviewed.</p></div>
                   <div className="component-grid optional-components">
+                    {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
                     {/* The skill behind this does not exist yet. The card is
                         disabled rather than selectable so it cannot be added to
                         a deck and then render nothing. */}
@@ -774,7 +776,10 @@ function App() {
                       <h2>Tax loss harvesting</h2>
                       <p>Realised and unrealised losses by lot, with wash-sale windows flagged. Not built yet.</p>
                     </div>
-                    {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
+                  </div>
+                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>A cover and contents page open every deck. These slides need no setup — they are built from the confirmed holdings and live market data.</p></div>
+                  <div className="component-grid auto-components">
+                    {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
                   </div>
                   {selected.includes("equity") && !equity && (
                     <details className="data-drawer" open><summary><span>Equity benchmark</span><small>Review needed</small><ChevronRight size={16}/></summary><div className="equity-input">
