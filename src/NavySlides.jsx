@@ -242,19 +242,21 @@ export function NavyRegional({positions, data}) {
 }
 
 const GROUPS = [{name: 'Cyclical', span: 4}, {name: 'Sensitive', span: 4}, {name: 'Defensive', span: 3}];
-// The page is a fixed 1280x720, so the space under the table is deterministic:
-// the viewBox is sized to that box's aspect ratio rather than letterboxing a
-// short chart inside a tall one. Zero sits below centre because the deeper
-// deviations are underweights.
-const BARS = {w: 1068, h: 340, zero: 176, max: 128, labels: 150};
+// The page is a fixed 1280x720, so the field under the table is deterministic.
+// The viewBox width is that field's content width in page pixels, which is what
+// makes a viewBox unit equal a CSS pixel: the 150-unit label column below then
+// lines up with the table's 150px one, and the bars sit on the same centres as
+// the sector columns. The height is the chart box's, so nothing letterboxes.
+// Zero sits below centre because the deeper deviations are underweights.
+const BARS = {w: 1092, h: 293, zero: 152, max: 108, labels: 150, gap: 4};
 
 export function NavyEquity({data}) {
   const diffs = data.sectors.map(s => s.portfolio - s.benchmark);
   const extent = Math.max(0.5, ...diffs.map(Math.abs));
   const scale = BARS.max / extent;
   const cols = data.sectors.length;
-  const track = (BARS.w - BARS.labels - (cols - 1) * 4) / cols;
-  const centre = i => BARS.labels + 4 + i * (track + 4) + track / 2;
+  const track = (BARS.w - BARS.labels - cols * BARS.gap) / cols;
+  const centre = i => BARS.labels + BARS.gap + i * (track + BARS.gap) + track / 2;
   const style = {gridTemplateColumns: `${BARS.labels}px repeat(${cols}, minmax(0, 1fr))`};
 
   return <div className="navy-slide-body">
@@ -381,14 +383,15 @@ export function NavyRisk({s}) {
   </div>;
 }
 
-// The spine replaces the light deck's brand lockup and footer sentence.
+// Navy carries no brand lockup or footer sentence. The section label is a gold
+// kicker above the title and the page number is a folio in the corner, so the
+// content gets the whole page rather than sharing it with a rail.
 export function NavyFrame({label, page, children, cover = false}) {
   return <div className={`navy-shell ${cover ? 'is-cover' : ''}`}>
-    <div className="navy-spine">
-      <span className="navy-mark" aria-hidden="true">GS</span>
-      <span className="navy-spine-label">{label}</span>
-      <span className="navy-spine-page">{page}</span>
+    <div className="navy-field">
+      {!cover && <div className="navy-kicker">{label}</div>}
+      {children}
+      <span className="navy-folio" aria-hidden="true">{page}</span>
     </div>
-    <div className="navy-field">{children}</div>
   </div>;
 }
