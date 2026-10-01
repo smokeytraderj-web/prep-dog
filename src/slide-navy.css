@@ -31,7 +31,10 @@
   --navy-ink: #ffffff;
   --navy-ink-2: #cbd5ec;
   --navy-ink-3: #a3b1d4;
-  --navy-index: #8392bb;
+  /* The gradient's lightest point is #2c3f7e, and the old index grey only
+     reached 3.21:1 against it. This clears 4.5:1 everywhere the gradient can
+     fall behind a row numeral. */
+  --navy-index: #a3b1d4;
   --navy-gold: #d8b870;
   --navy-gold-bright: #e8c98a;
   --navy-hair: rgba(255, 255, 255, 0.1);
@@ -47,12 +50,16 @@
   --navy-series-4: #6f85bc;
 }
 
-/* The cover takes the one gradient in the deck; every other slide is flat. */
+/* The gradient runs through the whole deck, not just the cover. On content
+   slides it is pulled further toward the corner and lands darker, so the light
+   never sits under a figure or a column of numbers; the cover keeps the
+   brighter, more open version. */
 .navy-shell {
   width: 100%;
   height: 100%;
   display: flex;
   overflow: hidden;
+  background: radial-gradient(102% 76% at 88% 4%, #233566 0%, #182a57 42%, #111e42 72%);
 }
 .navy-shell.is-cover {
   background: radial-gradient(118% 88% at 76% 8%, #2c3f7e 0%, #1a2a58 38%, #111e42 68%);
@@ -503,7 +510,7 @@ rect.navy-under { fill: var(--navy-under); }
    no separate type scale here; it inherits the same composition. */
 @media print {
   .slide.navy-slide {
-    background: var(--navy-ground) !important;
+    background: var(--navy-ground);
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

@@ -36,11 +36,15 @@ function Lede({label, value, unit, gold, note}) {
   </div>;
 }
 
+// The cover is the client's name over what the deck is, not a generic title:
+// whoever it was prepared for reads first, and "Account review" says what it
+// is. The deck title is the fallback for a deck with no client named yet.
 export function NavyCover({title, preparedFor, advisor, reportDate, total}) {
   const date = reportDate
     ? new Date(`${reportDate}T12:00:00`).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
     : '';
-  const [first, ...rest] = (title || 'Portfolio review').split(' ');
+  const headline = preparedFor?.trim() || title?.trim() || 'Account review';
+  const subject = preparedFor?.trim() ? 'Account review' : '';
   return <div className="navy-cover">
     <div className="navy-cover-top">
       <div>
@@ -50,11 +54,11 @@ export function NavyCover({title, preparedFor, advisor, reportDate, total}) {
       {date && <span className="navy-meta">{date.toUpperCase()}</span>}
     </div>
     <div className="navy-cover-title">
-      <h2>{first}{rest.length > 0 && <><br/><em>{rest.join(' ')}</em></>}</h2>
+      <h2>{headline}{subject && <><br/><em>{subject}</em></>}</h2>
       <p>Allocation, market context and risk, built from your confirmed holdings.</p>
     </div>
     <div className="navy-cover-meta">
-      {preparedFor && <div><div className="navy-eyebrow">PREPARED FOR</div><b>{preparedFor}</b></div>}
+      {!preparedFor?.trim() && <div><div className="navy-eyebrow">REVIEW</div><b>Account review</b></div>}
       {advisor && <div><div className="navy-eyebrow">ADVISOR</div><b>{advisor}</b></div>}
       {total > 0 && <div className="navy-cover-value"><div className="navy-eyebrow">PORTFOLIO VALUE</div><b>{usd(total)}</b></div>}
     </div>

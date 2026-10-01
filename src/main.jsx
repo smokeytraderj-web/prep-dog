@@ -282,7 +282,7 @@ function App() {
     .filter(Boolean)
     .flatMap((line) => line.match(/.{1,140}(?:\s|$)|.{1,140}/g) || []);
   const slides = [
-    { id: "cover", name: "Portfolio review" },
+    { id: "cover", name: "Account review" },
     { id: "contents", name: "Contents" },
     ...sections
       .filter((s) => selected.includes(s.id))
@@ -431,8 +431,9 @@ function App() {
     if (slide.id === "cover")
       return (
         <div className="cover-content">
-          <p className="eyebrow">PORTFOLIO REVIEW</p>
-          <h2>{title || "Portfolio review"}</h2>{preparedFor && <p className="cover-client">Prepared for {preparedFor}</p>}
+          <p className="eyebrow">ACCOUNT REVIEW</p>
+          <h2>{preparedFor?.trim() || title || "Account review"}</h2>
+          {preparedFor?.trim() && <p className="cover-client">Account review</p>}
           <div className="gold-rule" />
           <p className="cover-sub">
             {advisor ? `Presented by ${advisor}` : "Gottfried & Somberg Wealth Management"}
@@ -563,7 +564,7 @@ function App() {
         <footer>
           <span>
             {slide.snippet ? "Source: uploaded image" : slide.id === "cover"
-              ? "PORTFOLIO REVIEW"
+              ? "ACCOUNT REVIEW"
               // The market-indexes slide carries neither a footer label nor a
               // source note: both were removed as redundant on that page.
               : slide.id === "market-indexes" ? ""
