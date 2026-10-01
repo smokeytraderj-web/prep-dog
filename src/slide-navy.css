@@ -16,7 +16,15 @@
   font-family: var(--navy-sans);
   display: block;
 }
-.slide.navy-slide.cover { background: var(--navy-ground); }
+/* The light cover carries a 10px accent bar on its left edge (report.css) and
+   the old dark theme recoloured it gold. Navy's cover has its own gradient and
+   needs no bar; left in, it also made the cover's left margin 9px wider than
+   every other slide's. */
+.slide.navy-slide.cover {
+  background: var(--navy-ground);
+  border-left-width: 1px;
+  border-left-color: var(--navy-ground);
+}
 
 .navy-slide {
   --navy-ground: #111e42;
@@ -382,6 +390,7 @@
 rect.navy-over { fill: var(--navy-over); }
 rect.navy-under { fill: var(--navy-under); }
 .navy-bar-value { fill: var(--navy-ink-2); font-size: 13px; font-family: "IBM Plex Mono", monospace; }
+.navy-bar-name { fill: var(--navy-ink-2); font-size: 11px; font-family: "Instrument Sans", sans-serif; }
 
 .navy-sector-table { margin-top: 30px; }
 .navy-sector-groups,

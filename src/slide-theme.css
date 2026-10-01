@@ -403,9 +403,12 @@
    same way. These rules change the architecture of the navy page, so the two
    themes differ in structure as well as style. */
 
-/* A gold spine runs down every navy slide, not just the cover, and the page
-   is inset from it. The light deck has no spine at all. */
-.slide[data-slide-theme="dark"]:not(.cover) {
+/* A gold spine and its inset. This now applies only to slides that fall
+   through to a light component under the dark theme (attribution, holdings,
+   discussion and the like). Slides with a navy composition opt out: they bring
+   their own full-bleed layout, and this rule's 6.2% inset was pushing their
+   content 82px off the left margin. */
+.slide[data-slide-theme="dark"]:not(.cover):not(.navy-slide) {
   border-left: 3px solid #d8b870;
   padding-left: 6.2%;
 }

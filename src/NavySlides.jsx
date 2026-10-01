@@ -248,16 +248,38 @@ const GROUPS = [{name: 'Cyclical', span: 4}, {name: 'Sensitive', span: 4}, {name
 // lines up with the table's 150px one, and the bars sit on the same centres as
 // the sector columns. The height is the chart box's, so nothing letterboxes.
 // Zero sits below centre because the deeper deviations are underweights.
-const BARS = {w: 1092, h: 293, zero: 152, max: 108, labels: 150, gap: 4};
+// The chart used to reserve a 150-unit gutter so its bars lined up with the
+// table's sector columns, which left it sitting off-centre with an empty
+// left-hand margin. It carries its own sector labels now, so it no longer has
+// to borrow the table's grid: the columns divide the full width evenly and the
+// chart is centred on the page.
+//
+// The band below `names` is reserved for those labels, and the geometry keeps
+// bars out of it at both extremes: an all-positive chart puts its tallest value
+// label at zero-max-9, an all-negative one its deepest at zero+max+17.
+const BARS = {w: 1166, h: 288, zero: 130, max: 100, names: 262, lineH: 12, fill: 0.68};
+// The table still needs a column for its row labels ("Your portfolio", the
+// benchmark). That is the table's own measurement, not the chart's.
+const TABLE_LABELS = 150;
+
+// Sector names are split onto at most two lines so a long one stays inside its
+// column instead of running into its neighbours.
+function nameLines(name) {
+  const words = name.split(' ');
+  if (words.length < 2) return [name];
+  const mid = Math.ceil(words.length / 2);
+  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+}
 
 export function NavyEquity({data}) {
   const diffs = data.sectors.map(s => s.portfolio - s.benchmark);
   const extent = Math.max(0.5, ...diffs.map(Math.abs));
   const scale = BARS.max / extent;
   const cols = data.sectors.length;
-  const track = (BARS.w - BARS.labels - cols * BARS.gap) / cols;
-  const centre = i => BARS.labels + BARS.gap + i * (track + BARS.gap) + track / 2;
-  const style = {gridTemplateColumns: `${BARS.labels}px repeat(${cols}, minmax(0, 1fr))`};
+  const track = BARS.w / cols;
+  const bar = track * BARS.fill;
+  const centre = i => i * track + track / 2;
+  const style = {gridTemplateColumns: `${TABLE_LABELS}px repeat(${cols}, minmax(0, 1fr))`};
 
   return <div className="navy-slide-body">
     <div className="navy-head">
@@ -294,14 +316,17 @@ export function NavyEquity({data}) {
       </div>
       <svg viewBox={`0 0 ${BARS.w} ${BARS.h}`} preserveAspectRatio="xMidYMid meet" role="img"
         aria-label="Portfolio sector weight relative to the benchmark, in percentage points">
-        <line x1={BARS.labels} x2={BARS.w} y1={BARS.zero} y2={BARS.zero} className="navy-zero"/>
+        <line x1="0" x2={BARS.w} y1={BARS.zero} y2={BARS.zero} className="navy-zero"/>
         {data.sectors.map((s, i) => {
           const v = diffs[i], h = Math.abs(v) * scale, up = v >= 0, cx = centre(i);
           return <g key={s.name}>
-            <rect x={cx - track / 2} y={up ? BARS.zero - h : BARS.zero} width={track} height={h}
+            <rect x={cx - bar / 2} y={up ? BARS.zero - h : BARS.zero} width={bar} height={h}
               className={up ? 'navy-over' : 'navy-under'}/>
             <text x={cx} y={up ? BARS.zero - h - 9 : BARS.zero + h + 17} textAnchor="middle" className="navy-bar-value">
               {signed2(v)}</text>
+            {nameLines(s.name).map((line, n) =>
+              <text key={line + n} x={cx} y={BARS.names + n * BARS.lineH} textAnchor="middle" className="navy-bar-name">
+                {line}</text>)}
           </g>;
         })}
       </svg>
