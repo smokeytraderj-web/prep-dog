@@ -77,7 +77,7 @@
 
 /* The mobile breakpoint drops the fixed ratio, so the caps above must not
    squash the chart when the slide is free to grow. */
-@media (max-width: 760px) {
+@media screen and (max-width: 760px) {
   .index-chart-panel svg { max-height: none; }
   .snapshot-lede > svg { max-height: 110px; }
 }
@@ -155,4 +155,4 @@
 .eq-value { font-size: 11px; font-weight: 600; fill: var(--c-1b2a4a, #1b2a4a); }
 .eq-label { font-size: 10px; fill: var(--c-42617e, #42617e); }
 .equity-slide .equity-source { font-size: 9.5px; font-style: italic; margin-top: auto; padding-top: 10px; }
-@media (max-width: 760px) { .equity-allocation { font-size: 9px; } }
+@media screen and (max-width: 760px) { .equity-allocation { font-size: 9px; } }

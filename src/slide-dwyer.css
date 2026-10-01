@@ -187,7 +187,7 @@
 .slide.cover:not(.navy-slide) .slide-brand span { color: var(--dw-gold-rule); }
 .slide.cover:not(.navy-slide) footer { color: var(--dw-gold-rule); }
 
-@media (max-width: 760px) {
+@media screen and (max-width: 760px) {
   .slide:not(.navy-slide) { padding: 6%; }
   .slide:not(.navy-slide) h2 { font-size: 24px; }
 }

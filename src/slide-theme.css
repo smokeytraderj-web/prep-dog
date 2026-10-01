@@ -395,7 +395,7 @@
 .theme-toggle button:hover { color: #1b2a4a; }
 .theme-toggle button.current { background: #1b2a4a; color: #fff; }
 .theme-toggle button:focus-visible { outline: 2px solid #3976b6; outline-offset: 2px; }
-@media (max-width: 760px) { .theme-toggle button { padding: 6px 10px; } }
+@media screen and (max-width: 760px) { .theme-toggle button { padding: 6px 10px; } }
 @media print { .theme-toggle { display: none; } }
 
 /* --- navy's own composition ---------------------------------------------

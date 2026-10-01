@@ -17,6 +17,18 @@
    they used to, and nothing else. Anything added here that is not geometry is
    a new way for the PDF to drift. */
 
+/* The page box has to be the slide, or the printer's own paper decides it.
+   Without this the PDF used a Letter portrait page — about 816px wide — which
+   fired every narrow-screen breakpoint in the deck: the earnings bullets
+   dropped on top of the chart, the admin columns stacked, and attribution ran
+   off the bottom, all while the slide box was still held at 1280x720. The
+   breakpoints are scoped to `screen` as well, so neither alone can bring it
+   back. 13.333in x 7.5in is exactly 1280x720 at 96dpi. */
+@page {
+  size: 13.333in 7.5in;
+  margin: 0;
+}
+
 @media print {
   html, body {
     width: 1280px;

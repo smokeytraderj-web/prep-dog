@@ -159,7 +159,7 @@
   color: var(--navy-ink);
 }
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .navy-light .dw-risk { grid-template-columns: 1fr; gap: 24px; }
 }
 
@@ -210,6 +210,6 @@
   color: var(--navy-ink-3);
   font-variant-numeric: tabular-nums;
 }
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .navy-light .dw-contents { grid-template-columns: 1fr; gap: 0; }
 }

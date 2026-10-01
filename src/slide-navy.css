@@ -800,7 +800,7 @@ rect.navy-under { fill: var(--navy-under); }
   font-size: 13px;
   color: var(--navy-ink);
 }
-@media(max-width: 900px) {
+@media screen and (max-width: 900px) {
   .navy-allocation-layout { grid-template-columns: 1fr; gap: 24px; }
   .navy-admin-flow { flex-wrap: wrap; }
   .navy-admin-columns { grid-template-columns: 1fr; }
