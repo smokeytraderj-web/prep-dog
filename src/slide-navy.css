@@ -209,55 +209,110 @@
 }
 
 /* --- cover -------------------------------------------------------------- */
-.navy-cover-top {
+/* --- the cover ----------------------------------------------------------
+   Measured from the Dwyer file at 1280x720: the gold rule runs down x=840,
+   the firm name sits at y=96, the title at 226, a 125px rule at 374 and the
+   client at 434; the review block to the right of the rule starts at x=893. */
+.navy-cover { flex-direction: row; gap: 0; }
+.navy-cover-main {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 32px;
+  flex-direction: column;
+  padding-right: 54px;
 }
-.navy-wordmark { font-size: 11px; letter-spacing: 4px; }
-.navy-wordmark-sub {
-  font-size: 8px;
-  letter-spacing: 3.6px;
+.navy-cover-firm {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 2.6px;
   color: var(--navy-gold);
-  margin-top: 6px;
+  margin-bottom: auto;
 }
-.navy-cover-title { margin-top: auto; }
-.slide.navy-slide .navy-cover-title h2 {
-  margin: 0;
+.slide.navy-slide .navy-cover-head {
   font-family: var(--navy-serif);
-  font-size: 96px;
-  font-weight: 200;
-  letter-spacing: -3.2px;
-  line-height: 0.96;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.6px;
+  color: var(--navy-ink);
+  margin: 0 0 12px;
 }
-.navy-cover-title h2 em { font-style: italic; font-weight: 300; }
-.navy-cover-title p {
-  margin: 28px 0 0;
-  font-size: 17px;
-  line-height: 1.6;
-  color: var(--navy-ink-2);
-  max-width: 520px;
+.navy-cover-sub {
+  font-family: var(--navy-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--navy-ink-3);
+  margin: 0 0 30px;
+  max-width: 44ch;
 }
-.navy-cover-meta {
-  margin-top: auto;
-  padding-top: 26px;
-  border-top: 1px solid rgba(216, 184, 112, 0.6);
-  display: flex;
-  gap: 40px;
-  align-items: flex-end;
+.navy-cover-rule {
+  width: 125px;
+  height: 2px;
+  background: var(--navy-gold-bright);
+  margin-bottom: 26px;
 }
-.navy-cover-meta > div { flex: 1; min-width: 0; }
-.navy-cover-meta b {
+.navy-cover-client {
+  font-family: var(--navy-serif);
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+  color: var(--navy-ink);
+  margin-top: 9px;
+  overflow-wrap: anywhere;
+}
+.navy-cover-advisor { margin-top: 22px; }
+.navy-cover-advisor b {
   display: block;
   font-family: var(--navy-serif);
-  font-size: 21px;
-  font-weight: 300;
-  margin-top: 11px;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--navy-ink);
+  margin-top: 7px;
 }
-.navy-cover-value { text-align: right; }
-.navy-cover-value b { color: var(--navy-gold-bright); }
-
+.navy-cover-confidential {
+  margin: auto 0 0;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--navy-index);
+}
+/* The rule down the page, with the review block beside it. */
+.navy-cover-aside {
+  width: 306px;
+  flex: none;
+  padding-left: 53px;
+  border-left: 1px solid var(--navy-gold-bright);
+  display: flex;
+  flex-direction: column;
+}
+.navy-cover-quarter {
+  font-family: var(--navy-serif);
+  font-size: 92px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -3px;
+  color: var(--navy-gold-bright);
+  margin: 10px 0 2px;
+}
+.navy-cover-year {
+  font-family: var(--navy-serif);
+  font-size: 34px;
+  font-weight: 400;
+  color: var(--navy-ink);
+  margin-bottom: 30px;
+}
+.navy-cover-aside-rule {
+  height: 1px;
+  background: var(--navy-hair);
+  margin-bottom: 22px;
+}
+.navy-cover-date {
+  font-family: var(--navy-serif);
+  font-size: 18px;
+  color: var(--navy-ink);
+  margin-top: 8px;
+}
+.navy-cover-gap { margin-top: 26px; }
 /* --- allocation bar ----------------------------------------------------- */
 .navy-allocation { margin-top: 24px; }
 .navy-allocation-bar { display: flex; height: 7px; gap: 2px; }
