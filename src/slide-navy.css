@@ -43,12 +43,16 @@
   --navy-serif: "Source Serif 4", "Iowan Old Style", Palatino, serif;
   --navy-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
   --navy-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --navy-over: #dce3f2;
-  --navy-under: #6e80ac;
+  /* Over and under are the two halves of one comparison, so they are the two
+     ends of the palette — the accent against a cool blue — rather than two
+     blues a client has to read a legend to tell apart. */
+  --navy-over: #d8b870;
+  --navy-under: #7f93c4;
   --navy-series-1: #e8c98a;
   --navy-series-2: #ffffff;
-  --navy-series-3: #9fb0d8;
-  --navy-series-4: #6f85bc;
+  /* A pale blue and a deep one, far enough apart to separate at 2px. */
+  --navy-series-3: #a9bde8;
+  --navy-series-4: #4c62a0;
 }
 
 /* The gradient is the cover's alone. Carried across the whole deck it read as

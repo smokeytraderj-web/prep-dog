@@ -218,12 +218,13 @@
   --navy-gold-bright: #b08d3e;/* 3.4:1 — large display figures only */
   --navy-hair: rgba(23, 35, 63, 0.11);
   --navy-rule: rgba(23, 35, 63, 0.26);
-  --navy-over: #32436a;       /* overweight stays the dense navy */
-  --navy-under: #a9b4c8;      /* underweight is the template's light blue */
-  --navy-series-1: #17233f;
-  --navy-series-2: #8a6b25;
-  --navy-series-3: #4a5d8f;
-  --navy-series-4: #8e9bbd;
+  /* The same two ends on white: the template's gold against its blue. */
+  --navy-over: #b08d3e;
+  --navy-under: #8fa0bd;
+  --navy-series-1: #8a6b25;
+  --navy-series-2: #17233f;
+  --navy-series-3: #6f85bc;
+  --navy-series-4: #b9c4d8;
 }
 
 /* On navy the slide edge is invisible because page and ground match. On white

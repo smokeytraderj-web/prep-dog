@@ -215,6 +215,21 @@ export function NavyMarketIndexes({data, title = 'The year so far', note = 'Inde
         {hasHistory && [0, 0.5, 1].map(f => <text key={f} x={CHART.left + (CHART.right - CHART.left) * f} y={CHART.h - 4}
           textAnchor={f === 0 ? 'start' : f === 1 ? 'end' : 'middle'} className="navy-axis">
           {dateLabel(start + (end - start) * f)}</text>)}
+        {/* Without a history the chart used to draw its gridlines and nothing
+            else: an empty plot above a legend of live returns, which reads as
+            a failure on a client's page. The returns are known either way, so
+            they are drawn as bars instead. */}
+        {!hasHistory && series.map((index, i) => {
+          const slot = (CHART.right - CHART.left) / series.length;
+          const w = Math.min(74, slot * 0.4);
+          const cx = CHART.left + slot * i + slot / 2;
+          const value = Number(index.return);
+          const top = Math.min(y(value), y(0)), height = Math.abs(y(value) - y(0));
+          return <g key={index.id || index.label}>
+            <rect x={cx - w / 2} y={top} width={w} height={Math.max(2, height)} fill={NAVY_SERIES[i % 4]}/>
+            <text x={cx} y={CHART.h - 4} textAnchor="middle" className="navy-axis">{index.label}</text>
+          </g>;
+        })}
       </svg>
     </div>
 
