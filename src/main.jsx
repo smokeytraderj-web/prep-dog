@@ -30,6 +30,8 @@ import "./risk-snapshot.css";
 import "./data-drawers.css";
 import "./slide-fit.css";
 import "./slide-theme.css";
+import "./slide-navy.css";
+import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -386,7 +388,49 @@ function App() {
       </>
     );
   }
+  // Navy renders its own components, not the light ones restyled. A slide
+  // without a navy composition falls through to the light one rather than
+  // showing a half-themed page.
+  const NAVY_LABELS = {
+    "cover": "IN-HOUSE PORTFOLIO ANALYTICS",
+    "account-summary": "ACCOUNT SUMMARY",
+    "market-indexes": "MARKET SNAPSHOT",
+    "regional-attribution": "REGIONAL ATTRIBUTION",
+    "equity": "EQUITY EXPOSURE",
+    "risk": "RISK SNAPSHOT",
+  };
+  function navyContent(slide) {
+    if (slide.snippet) return null;
+    const label = NAVY_LABELS[slide.id];
+    if (!label) return null;
+    const positions = deckMarket.positions || enrichedPositions;
+    if (slide.id === "cover")
+      return {label, body: <NavyCover title={title} preparedFor={preparedFor} advisor={advisor} reportDate={reportDate} total={total}/>};
+    if (slide.id === "account-summary")
+      return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={reportDate}/>};
+    if (slide.id === "market-indexes")
+      return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
+    if (slide.id === "regional-attribution")
+      return {label, body: <NavyRegional positions={positions} data={deckMarket.marketIndexes}/>};
+    if (slide.id === "equity" && deckEquity)
+      return {label, body: <NavyEquity data={deckEquity}/>};
+    if (slide.id === "risk" && deckMarket.riskSnapshot)
+      return {label, body: <NavyRisk s={deckMarket.riskSnapshot}/>};
+    return null;
+  }
   function renderSlide({ slide, index, print = false }) {
+    const navy = slideTheme === "dark" ? navyContent(slide) : null;
+    if (navy)
+      return (
+        <article
+          data-slide-theme="dark"
+          className={`slide navy-slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
+        >
+          <NavyFrame label={navy.label} page={String(index + 1).padStart(2, "0")} cover={slide.id === "cover"}>
+            {navy.body}
+          </NavyFrame>
+        </article>
+      );
     return (
       <article
         data-slide-theme={slideTheme}

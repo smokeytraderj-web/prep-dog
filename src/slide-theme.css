@@ -465,21 +465,12 @@
    title sits inside, a gold spine, oversized figures, and a page number
    instead of a footer line. */
 
-/* The band bleeds past the slide's padding because it is painted on the
-   slide itself rather than on an element inside it. */
-.slide[data-slide-theme="dark"]:not(.cover)::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 166px;
-  background: linear-gradient(180deg, #1e3062 0%, #1b2b58 100%);
-  border-bottom: 1px solid #d8b870;
-  pointer-events: none;
-}
-/* Content sits above the band. */
-.slide[data-slide-theme="dark"] > * { position: relative; z-index: 1; }
+/* The header band that used to live here has been removed. It was a fixed
+   166px rectangle painted behind the slide, so it had no idea where the title
+   actually sat: a two-line or large heading had the band's gold edge drawn
+   straight through it. Navy now renders its own components (NavySlides.jsx,
+   slide-navy.css) where the division is part of the layout rather than a
+   rectangle painted over it. */
 
 /* The band supplies the division, so the heading drops its own rule. */
 [data-slide-theme="dark"] .report-heading {
