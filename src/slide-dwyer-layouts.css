@@ -1,0 +1,215 @@
+/* Light-deck slides built to the Dwyer file's own layouts.
+   ===========================================================================
+   These rules only ever match .navy-light, so navy is untouched. Positions are
+   the file's own pixel values at 1280x720, expressed as the proportions the
+   slide actually renders at.
+
+   The file's panels are a lighter navy on a navy ground (#212D4C on #17233F).
+   White has to invert that relationship: a panel is a tint of the ink rather
+   than a lift out of it, so #f4f6fa carries the same separation on the page. */
+
+.navy-light .dw-slide {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.navy-light .dw-eyebrow {
+  font-family: var(--navy-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  color: var(--navy-gold);
+  margin-bottom: 11px;
+}
+.navy-light .dw-centre { text-align: center; }
+.navy-light .dw-source {
+  margin: auto 0 0;
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--navy-index);
+  max-width: 96ch;
+}
+
+/* --- risk ---------------------------------------------------------------- */
+.navy-light .dw-risk {
+  display: grid;
+  grid-template-columns: 435fr 685fr;   /* the file's own two columns */
+  gap: 45px;
+  flex: 1;
+  min-height: 0;
+  align-items: start;
+}
+.navy-light .dw-risk-panel {
+  background: #f4f6fa;
+  border-radius: 4px;
+  padding: 26px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.navy-light .dw-gauge { margin: 0; display: flex; flex-direction: column; }
+.navy-light .dw-gauge svg { width: 100%; height: auto; display: block; }
+.navy-light .dw-gauge-track { stroke: #d8e0ec; }
+.navy-light .dw-gauge-fill { stroke: var(--navy-gold-bright); }
+.navy-light .dw-gauge-score {
+  font-family: var(--navy-serif);
+  font-size: 58px;
+  fill: var(--navy-ink);
+}
+.navy-light .dw-gauge figcaption {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -6px;
+  padding: 0 6px;
+}
+.navy-light .dw-gauge figcaption span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--navy-ink-3);
+}
+.navy-light .dw-gauge figcaption b {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--navy-ink-2);
+}
+/* The file sets the total apart with a rule above it and a coloured bar at its
+   left edge; that bar is the one place it uses a colour outside the palette. */
+.navy-light .dw-risk-total {
+  margin-top: auto;
+  padding: 18px 0 0 18px;
+  border-top: 1px solid #dfe4ed;
+  position: relative;
+}
+.navy-light .dw-risk-total::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20px;
+  bottom: 2px;
+  width: 5px;
+  background: #7a6fbf;
+}
+.navy-light .dw-risk-total b {
+  display: block;
+  font-family: var(--navy-serif);
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  color: var(--navy-ink);
+}
+
+.navy-light .dw-risk-side { display: flex; flex-direction: column; min-width: 0; }
+.navy-light .dw-risk-range {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 30px;
+  font-size: 19px;
+  font-weight: 500;
+}
+.navy-light .dw-risk-range i { font-style: normal; color: var(--navy-ink-3); font-size: 14px; }
+.navy-light .dw-risk-range .is-down { color: #a4342c; }   /* 5.1:1 on white */
+.navy-light .dw-risk-range .is-up { color: #1c7a47; }     /* 4.9:1 on white */
+
+.navy-light .dw-alloc-bar {
+  display: flex;
+  height: 26px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.navy-light .dw-alloc-bar i { display: block; height: 100%; }
+.navy-light .dw-alloc-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  font-size: 13px;
+  color: var(--navy-ink-2);
+  margin-bottom: 30px;
+}
+.navy-light .dw-alloc-keys span { display: flex; align-items: center; gap: 8px; }
+.navy-light .dw-alloc-keys b { font-weight: 600; color: var(--navy-ink); }
+.navy-light .dw-alloc-keys i { width: 9px; height: 9px; flex: none; }
+.navy-light .dw-fill-0 { background: #d3bb81; }
+.navy-light .dw-fill-1 { background: #6f80a8; }
+.navy-light .dw-fill-2 { background: #a9b3c7; }
+.navy-light .dw-fill-3 { background: #c9d2e3; }
+
+.navy-light .dw-measures { margin: 0; border-top: 1px solid #dfe4ed; }
+.navy-light .dw-measures > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #ebeff5;
+}
+.navy-light .dw-measures dt { font-size: 14px; color: var(--navy-ink-2); }
+.navy-light .dw-measures dd {
+  margin: 0;
+  font-family: var(--navy-serif);
+  font-size: 17px;
+  color: var(--navy-ink);
+}
+
+@media (max-width: 900px) {
+  .navy-light .dw-risk { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* --- contents ------------------------------------------------------------ */
+.navy-light .dw-contents {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 70px;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+}
+.navy-light .dw-contents-col { min-width: 0; }
+.navy-light .dw-group { margin-bottom: 30px; }
+.navy-light .dw-group:last-child { margin-bottom: 0; }
+.navy-light .dw-group header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--navy-gold-bright);
+}
+.navy-light .dw-group-no {
+  font-family: var(--navy-serif);
+  font-size: 15px;
+  color: var(--navy-gold);
+  min-width: 26px;
+}
+.navy-light .dw-group-name {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+  color: var(--navy-gold);
+}
+.navy-light .dw-group-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 11px 0 11px 42px;
+  border-bottom: 1px solid #ebeff5;
+  font-size: 14px;
+  color: var(--navy-ink);
+}
+.navy-light .dw-group-row b {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--navy-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 900px) {
+  .navy-light .dw-contents { grid-template-columns: 1fr; gap: 0; }
+}

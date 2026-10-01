@@ -41,6 +41,8 @@ import { deckName } from "./deck-name";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
 import "./slide-brand.css";
+import "./slide-dwyer-layouts.css";
+import { DwyerRisk, DwyerContents } from "./DwyerSlides";
 import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyCoverClassic, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
@@ -661,7 +663,11 @@ function App() {
     if (slide.id === "market-indexes")
       return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
     if (slide.id === "contents")
-      return {label, body: <ContentsSlide slides={slides} navy/>};
+      // The file groups its agenda into numbered sections across two columns;
+      // navy keeps the single list it had.
+      return {label, body: themeOf(slideTheme).dark
+        ? <ContentsSlide slides={slides} navy/>
+        : <DwyerContents slides={slides}/>};
     if (slide.id === "fixed-income")
       return {label, body: <NavyMarketIndexes data={deckMarket.fixedIncome} heading="Fixed income, year to date"
         title="What bonds did" note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
@@ -674,7 +680,11 @@ function App() {
     if (slide.id === "equity" && deckEquity)
       return {label, body: <NavyEquity data={deckEquity}/>};
     if (slide.id === "risk" && deckMarket.riskSnapshot)
-      return {label, body: <NavyRisk s={deckMarket.riskSnapshot}/>};
+      // The file's risk slide is a different arrangement, not the navy one
+      // recoloured, so the light deck renders its own.
+      return {label, body: themeOf(slideTheme).dark
+        ? <NavyRisk s={deckMarket.riskSnapshot}/>
+        : <DwyerRisk s={deckMarket.riskSnapshot}/>};
     if (slide.id === "allocation")
       return {label, body: <NavyAllocation positions={positions} asOf={asOfLabel} source={importSource}/>};
     if (slide.id === "asset-class-performance")
