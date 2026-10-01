@@ -1,0 +1,133 @@
+/* The two slides lifted from the firm's existing deck: sector leadership and
+   the earnings path. Their layout is the same on both grounds — the firm's own
+   slide is the reference — so only the palette changes, via .is-navy. */
+
+.context-board {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  --board-ink: var(--c-1b2a4a, #1b2a4a);
+  --board-muted: var(--c-42617e, #42617e);
+  --board-rule: var(--c-c8a24a, #c8a24a);
+  --board-grid: var(--c-dce5ef, #dce5ef);
+  --board-bar: var(--c-1b2a4a, #1b2a4a);
+  --board-bar-down: var(--c-8aa9c8, #8aa9c8);
+  --board-bar-estimate: var(--c-9cbbdf, #9cbbdf);
+  --board-growth: var(--c-2f6b43, #2f6b43);
+  color: var(--board-ink);
+}
+.context-board.is-navy {
+  --board-ink: #ffffff;
+  --board-muted: #a3b1d4;
+  --board-rule: #d8b870;
+  --board-grid: rgba(255, 255, 255, 0.1);
+  --board-bar: #dce3f2;
+  --board-bar-down: #6e80ac;
+  --board-bar-estimate: #d8b870;
+  --board-growth: #e8c98a;
+}
+
+.board-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--board-rule);
+}
+.slide .context-board .board-head h2 { margin: 0; }
+.context-board.is-navy .board-head { border-bottom-color: var(--board-rule); }
+.board-meta {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--board-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.board-chart {
+  flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  margin-top: 18px;
+}
+.board-chart svg { width: 100%; height: 100%; display: block; }
+
+.board-zero { stroke: var(--board-muted); stroke-width: 1; }
+.board-grid { stroke: var(--board-grid); stroke-width: 1; }
+.board-bar { fill: var(--board-bar); }
+.board-bar.is-down { fill: var(--board-bar-down); }
+.board-bar.is-estimate { fill: var(--board-bar-estimate); }
+.board-value { fill: var(--board-ink); font-size: 15px; font-weight: 600; }
+.context-board.is-navy .board-value { font-weight: 400; font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+.board-name { fill: var(--board-ink); font-size: 14px; }
+.context-board.is-navy .board-name { fill: var(--board-muted); font-size: 12px; }
+.board-axis { fill: var(--board-muted); font-size: 12px; }
+.board-growth { fill: var(--board-growth); font-size: 15px; font-weight: 600; }
+.board-arrow { stroke: var(--board-bar-estimate); stroke-width: 2.4; fill: none; }
+.board-arrow-head { fill: var(--board-bar-estimate); }
+
+.board-source {
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--board-muted);
+  margin: 14px 0 0;
+  max-width: 980px;
+}
+.context-board.is-navy .board-source {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.4px;
+  line-height: 1.8;
+}
+.board-pending {
+  margin: 30px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--board-muted);
+  max-width: 620px;
+  border-left: 3px solid var(--board-rule);
+  padding-left: 16px;
+}
+
+/* Earnings: the bullets carry the reading, the chart carries the shape. */
+.earnings-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.4fr);
+  gap: 36px;
+  align-items: center;
+  flex-grow: 1;
+  min-height: 0;
+}
+.earnings-split .board-chart { margin-top: 0; }
+.earnings-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.earnings-points li {
+  font-size: 15px;
+  line-height: 1.65;
+  position: relative;
+  padding-left: 18px;
+}
+.earnings-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  background: var(--board-rule);
+}
+.context-board.is-navy .earnings-points li { font-size: 14px; color: var(--c-cbd5ec, #cbd5ec); }
+
+@media (max-width: 760px) {
+  .earnings-split { grid-template-columns: 1fr; gap: 20px; }
+  .earnings-points li { font-size: 13px; }
+  .board-source { font-size: 10px; }
+}

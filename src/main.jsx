@@ -31,6 +31,9 @@ import "./data-drawers.css";
 import "./slide-fit.css";
 import "./slide-theme.css";
 import "./slide-navy.css";
+import "./context-board.css";
+import { SectorYtdSlide, EarningsExpectationsSlide } from "./ContextSlides";
+import { SP500_EARNINGS } from "./earnings-data";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
@@ -75,6 +78,27 @@ const sections = [
     id: "market-indexes",
     name: "YTD market snapshot",
     description: "S&P 500, Nasdaq, emerging markets, and MSCI returns.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
+    id: "fixed-income",
+    name: "Fixed income snapshot",
+    description: "Aggregate, Treasury, corporate and municipal year-to-date returns.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
+    id: "sector-ytd",
+    name: "Sector performance",
+    description: "The eleven S&P 500 sectors ranked by year-to-date return.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
+    id: "earnings-expectations",
+    name: "S&P 500 earnings",
+    description: "The earnings path, with consensus estimates for the forward years.",
     icon: ChartNoAxesColumnIncreasing,
     auto: true,
   },
@@ -139,7 +163,7 @@ function App() {
     [holdings, setHoldings] = useState([]),
     [errors, setErrors] = useState([]),
     [reviewed, setReviewed] = useState(false),
-    [selected, setSelected] = useState(["account-summary", "market-indexes", "regional-attribution"]),
+    [selected, setSelected] = useState(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]),
     [title, setTitle] = useState("Portfolio review"),
     [notes, setNotes] = useState(""),
     [page, setPage] = useState(0),
@@ -164,6 +188,10 @@ function App() {
   const [importBook, setImportBook] = useState(null), [importBusy, setImportBusy] = useState(false), [importSource, setImportSource] = useState("");
   const [marketIndexes, setMarketIndexes] = useState(emptyMarketIndexes), [sectorPerformance, setSectorPerformance] = useState(emptySectorPerformance), [earnings, setEarnings] = useState(emptyEarnings);
   const [marketLoading, setMarketLoading] = useState(false), [marketError, setMarketError] = useState("");
+  // The fixed income and sector boards come from the same endpoint as the
+  // equity one, each a separate request so a failure on one does not blank the
+  // others.
+  const [fixedIncome, setFixedIncome] = useState(null), [sectorBoard, setSectorBoard] = useState(null);
   const [deckMarket, setDeckMarket] = useState({});
   const [positions, setPositions] = useState([]), [supporting, setSupporting] = useState({}), [supportError, setSupportError] = useState("");
   const [preparedFor, setPreparedFor] = useState(""), [advisor, setAdvisor] = useState(""), [reportDate, setReportDate] = useState(new Date().toLocaleDateString('en-CA'));
@@ -205,7 +233,17 @@ function App() {
     } catch (error) { setMarketError(error.message || 'YTD market data is unavailable.'); }
     finally { setMarketLoading(false); }
   }
-  useEffect(() => { refreshMarketIndexes(); }, []);
+  async function refreshBoard(board, apply) {
+    try {
+      const data = await fetchMarketJson(`/api/market/ytd?board=${board}`);
+      if (Array.isArray(data?.indexes) && data.indexes.length) apply(data);
+    } catch { /* the slide shows its own waiting state rather than failing the deck */ }
+  }
+  useEffect(() => {
+    refreshMarketIndexes();
+    refreshBoard('fixed-income', setFixedIncome);
+    refreshBoard('sectors', setSectorBoard);
+  }, []);
   const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot, fundSectors) : null;
   const equity = importedEquity || (benchmark.snapshot && !isBenchmarkStale(benchmark.snapshot) ? comparison?.data : null);
   const equityFile = useRef(null);
@@ -308,7 +346,7 @@ function App() {
       // which rebuilds positions from the textarea and so drops the account,
       // asset class and region the CSV carries.
       setReviewed(true);
-      setSelected(["account-summary", "market-indexes", "regional-attribution"]);
+      setSelected(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]);
     } catch {
       // The sample still works without the file; it just has no account column.
       setText(sample);
@@ -326,7 +364,7 @@ function App() {
     refreshMarketIndexes(); setSectorPerformance(emptySectorPerformance()); setEarnings(emptyEarnings());
     setHoldings([]);
     setReviewed(false);
-    setSelected(["account-summary", "market-indexes", "regional-attribution"]);
+    setSelected(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]);
     setTitle("Portfolio review");
     setNotes("");
     setErrors([]);
@@ -378,6 +416,9 @@ function App() {
       );
     if (slide.id === "account-summary") return <AccountSummarySlide positions={deckMarket.positions || enrichedPositions} source={importSource}/>;
     if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
+    if (slide.id === "fixed-income") return <MarketIndexesSlide data={deckMarket.fixedIncome} kicker="MARKET CONTEXT" title="Fixed income, year to date"/>;
+    if (slide.id === "sector-ytd") return <SectorYtdSlide data={deckMarket.sectorBoard}/>;
+    if (slide.id === "earnings-expectations") return <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS}/>;
     if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={deckMarket.positions || enrichedPositions} data={deckMarket.marketIndexes}/>;
     if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot} theme={slideTheme}/>;
     if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
@@ -432,6 +473,9 @@ function App() {
     "cover": "IN-HOUSE PORTFOLIO ANALYTICS",
     "account-summary": "ACCOUNT SUMMARY",
     "market-indexes": "MARKET SNAPSHOT",
+    "fixed-income": "FIXED INCOME",
+    "sector-ytd": "SECTOR PERFORMANCE",
+    "earnings-expectations": "S&P 500 EARNINGS",
     "regional-attribution": "REGIONAL ATTRIBUTION",
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
@@ -447,6 +491,13 @@ function App() {
       return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={reportDate}/>};
     if (slide.id === "market-indexes")
       return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
+    if (slide.id === "fixed-income")
+      return {label, body: <NavyMarketIndexes data={deckMarket.fixedIncome} heading="Fixed income, year to date"
+        title="What bonds did" note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
+    if (slide.id === "sector-ytd")
+      return {label, body: <SectorYtdSlide data={deckMarket.sectorBoard} navy/>};
+    if (slide.id === "earnings-expectations")
+      return {label, body: <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS} navy/>};
     if (slide.id === "regional-attribution")
       return {label, body: <NavyRegional positions={positions} data={deckMarket.marketIndexes}/>};
     if (slide.id === "equity" && deckEquity)
@@ -535,7 +586,7 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
+              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","fixed-income","sector-ytd","earnings-expectations","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
                 <section
                   aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -772,7 +823,7 @@ function App() {
                       (selected.includes("equity") && !equity) ||
                       (selected.includes("risk") && !supporting.risk && !riskSnapshot && riskStatus.busy)
                     }
-                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
+                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), fixedIncome: structuredClone(fixedIncome), sectorBoard: structuredClone(sectorBoard), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>

@@ -1,7 +1,8 @@
-import { MARKET_INDEXES, marketSnapshotFromYahoo, parseYahooChart } from '../src/market-indexes.js';
+import { BOARDS, boardFor, marketSnapshotFromYahoo, parseYahooChart } from '../src/market-indexes.js';
 
 const YAHOO_CHARTS = ['https://query1.finance.yahoo.com/v8/finance/chart/', 'https://query2.finance.yahoo.com/v8/finance/chart/'];
-let cached;
+// One cache entry per board, so a sector refresh cannot evict the equity one.
+const cached = new Map();
 
 const unix = date => Math.floor(date.getTime() / 1000);
 export async function fetchIndexChart(definition, period1, period2, year, fetcher=fetch) {
@@ -21,22 +22,29 @@ export async function fetchIndexChart(definition, period1, period2, year, fetche
 
 export async function marketResponse(request, fetcher = fetch, clock = () => new Date()) {
   if (request.method !== 'GET') return Response.json({error:'Use GET.'}, {status:405, headers:{Allow:'GET'}});
+  // An unknown board falls back to the equity one rather than erroring, so an
+  // older client asking without a board keeps working.
+  const requested = new URL(request.url).searchParams.get('board') || 'indexes';
+  const key = BOARDS[requested] ? requested : 'indexes';
+  const board = boardFor(key);
+  const hit = cached.get(key);
   try {
-    if (!cached || Date.now() - cached.time > 60 * 60 * 1000) {
+    if (!hit || Date.now() - hit.time > 60 * 60 * 1000) {
       const now = clock();
       const start = new Date(Date.UTC(now.getUTCFullYear() - 1, 11, 20));
       const period1 = unix(start);
       const period2 = unix(new Date(now.getTime() + 24 * 60 * 60 * 1000));
-      const entries = await Promise.all(MARKET_INDEXES.map(async definition => {
+      const entries = await Promise.all(board.definitions.map(async definition => {
         return [definition.id, await fetchIndexChart(definition,period1,period2,now.getUTCFullYear(),fetcher)];
       }));
-      cached = {data:marketSnapshotFromYahoo(Object.fromEntries(entries), now), time:Date.now()};
+      cached.set(key, {data:marketSnapshotFromYahoo(Object.fromEntries(entries), now, key), time:Date.now()});
     }
-    return Response.json(cached.data, {headers:{'Cache-Control':'public, max-age=300, s-maxage=3600','X-Content-Type-Options':'nosniff'}});
+    return Response.json(cached.get(key).data, {headers:{'Cache-Control':'public, max-age=300, s-maxage=3600','X-Content-Type-Options':'nosniff'}});
   } catch(error) {
     const message=`YTD refresh failed. ${error.name==='TimeoutError'?'The market provider timed out.':error.message}`;
     console.warn('market_refresh_failed',message);
-    if (cached && cached.data.asOf.startsWith(String(clock().getUTCFullYear()))) return Response.json({...cached.data,warning:message},{headers:{'Cache-Control':'no-store'}});
+    const stale = cached.get(key);
+    if (stale && stale.data.asOf.startsWith(String(clock().getUTCFullYear()))) return Response.json({...stale.data,warning:message},{headers:{'Cache-Control':'no-store'}});
     return Response.json({error:message}, {status:502, headers:{'Cache-Control':'no-store'}});
   }
 }

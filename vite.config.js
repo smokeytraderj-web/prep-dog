@@ -27,7 +27,8 @@ const benchmarkApi = {
       res.end(await response.text());
     });
     server.middlewares.use('/api/market/ytd', async (req, res) => {
-      const response = await marketResponse(new Request('http://localhost/api/market/ytd', {method: req.method}));
+      // Pass the original URL through: the board is a query parameter.
+      const response = await marketResponse(new Request(`http://localhost${req.originalUrl || req.url}`, {method: req.method}));
       res.statusCode = response.status;
       for (const [key, value] of response.headers) res.setHeader(key, value);
       res.end(await response.text());

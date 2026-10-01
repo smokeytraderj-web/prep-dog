@@ -138,10 +138,10 @@ export function NavyAccountSummary({positions, source, asOf}) {
 const NAVY_SERIES = ['var(--navy-series-1)', 'var(--navy-series-2)', 'var(--navy-series-3)', 'var(--navy-series-4)'];
 const CHART = {w: 1068, h: 268, left: 50, right: 1060, top: 20, bottom: 250};
 
-export function NavyMarketIndexes({data}) {
+export function NavyMarketIndexes({data, title = 'The year so far', note = 'Index returns are cumulative and unmanaged. They set the context for the portfolio, and are not its return.', heading = 'Year-to-date market snapshot'}) {
   const ready = data?.indexes?.length && data.indexes.every(i => Number.isFinite(Number(i.return)));
   if (!ready) return <div className="navy-slide-body">
-    <div className="navy-head"><h2>Year-to-date market snapshot</h2><span className="navy-meta">AWAITING SOURCED DATA</span></div>
+    <div className="navy-head"><h2>{heading}</h2><span className="navy-meta">AWAITING SOURCED DATA</span></div>
     <p className="navy-pending">This automatic slide is ready for the sourced index file. No market values are invented from the holdings file.</p>
   </div>;
 
@@ -163,12 +163,12 @@ export function NavyMarketIndexes({data}) {
 
   return <div className="navy-slide-body">
     <div className="navy-head">
-      <h2>The year so far</h2>
+      <h2>{title}</h2>
       {data.asOf && <span className="navy-meta">YTD {data.asOf}</span>}
     </div>
 
     <Lede label={`${lead.label} · YEAR TO DATE`} value={signed(lead.return).replace('%', '')} unit="%" gold
-      note="Index returns are cumulative and unmanaged. They set the context for the portfolio, and are not its return."/>
+      note={note}/>
 
     <div className="navy-chart">
       <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} preserveAspectRatio="none" role="img"
