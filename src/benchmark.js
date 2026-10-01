@@ -74,23 +74,38 @@ export function parseBenchmark(csv, retrievedAt = new Date().toISOString()) {
     sectors, constituents: constituents.map(({value, ...h}) => ({...h, weight: value / total * 100})) };
 }
 
-export function comparePortfolio(holdings, snapshot) {
+// `funds` is the look-through from /api/fund-sectors, keyed by ticker. A fund
+// with no equity sleeve is not an unknown -- it is a bond, cash or commodity
+// position, and this is an equity sector exposure, so it leaves the sleeve
+// rather than blocking the slide.
+export function comparePortfolio(holdings, snapshot, funds = {}) {
   const totals = Object.fromEntries(SECTOR_ORDER.map(n => [n, 0]));
   const map = new Map(snapshot.constituents.map(h => [h.ticker, h.sector]));
-  const unmatched = []; let total = 0;
+  const unmatched = [];
+  const nonEquity = [];
+  let total = 0;
+  let supplied = 0;
   for (const h of holdings) {
-    const ticker = normalizeTicker(h.ticker); total += h.value;
+    const ticker = normalizeTicker(h.ticker);
+    const fund = funds[ticker];
+    supplied += h.value;
+    if (fund?.available && !fund.sectors) { nonEquity.push(h); continue; }
+    total += h.value;
     if (ticker === 'IVV') for (const s of snapshot.sectors) totals[s.name] += h.value * s.weight / 100;
     else if (map.has(ticker)) totals[map.get(ticker)] += h.value;
+    else if (fund?.available && fund.sectors)
+      for (const name of SECTOR_ORDER) totals[name] += h.value * (fund.sectors[name] || 0) / 100;
     else unmatched.push(h);
   }
   const coverage = total ? 100 * (total - unmatched.reduce((n, h) => n + h.value, 0)) / total : 0;
-  if (unmatched.length || !total) return { data: null, unmatched, coverage };
+  if (unmatched.length || !total) return {data: null, unmatched, nonEquity, coverage};
+  const equityShare = supplied ? total / supplied * 100 : 0;
+  const lookedThrough = Object.values(funds).filter(f => f?.available && f.sectors).length;
   const data = validateEquity({title: 'Equity Sector Exposure', as_of: `Benchmark as of ${snapshot.asOf}`,
     portfolio_label: 'Your portfolio', benchmark_label: 'S&P 500 (IVV)', benchmark_short: 'S&P 500 (IVV proxy)',
-    source_note: `Benchmark: iShares IVV equity holdings, ${snapshot.asOf}, normalized to 100%. Portfolio: supplied position values; classifications from IVV.`,
+    source_note: `Benchmark: iShares IVV equity holdings, ${snapshot.asOf}, normalized to 100%. Portfolio: supplied position values, classified from IVV constituents${lookedThrough ? ' and daily fund holdings look-through' : ''}. ${equityShare < 99.5 ? `Equity sleeve only: ${equityShare.toFixed(1)}% of the portfolio; non-equity positions are excluded.` : 'All supplied positions are equity.'}`,
     sectors: SECTOR_ORDER.map(name => ({name, portfolio: totals[name] / total * 100, benchmark: snapshot.sectors.find(s => s.name === name).weight}))});
-  return {data, unmatched, coverage};
+  return {data, unmatched, nonEquity, coverage, equityShare};
 }
 
 export function isBenchmarkStale(snapshot, now = Date.now()) {

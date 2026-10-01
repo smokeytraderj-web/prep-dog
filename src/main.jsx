@@ -50,16 +50,16 @@ const money = (n) =>
     currency: "USD",
     maximumFractionDigits: 2,
   }).format(n);
-// A balanced book rather than six mega-caps: pasting only carries ticker and
-// value, but the fund table and the benchmark constituents classify these into
-// all four asset classes, so the allocation and risk slides have something real
-// to show. public/example-holdings.csv is the fuller version, with the account,
-// asset class and region columns that the account and regional slides need.
+// A balanced book rather than six mega-caps. The funds are all iShares, so the
+// equity slide can take its sector look-through from the provider's own daily
+// holdings file and the whole deck builds with nothing to import.
+// public/example-holdings.csv is the same book with the account, asset class
+// and region columns that a real custodian export would carry.
 const sample = [
   "IVV 420000", "AAPL 95000", "MSFT 110000", "JPM 78000", "LLY 64000",
-  "QQQ 180000", "VEA 165000", "VWO 92000",
-  "AGG 300000", "MUB 180000", "VCIT 120000", "TLT 85000",
-  "SGOV 95000", "GLD 85000", "VNQ 70000",
+  "IWF 180000", "IEFA 165000", "IEMG 92000",
+  "AGG 300000", "MUB 180000", "IGIB 120000", "TLT 85000",
+  "SGOV 95000", "IAU 85000", "IYR 70000",
 ].join("\n");
 const sections = [
   {
@@ -169,6 +169,22 @@ function App() {
   const assetReady = positions.length > 0 && positions.every(p => p.assetClass);
   const accountsReady = positions.length > 0 && positions.every(p => p.account);
   const benchmark = useBenchmark();
+  // Sector look-through for any fund the advisor holds, taken from the fund
+  // provider's own daily holdings file rather than asked of the advisor.
+  const [fundSectors, setFundSectors] = useState({});
+  const fundKey = holdings.map(h => h.ticker).sort().join(",");
+  useEffect(() => {
+    if (!fundKey) { setFundSectors({}); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch(`/api/fund-sectors?symbols=${encodeURIComponent(fundKey)}`, {headers: {Accept: "application/json"}});
+        const payload = await response.json().catch(() => null);
+        if (!cancelled && response.ok && payload?.funds) setFundSectors(payload.funds);
+      } catch { /* the slide reports its own coverage either way */ }
+    })();
+    return () => { cancelled = true; };
+  }, [fundKey]);
   // A pasted list carries ticker and value only, which left the account and
   // regional slides showing placeholders. Fill in what the benchmark and the
   // fund tables can establish; anything unresolved stays blank, so those slides
@@ -188,7 +204,7 @@ function App() {
     finally { setMarketLoading(false); }
   }
   useEffect(() => { refreshMarketIndexes(); }, []);
-  const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot) : null;
+  const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot, fundSectors) : null;
   const equity = importedEquity || (benchmark.snapshot && !isBenchmarkStale(benchmark.snapshot) ? comparison?.data : null);
   const equityFile = useRef(null);
   const file = useRef(null);

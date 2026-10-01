@@ -72,12 +72,34 @@ Two files in `public/` exercise the parts that need more than ticker and value:
 | File | What it unlocks |
 | --- | --- |
 | `example-holdings.csv` | 15 positions across 4 accounts with Account, Asset Class and Region columns. Populates the account summary's equities-vs-fixed-income split and the regional attribution slide, which are both blocked without them. |
-| `example-sectors.json` | Sector exposure for the equity sleeve of that file. The app refuses to guess ETF look-through, so the equity slide stays blocked until sector data is imported. |
+| `example-sectors.json` | A hand-prepared sector file, kept as a worked example of the import format. The equity slide no longer needs it: look-through is fetched from the fund provider. |
 
 The **Example file** link beside the upload button downloads the holdings CSV;
 import the sector JSON from the Equity benchmark panel. Benchmark weights in the
 sector file come from the IVV daily holdings file; the fund sleeves use published
 sector mixes. Both files are illustrative, not a client portfolio.
+
+## Fund sector look-through
+
+The equity slide needs a sector for every position. Individual equities come
+from the IVV constituent file. For funds, the app reads the provider's own daily
+holdings file rather than asking the advisor to import one:
+
+- `/api/fund-sectors` resolves a ticker through the iShares product list (526
+  products, cached for a day) and aggregates that fund's equity holdings into
+  the eleven sector weights.
+- The provider's own asset classification settles the rest. A Fixed Income,
+  Commodity or Money Market fund has no equity sleeve, so its file is never
+  fetched -- a bullion trust does not publish one. Those positions leave the
+  equity sleeve instead of blocking the slide, and the slide says what share of
+  the portfolio it covers.
+- A fund outside that list still blocks the slide. The app does not guess
+  look-through it cannot source.
+
+Caches hold the in-flight promise rather than the settled value, because a deck
+asks for every ticker at once and duplicate requests get rate-limited. A
+transient failure is returned `no-store`, so a brief provider outage does not
+leave a fund looking unknown for the rest of the cache window.
 
 ## Slide sizing
 

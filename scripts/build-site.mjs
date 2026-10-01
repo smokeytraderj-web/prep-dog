@@ -21,12 +21,14 @@ await mkdir('dist/server',{recursive:true});
 await build({stdin:{contents:`import {benchmarkResponse} from './server/benchmark.js';
 import {marketResponse} from './server/market.js';
 import {historyResponse} from './server/history.js';
+import {fundSectorsResponse} from './server/fund-sectors.js';
 const assets=${JSON.stringify(assets)};
 export default {async fetch(request) {
  const path=new URL(request.url).pathname;
  if(path==='/api/benchmark/sp500')return benchmarkResponse(request);
  if(path==='/api/market/ytd')return marketResponse(request);
  if(path==='/api/history')return historyResponse(request);
+ if(path==='/api/fund-sectors')return fundSectorsResponse(request);
  if(request.method!=='GET' && request.method!=='HEAD')return new Response('Method not allowed',{status:405});
  const asset=assets[path==='/'?'/index.html':path];
  if(!asset)return new Response('Not found',{status:404});

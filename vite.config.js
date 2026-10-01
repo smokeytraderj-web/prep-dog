@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { benchmarkResponse } from './server/benchmark.js';
 import { marketResponse } from './server/market.js';
 import { historyResponse } from './server/history.js';
+import { fundSectorsResponse } from './server/fund-sectors.js';
 const benchmarkApi = {
   name: 'benchmark-api',
   configureServer(server) {
@@ -15,6 +16,12 @@ const benchmarkApi = {
     });
     server.middlewares.use('/api/history', async (req, res) => {
       const response = await historyResponse(new Request(`http://localhost${req.originalUrl || req.url}`, {method: req.method}));
+      res.statusCode = response.status;
+      for (const [key, value] of response.headers) res.setHeader(key, value);
+      res.end(await response.text());
+    });
+    server.middlewares.use('/api/fund-sectors', async (req, res) => {
+      const response = await fundSectorsResponse(new Request(`http://localhost${req.originalUrl || req.url}`, {method: req.method}));
       res.statusCode = response.status;
       for (const [key, value] of response.headers) res.setHeader(key, value);
       res.end(await response.text());

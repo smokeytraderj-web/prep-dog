@@ -12,7 +12,7 @@
 export const EXPENSE_RATIOS = {
   // Broad equity
   IVV: 0.03, VOO: 0.03, SPY: 0.0945, VTI: 0.03, ITOT: 0.03, SCHB: 0.03,
-  QQQ: 0.20, QQQM: 0.15, DIA: 0.16, IWM: 0.19, IJH: 0.05, IJR: 0.06,
+  QQQ: 0.20, QQQM: 0.15, IWF: 0.19, IWD: 0.19, IWB: 0.15, IGIB: 0.04, IYR: 0.38, IAU: 0.25, DIA: 0.16, IWM: 0.19, IJH: 0.05, IJR: 0.06,
   VXUS: 0.05, VEA: 0.03, VWO: 0.07, IEFA: 0.07, IEMG: 0.09, EFA: 0.33, EEM: 0.70,
   VGT: 0.09, VIG: 0.05, VYM: 0.06, SCHD: 0.06, DGRO: 0.08, VUG: 0.04, VTV: 0.04,
   // Sector

@@ -64,3 +64,34 @@ test('a wholesale sector-format change still fails loudly', () => {
   assert.throws(() => parseBenchmark(fixture.replaceAll(',Materials,', ',Mystery,'), '2026-09-29T15:00:00Z'),
     /incomplete equity classifications/);
 });
+
+test('a fund with no equity sleeve leaves the sleeve instead of blocking the slide', () => {
+  // A bond or commodity fund is not an unknown sector -- it has no equity
+  // exposure at all, and this is an equity sector exposure.
+  const holdings = [{ticker: 'T0', value: 600}, {ticker: 'T1', value: 200}, {ticker: 'AGG', value: 200}];
+  const funds = {AGG: {available: true, sectors: null}};
+  const result = comparePortfolio(holdings, snapshot(), funds);
+  assert.deepEqual(result.unmatched, []);
+  assert.deepEqual(result.nonEquity.map(h => h.ticker), ['AGG']);
+  assert.ok(result.data);
+  // Weights are of the equity sleeve, so they still total 100.
+  assert.equal(result.data.sectors[0].portfolio, 75);
+  assert.ok(Math.abs(result.equityShare - 80) < 0.001);
+  assert.match(result.data.source_note, /Equity sleeve only: 80.0%/);
+});
+
+test('a fund look-through distributes the position across sectors', () => {
+  const [a, b] = [SECTOR_NAMES[Object.keys(SECTOR_NAMES)[0]], 'Info Tech'];
+  const funds = {XEQ: {available: true, sectors: {[a]: 40, [b]: 60}}};
+  const result = comparePortfolio([{ticker: 'XEQ', value: 1000}], snapshot(), funds);
+  assert.deepEqual(result.unmatched, []);
+  assert.equal(result.data.sectors.find(s => s.name === a).portfolio, 40);
+  assert.equal(result.data.sectors.find(s => s.name === b).portfolio, 60);
+  assert.match(result.data.source_note, /look-through/);
+});
+
+test('a fund with no look-through still blocks rather than being guessed', () => {
+  const result = comparePortfolio([{ticker: 'T0', value: 500}, {ticker: 'QQQ', value: 500}], snapshot(), {QQQ: {available: false, reason: 'not-listed'}});
+  assert.deepEqual(result.unmatched.map(h => h.ticker), ['QQQ']);
+  assert.equal(result.data, null);
+});
