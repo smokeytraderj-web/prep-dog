@@ -9,282 +9,322 @@
 
 .slide[data-slide-theme="dark"] {
   /* surface */
-  --c-eef5fc: #0f1422;
-  --c-eff5fb: #101523;
-  --c-f0f5fa: #101524;
-  --c-f1f5f9: #111624;
-  --c-eff6fc: #111725;
-  --c-f1f6fb: #121726;
-  --c-f4f7fa: #121827;
-  --c-f5f8fb: #131928;
-  --c-f5f8fc: #141929;
-  --c-f5f9fd: #141a2a;
-  --c-f8fafc: #151b2a;
-  --c-f8fbfd: #151b2b;
-  --c-fff: #161c2c;
+  --c-eef5fc: #131f42;
+  --c-eff5fb: #142043;
+  --c-f0f5fa: #142044;
+  --c-f1f5f9: #152145;
+  --c-eff6fc: #152246;
+  --c-f1f6fb: #162247;
+  --c-f4f7fa: #162348;
+  --c-f5f8fb: #172449;
+  --c-f5f8fc: #18244a;
+  --c-f5f9fd: #18254b;
+  --c-f8fafc: #19264c;
+  --c-f8fbfd: #19264d;
+  --c-fff: #1a274e;
   /* panel */
-  --c-dce6ef: #111625;
-  --c-dfe7ee: #111726;
-  --c-e1e9f1: #121726;
-  --c-e3ebf2: #121827;
-  --c-e3ebf3: #131828;
-  --c-e5ebf0: #131928;
-  --c-e6ebf0: #131929;
-  --c-e6edf3: #141a2a;
-  --c-e7edf2: #141a2a;
-  --c-e4eef6: #151b2b;
-  --c-e7eef5: #151b2b;
-  --c-e9eff5: #161c2c;
-  --c-eaf1f7: #161c2d;
-  --c-eef1f5: #161d2d;
-  --c-eaf2fa: #171d2e;
-  --c-eff2f5: #171e2f;
-  --c-edf3f8: #181e2f;
-  --c-edf3fa: #181f30;
+  --c-dce6ef: #152145;
+  --c-dfe7ee: #152246;
+  --c-e1e9f1: #162247;
+  --c-e3ebf2: #162347;
+  --c-e3ebf3: #172348;
+  --c-e5ebf0: #172449;
+  --c-e6ebf0: #18254a;
+  --c-e6edf3: #18254b;
+  --c-e7edf2: #19264c;
+  --c-e4eef6: #19264c;
+  --c-e7eef5: #1a274d;
+  --c-e9eff5: #1a274e;
+  --c-eaf1f7: #1b284f;
+  --c-eef1f5: #1b2950;
+  --c-eaf2fa: #1c2951;
+  --c-eff2f5: #1c2a51;
+  --c-edf3f8: #1d2a52;
+  --c-edf3fa: #1d2b53;
   /* border */
-  --c-c6d6e6: #232b3d;
-  --c-c9d9e8: #232b3e;
-  --c-c9d9e9: #242c3e;
-  --c-cbd9e7: #242c3f;
-  --c-d0dae3: #252d3f;
-  --c-cbdbe8: #252d40;
-  --c-ccdbe9: #252e40;
-  --c-cedce9: #262e41;
-  --c-cfdeea: #262f41;
-  --c-d3dee7: #272f42;
-  --c-d4dfeb: #272f42;
-  --c-d7dfe7: #273043;
-  --c-d4e1ec: #283043;
-  --c-d5e1ed: #283144;
-  --c-d7e2ed: #293144;
-  --c-d7e3ed: #293245;
-  --c-d8e3ed: #2a3245;
-  --c-d9e4ed: #2a3346;
-  --c-dce4eb: #2a3346;
-  --c-dce4ec: #2b3347;
-  --c-d9e5ee: #2b3447;
-  --c-dbe5ed: #2c3448;
-  --c-dbe5ef: #2c3548;
-  --c-dce5ed: #2c3549;
-  --c-dce5ee: #2d3649;
-  --c-dde5ec: #2d364a;
-  --c-dce5ef: #2e374a;
-  --c-dce6ee: #2e374b;
+  --c-c6d6e6: #26335c;
+  --c-c9d9e8: #26345d;
+  --c-c9d9e9: #27345d;
+  --c-cbd9e7: #27355e;
+  --c-d0dae3: #28355f;
+  --c-cbdbe8: #283660;
+  --c-ccdbe9: #293660;
+  --c-cedce9: #293761;
+  --c-cfdeea: #2a3762;
+  --c-d3dee7: #2a3863;
+  --c-d4dfeb: #2b3963;
+  --c-d7dfe7: #2b3964;
+  --c-d4e1ec: #2c3a65;
+  --c-d5e1ed: #2c3a66;
+  --c-d7e2ed: #2d3b66;
+  --c-d7e3ed: #2d3b67;
+  --c-d8e3ed: #2e3c68;
+  --c-d9e4ed: #2e3c69;
+  --c-dce4eb: #2f3d69;
+  --c-dce4ec: #2f3e6a;
+  --c-d9e5ee: #303e6b;
+  --c-dbe5ed: #303f6c;
+  --c-dbe5ef: #313f6c;
+  --c-dce5ed: #31406d;
+  --c-dce5ee: #32406e;
+  --c-dde5ec: #32416f;
+  --c-dce5ef: #33416f;
+  --c-dce6ee: #334270;
   /* muted */
-  --c-6c879f: #939eb2;
-  --c-6f879b: #949fb3;
-  --c-6288ae: #949fb3;
-  --c-74899a: #95a0b4;
-  --c-7a8997: #96a1b4;
-  --c-728ba0: #96a1b5;
-  --c-738b9f: #97a2b5;
-  --c-7c8b99: #98a2b6;
-  --c-718eab: #98a3b6;
-  --c-7c8f9f: #99a4b7;
-  --c-7d91a1: #9aa4b7;
-  --c-7792a7: #9aa5b8;
-  --c-7892a7: #9ba6b8;
-  --c-7594af: #9ca6b9;
-  --c-8093a3: #9ca7b9;
-  --c-8093a4: #9da7ba;
-  --c-8094a4: #9ea8ba;
-  --c-8494a2: #9ea9bb;
-  --c-8195a6: #9fa9bc;
-  --c-8096a7: #a0aabc;
-  --c-8296a7: #a0abbd;
-  --c-7298b8: #a1abbd;
-  --c-8a98a5: #a2acbe;
-  --c-759bbf: #a2adbe;
-  --c-819bb0: #a3adbf;
-  --c-8c9aa8: #a4aebf;
-  --c-8a9caa: #a5aec0;
-  --c-8b9dac: #a5afc0;
-  --c-8b9eae: #a6b0c1;
-  --c-8aa3b7: #a7b0c1;
-  --c-96a2ac: #a7b1c2;
-  --c-8aa4ba: #a8b2c2;
-  --c-99a5af: #a9b2c3;
-  --c-8ea7bb: #a9b3c4;
-  --c-8aa8c5: #aab4c4;
-  --c-98a7b5: #abb4c5;
-  --c-99a7b3: #abb5c5;
-  --c-8aa9c8: #acb5c6;
-  --c-9aa8b2: #adb6c6;
-  --c-91abc0: #adb7c7;
-  --c-7aadd8: #aeb7c7;
-  --c-9baec2: #afb8c8;
-  --c-9cb7d0: #afb9c8;
-  --c-a9bcd0: #b0b9c9;
-  --c-a8bdd1: #b1bac9;
-  --c-aac0d5: #b1baca;
-  --c-b7c3cf: #b2bbca;
-  --c-b8c8d5: #b3bccb;
-  --c-bacddd: #b3bccb;
-  --c-b6cee5: #b4bdcc;
+  --c-6c879f: #9daac9;
+  --c-6f879b: #9eabca;
+  --c-6288ae: #9fabca;
+  --c-74899a: #9faccb;
+  --c-7a8997: #a0adcb;
+  --c-728ba0: #a1adcc;
+  --c-738b9f: #a2aecc;
+  --c-7c8b99: #a2afcd;
+  --c-718eab: #a3afcd;
+  --c-7c8f9f: #a4b0ce;
+  --c-7d91a1: #a5b1ce;
+  --c-7792a7: #a5b1cf;
+  --c-7892a7: #a6b2cf;
+  --c-7594af: #a7b3d0;
+  --c-8093a3: #a8b3d0;
+  --c-8093a4: #a8b4d1;
+  --c-8094a4: #a9b5d1;
+  --c-8494a2: #aab5d2;
+  --c-8195a6: #abb6d2;
+  --c-8096a7: #abb7d3;
+  --c-8296a7: #acb7d3;
+  --c-7298b8: #adb8d4;
+  --c-8a98a5: #aeb9d4;
+  --c-759bbf: #aeb9d5;
+  --c-819bb0: #afbad5;
+  --c-8c9aa8: #b0bbd6;
+  --c-8a9caa: #b1bcd6;
+  --c-8b9dac: #b1bcd7;
+  --c-8b9eae: #b2bdd7;
+  --c-8aa3b7: #b3bed8;
+  --c-96a2ac: #b4bed8;
+  --c-8aa4ba: #b4bfd9;
+  --c-99a5af: #b5c0d9;
+  --c-8ea7bb: #b6c0da;
+  --c-8aa8c5: #b7c1da;
+  --c-98a7b5: #b7c2db;
+  --c-99a7b3: #b8c2db;
+  --c-8aa9c8: #b9c3dc;
+  --c-9aa8b2: #bac4dc;
+  --c-91abc0: #bac4dd;
+  --c-7aadd8: #bbc5dd;
+  --c-9baec2: #bcc6de;
+  --c-9cb7d0: #bdc6de;
+  --c-a9bcd0: #bdc7df;
+  --c-a8bdd1: #bec8df;
+  --c-aac0d5: #bfc8e0;
+  --c-b7c3cf: #c0c9e0;
+  --c-b8c8d5: #c0cae1;
+  --c-bacddd: #c1cae1;
+  --c-b6cee5: #c2cbe2;
   /* accent */
-  --c-365e80: #c9b06a;
-  --c-315d8c: #cab16b;
-  --c-914735: #cab26d;
-  --c-345f8e: #cbb36e;
-  --c-436078: #ccb36f;
-  --c-42617e: #cdb471;
-  --c-456480: #cdb572;
-  --c-486480: #ceb673;
-  --c-426889: #cfb775;
-  --c-456888: #d0b876;
-  --c-466887: #d0b978;
-  --c-526c86: #d1ba79;
-  --c-2c729b: #d2ba7a;
-  --c-536f87: #d3bb7c;
-  --c-54718a: #d3bc7d;
-  --c-55728b: #d4bd7e;
-  --c-527594: #d5be80;
-  --c-49779e: #d6bf81;
-  --c-3976b6: #d6c082;
-  --c-547796: #d7c184;
-  --c-587b99: #d8c185;
-  --c-8a7652: #d9c286;
-  --c-557d9f: #d9c388;
-  --c-617d94: #dac489;
-  --c-8c7853: #dbc58b;
-  --c-587fa9: #dcc68c;
-  --c-658096: #dcc78d;
-  --c-a38a57: #ddc88f;
-  --c-a78d58: #dec890;
-  --c-b59a63: #dfc991;
-  --c-b39c70: #dfca93;
-  --c-bca674: #e0cb94;
+  --c-365e80: #c9a961;
+  --c-315d8c: #caaa62;
+  --c-914735: #cbab64;
+  --c-345f8e: #ccac65;
+  --c-436078: #ccad66;
+  --c-42617e: #cdae67;
+  --c-456480: #ceaf69;
+  --c-486480: #cfb06a;
+  --c-426889: #d0b16b;
+  --c-456888: #d1b26d;
+  --c-466887: #d1b36e;
+  --c-526c86: #d2b46f;
+  --c-2c729b: #d3b570;
+  --c-536f87: #d4b672;
+  --c-54718a: #d5b773;
+  --c-55728b: #d6b874;
+  --c-527594: #d6b976;
+  --c-49779e: #d7ba77;
+  --c-3976b6: #d8bb78;
+  --c-547796: #d9bc7a;
+  --c-587b99: #dabd7b;
+  --c-8a7652: #dbbe7c;
+  --c-557d9f: #dbbf7d;
+  --c-617d94: #dcc07f;
+  --c-8c7853: #ddc180;
+  --c-587fa9: #dec281;
+  --c-658096: #dfc383;
+  --c-a38a57: #e0c484;
+  --c-a78d58: #e0c585;
+  --c-b59a63: #e1c686;
+  --c-b39c70: #e2c788;
+  --c-bca674: #e3c889;
   /* ink */
-  --c-1b2a4a: #e8ecf2;
-  --c-112e48: #e9ecf2;
-  --c-142f49: #e9edf3;
-  --c-173451: #eaeef3;
-  --c-163653: #eaeef4;
-  --c-153753: #ebeef4;
-  --c-173b5a: #eceff4;
-  --c-233f58: #ecf0f5;
-  --c-244460: #edf0f5;
-  --c-254562: #edf0f5;
-  --c-29475f: #eef1f6;
-  --c-23476b: #eef2f6;
-  --c-254969: #eff2f6;
-  --c-2e4b68: #f0f2f7;
-  --c-264c6b: #f0f3f7;
-  --c-254d6d: #f1f4f8;
-  --c-254c75: #f1f4f8;
-  --c-244e70: #f2f4f8;
-  --c-365168: #f2f5f9;
-  --c-315574: #f3f6f9;
-  --c-365873: #f4f6fa;
-  --c-385875: #f4f6fa;
-  --c-31597a: #f5f7fa;
-  --c-365b7b: #f5f8fb;
-  --c-285f70: #f6f8fb;
+  --c-1b2a4a: #eef2fa;
+  --c-112e48: #eff3fa;
+  --c-142f49: #eff3fa;
+  --c-173451: #f0f4fb;
+  --c-163653: #f1f4fb;
+  --c-153753: #f2f5fb;
+  --c-173b5a: #f2f5fb;
+  --c-233f58: #f3f6fb;
+  --c-244460: #f4f6fc;
+  --c-254562: #f4f7fc;
+  --c-29475f: #f5f7fc;
+  --c-23476b: #f6f8fc;
+  --c-254969: #f6f8fc;
+  --c-2e4b68: #f7f9fd;
+  --c-264c6b: #f8fafd;
+  --c-254d6d: #f9fafd;
+  --c-254c75: #f9fbfd;
+  --c-244e70: #fafbfe;
+  --c-365168: #fbfcfe;
+  --c-315574: #fbfcfe;
+  --c-365873: #fcfdfe;
+  --c-385875: #fdfdfe;
+  --c-31597a: #fefeff;
+  --c-365b7b: #fefeff;
+  --c-285f70: #ffffff;
   /* the seal's gold, and status tones */
-  --c-bfa775: #c9b06a;
-  --c-e0caae: #7a6742;
-  --c-fff8ef: #231d12;
-  --c-694d35: #e6d3a8;
-  --c-8a3d32: #e8998c;
-  --c-fff0ed: #2a1c19;
+  --c-bfa775: #c9a961;
+  --c-e0caae: #7d6a3e;
+  --c-fff8ef: #241f14;
+  --c-694d35: #e8d6ab;
+  --c-8a3d32: #eb9b8d;
+  --c-fff0ed: #2b1d1a;
   /* shadows and tints */
-  --c-0c2639a8: #00000073;
-  --c-15324e04: #00000073;
-  --c-15324e0c: #00000073;
-  --c-15324e12: #00000073;
-  --c-17344b06: #00000073;
-  --c-18354c06: #00000073;
-  --c-7594af18: #ffffff0f;
-  --c-7d9dc333: #ffffff0f;
+  --c-0c2639a8: #00000080;
+  --c-15324e04: #00000080;
+  --c-15324e0c: #00000080;
+  --c-15324e12: #00000080;
+  --c-17344b06: #00000080;
+  --c-18354c06: #00000080;
+  --c-7594af18: #ffffff12;
+  --c-7d9dc333: #ffffff12;
 
   /* Chart colours that live in JSX, not CSS. */
-  --c-526c86: #97a2b6;
-  --c-365873: #b4bdcc;
-  --c-9baec2: #2e374b;
-  --c-dce5ef: #232b3d;
-  --c-254562: #e2e7ee;
-  --c-254c75: #f2f5f9;
-  --c-547796: #97a2b6;
-  --c-a9bcd0: #2e374b;
+  --c-526c86: #9daac9;
+  --c-365873: #c2cbe2;
+  --c-9baec2: #33425f;
+  --c-dce5ef: #26335c;
+  --c-254562: #eef2fa;
+  --c-254c75: #ffffff;
+  --c-547796: #9daac9;
+  --c-a9bcd0: #33425f;
 
-  /* One accent. Series step down in gold then cool grey -- no second blue. */
-  --series-1: #c9b06a;
-  --series-2: #8f9bb0;
-  --series-3: #5c687e;
-  --series-4: #3c4457;
-  --ramp-1: #c9b06a;
-  --ramp-2: #8f9bb0;
-  --ramp-3: #55607a;
-  --ramp-4: #333b4f;
+  /* Gold leads; the rest step through warm sand and cool slate. No light blue. */
+  --series-1: #d4b26a;
+  --series-2: #8e9ab8;
+  --series-3: #5d6b8c;
+  --series-4: #3a4668;
+  --ramp-1: #d4b26a;
+  --ramp-2: #8e9ab8;
+  --ramp-3: #51608a;
+  --ramp-4: #32406a;
 }
 
-/* --- structural treatment -----------------------------------------------
-   Light is the plain, classic page. Navy is the minimal one: a near-black
-   ink ground, filled panels stripped back to hairlines and space, tighter
-   letterspacing on labels, and a single gold accent. No second blue. */
+/* --- navy is a different design, not a recoloured light deck -------------
+   Light stays the classic page: Georgia headings, filled panels, hairlines.
+   Navy is the modern one, and the difference is structural before it is
+   chromatic -- a sans type system, wide-tracked micro labels, oversized
+   tabular figures, no panel fills, and a single gold accent. */
+
 .slide[data-slide-theme="dark"] {
-  background: #0b1018;
-  border-color: #232b3d;
-  box-shadow: 0 12px 40px #00000073;
-  color: #e8ecf2;
+  background: #0d1733;
+  border-color: #26335c;
+  box-shadow: 0 16px 48px #00000080;
+  color: #eef2fa;
 }
-.slide.cover[data-slide-theme="dark"] {
-  background: #0b1018;
-  border-left-color: #c9b06a;
+.slide.cover[data-slide-theme="dark"] { background: #0d1733; border-left-color: #c9a961; }
+
+/* 1. Type system. The light deck sets its headings in Georgia; the navy deck
+      answers in the UI sans, tighter and heavier. This is the change that makes
+      the two read as different designs rather than two colourways. */
+[data-slide-theme="dark"] h2,
+[data-slide-theme="dark"] .equity-heading h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.8px;
 }
-/* Rules do the work that panel fills do on the light page, so they are crisp
-   and hairline rather than heavier. Only the side each element actually draws
-   is set: the CSS reset leaves border-style solid on all four sides at zero
-   width, so the border-width shorthand would box the element in. */
-.slide[data-slide-theme="dark"] footer { border-top-width: 1px; border-top-color: #232b3d; }
-[data-slide-theme="dark"] .snapshot-lede,
-[data-slide-theme="dark"] .overview-stats,
-[data-slide-theme="dark"] .account-summary-head,
-[data-slide-theme="dark"] .regional-table-head { border-bottom-width: 1px; }
-[data-slide-theme="dark"] .gold-rule { height: 2px; width: 84px; background: #c9b06a; }
-[data-slide-theme="dark"] .equity-rule { background: #c9b06a; opacity: .75; }
-/* Minimal: panels lose their fill and box, and are separated by a hairline. */
+[data-slide-theme="dark"] .cover-content h2 { font-weight: 300; letter-spacing: -1.6px; }
+
+/* 2. Micro labels: wide tracking, small, confident. */
+[data-slide-theme="dark"] .slide-kicker,
+[data-slide-theme="dark"] .account-summary-label,
+[data-slide-theme="dark"] .eq-kicker,
+[data-slide-theme="dark"] .range-anchor span,
+[data-slide-theme="dark"] .equity-caption {
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-style: normal;
+  opacity: .85;
+}
+
+/* 3. Figures carry the page: larger, lighter, tabular so columns line up. */
+[data-slide-theme="dark"] .account-summary-head strong,
+[data-slide-theme="dark"] .snapshot-lede strong,
+[data-slide-theme="dark"] .executive-primary strong,
+[data-slide-theme="dark"] .range-anchor b,
+[data-slide-theme="dark"] .index-card b,
+[data-slide-theme="dark"] .account-total strong {
+  font-weight: 300;
+  letter-spacing: -1.2px;
+  font-variant-numeric: tabular-nums;
+}
+[data-slide-theme="dark"] td,
+[data-slide-theme="dark"] .snapshot-measures dd,
+[data-slide-theme="dark"] .equity-allocation td { font-variant-numeric: tabular-nums; }
+
+/* 4. No panel fills. Structure comes from rules and space. */
 [data-slide-theme="dark"] .index-card,
 [data-slide-theme="dark"] .earnings-metric,
 [data-slide-theme="dark"] .sensitivity-scenario,
 [data-slide-theme="dark"] .risk-account {
   background: transparent;
   border: 0;
-  border-top: 1px solid #232b3d;
+  border-top: 1px solid #26335c;
   border-radius: 0;
+  padding-left: 0;
 }
-[data-slide-theme="dark"] .data-pending { background: transparent; border: 1px dashed #2e374b; }
+[data-slide-theme="dark"] .data-pending { background: transparent; border: 1px dashed #33425f; }
 [data-slide-theme="dark"] .snapshot-range-track,
 [data-slide-theme="dark"] .range-scale,
 [data-slide-theme="dark"] .index-bar,
-[data-slide-theme="dark"] .asset-balance-track { background: #1a212e; }
-/* Labels are set a little wider and lighter, which is what makes a dark page
-   read as deliberate rather than inverted. */
-[data-slide-theme="dark"] .slide-kicker,
-[data-slide-theme="dark"] .account-summary-label,
-[data-slide-theme="dark"] .eq-kicker,
-[data-slide-theme="dark"] .range-anchor span { letter-spacing: 1.8px; font-weight: 500; }
+[data-slide-theme="dark"] .asset-balance-track { background: #1b2748; }
+
+/* 5. Rules are hairlines, and the brand rule is a gold fade rather than a bar. */
+.slide[data-slide-theme="dark"] footer { border-top-width: 1px; border-top-color: #26335c; }
+[data-slide-theme="dark"] .snapshot-lede,
+[data-slide-theme="dark"] .overview-stats,
+[data-slide-theme="dark"] .account-summary-head,
+[data-slide-theme="dark"] .regional-table-head { border-bottom-width: 1px; }
+[data-slide-theme="dark"] .gold-rule,
+[data-slide-theme="dark"] .equity-rule {
+  height: 1px;
+  background: linear-gradient(90deg, #c9a961, #c9a96100);
+  opacity: 1;
+}
+[data-slide-theme="dark"] .gold-rule { width: 140px; }
+
+/* 6. The allocation table loses its navy band for a gold underline. */
 [data-slide-theme="dark"] .equity-allocation .equity-groups th {
   background: transparent;
-  border-bottom: 1px solid #c9b06a;
+  border-bottom: 1px solid #c9a961;
   border-right: 0;
-  color: #c9b06a;
+  color: #c9a961;
+  letter-spacing: 2px;
 }
-[data-slide-theme="dark"] .equity-allocation .equity-sectors th { background: transparent; border-bottom: 1px solid #232b3d; }
+[data-slide-theme="dark"] .equity-allocation .equity-sectors th { background: transparent; border-bottom: 1px solid #26335c; }
 [data-slide-theme="dark"] .equity-allocation tbody tr:nth-child(2) th,
 [data-slide-theme="dark"] .equity-allocation tbody tr:nth-child(2) td { background: transparent; }
 [data-slide-theme="dark"] .equity-allocation tbody th,
-[data-slide-theme="dark"] .equity-allocation tbody td { border-bottom: 1px solid #1a212e; }
-/* The seal is a full-colour mark with navy lettering on transparency, so it
-   sits on a light chip rather than being filtered -- the brand colours stay
-   exact and the outer ring stays readable. */
+[data-slide-theme="dark"] .equity-allocation tbody td { border-bottom: 1px solid #1b2748; }
+[data-slide-theme="dark"] .eq-zebra { fill: #ffffff08; }
+
+/* The seal is a full-colour mark on transparency, so it sits on a light chip
+   rather than being filtered -- the brand colours stay exact. */
 [data-slide-theme="dark"] .slide-brand img {
-  background: #eef1f6;
+  background: #eef2fa;
   border-radius: 50%;
   padding: 2px;
-  box-shadow: 0 0 0 1px #2e374b;
+  box-shadow: 0 0 0 1px #33425f;
 }
-/* The wordmark beside it is set in the slide's own ink, which already flips. */
 
 /* Carry the theme into the PDF: browsers drop backgrounds when printing
    unless the page opts in. */

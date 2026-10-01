@@ -123,7 +123,9 @@
 .equity-allocation .equity-groups th { background: var(--c-1b2a4a, #1b2a4a); color: var(--c-ffffff, #ffffff); font-size: 11px; font-weight: 600; padding: 7px 4px; text-align: center; border-right: 2px solid var(--c-ffffff, #ffffff); }
 .equity-allocation .equity-groups th:first-child { background: transparent; border-right: 0; }
 .equity-allocation .equity-sectors th { background: var(--c-e9eff5, #e9eff5); font-size: 9.5px; font-weight: 600; line-height: 1.25; padding: 6px 3px; text-align: center; color: var(--c-1b2a4a, #1b2a4a); }
-.equity-allocation tbody th { text-align: left; font-size: 11px; font-weight: 700; padding: 8px 8px 8px 0; line-height: 1.25; white-space: pre-line; }
+/* These are row labels, so they take the slide's ink rather than the muted
+   colour the global rule gives column headers. */
+.equity-allocation tbody th { text-align: left; font-size: 11px; font-weight: 700; padding: 8px 8px 8px 0; line-height: 1.25; white-space: pre-line; color: var(--c-1b2a4a, #1b2a4a); }
 .equity-allocation tbody td { text-align: center; font-size: 11px; padding: 8px 3px; font-variant-numeric: tabular-nums; }
 .equity-allocation tbody tr:nth-child(2) th, .equity-allocation tbody tr:nth-child(2) td { background: var(--c-f1f5f9, #f1f5f9); font-weight: 400; }
 
