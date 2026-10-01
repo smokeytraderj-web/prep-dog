@@ -224,9 +224,14 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
    card next to its controls. The row owns the hover now. */
 .slide-list .slide-row button.slide-row-open:hover { background: transparent; }
 
-/* Admin's position is not the advisor's to change, so its row says so instead
-   of offering arrows that would do nothing. */
-.order-pinned {
-  font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase;
-  color: #8fa2b5; padding: 5px 4px;
+
+/* Adding a slide from the preview sidebar. Same dashed chips as step 2, stacked
+   under the list so they read as "not in the deck" rather than as slides. */
+.slide-list-add { display: flex; flex-direction: column; gap: 7px; margin-top: 12px; padding: 0 2px; }
+.slide-list-add button {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px dashed #c3d2e0; background: none; color: #486480;
+  font-size: 11px; text-align: left;
+  padding: 8px 11px; border-radius: 6px; cursor: pointer;
 }
+.slide-list-add button:hover { border-style: solid; border-color: #8fa9c2; color: #173b5a; }

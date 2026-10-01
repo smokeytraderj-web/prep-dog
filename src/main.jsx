@@ -152,14 +152,9 @@ const sections = [
 // step the moment a slide was added.
 const AUTO_SLIDES = sections.filter(s => s.auto).map(s => s.id);
 
-// Admin closes the deck, always. It is the one slide whose position is not the
-// advisor's to choose, so it is pinned here rather than policed in the two
-// lists: the deck is built from this order, so nothing can land after it.
-const PINNED_LAST = "admin";
-const orderSelection = (ids) => [
-  ...ids.filter((id) => id !== PINNED_LAST),
-  ...(ids.includes(PINNED_LAST) ? [PINNED_LAST] : []),
-];
+// Every slide's position is the advisor's to choose, Admin included, so the
+// selected list is the deck order exactly as it stands.
+const orderSelection = (ids) => ids;
 
 // Four slide styles. 1 and 2 are the Dwyer template reproduced on white and on
 // navy. 3 and 4 are the September 2026 brand guide: Primary #001644, Stability
@@ -297,7 +292,6 @@ function App() {
     setSelected(v => {
       const order = orderSelection(v);
       if (from === to || from < 0 || to < 0 || from >= order.length || to >= order.length) return v;
-      if (order[from] === PINNED_LAST) return v;
       const next = [...order];
       next.splice(to, 0, ...next.splice(from, 1));
       return orderSelection(next);
@@ -388,7 +382,6 @@ function App() {
     { id: "cover", name: "Account review" },
     { id: "contents", name: "Contents" },
     ...deckOrder
-      .filter((id) => id !== PINNED_LAST)
       .map((id) => sections.find((s) => s.id === id))
       .filter(Boolean)
       .flatMap((s) =>
@@ -399,10 +392,6 @@ function App() {
       ),
   ];
   slides.push(...snippetImages.map(image => ({id:`snippet-${image.id}`, name:image.title || 'Source image', snippet:image})));
-  if (selected.includes(PINNED_LAST)) {
-    const admin = sections.find((x) => x.id === PINNED_LAST);
-    if (admin) slides.push(admin);
-  }
   useEffect(() => {
     if (page > slides.length - 1) setPage(Math.max(0, slides.length - 1));
   }, [slides.length, page]);
@@ -910,26 +899,21 @@ function App() {
                       {deckOrder.map((id, i) => {
                         const section = sections.find((x) => x.id === id);
                         if (!section) return null;
-                        const pinned = id === PINNED_LAST;
                         return <li
                           key={id}
-                          draggable={!pinned}
+                          draggable
                           className={`order-row ${dragId === id ? "is-dragging" : ""}`}
                           onDragStart={(e) => { setDragId(id); e.dataTransfer.effectAllowed = "move"; }}
                           onDragEnd={() => setDragId(null)}
                           onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
-                          onDrop={(e) => { e.preventDefault(); if (!pinned) moveSlide(deckOrder.indexOf(dragId), i); setDragId(null); }}
+                          onDrop={(e) => { e.preventDefault(); moveSlide(deckOrder.indexOf(dragId), i); setDragId(null); }}
                         >
                           <GripVertical className="order-grip" size={15} aria-hidden="true"/>
                           <span className="order-index">{String(i + 3).padStart(2, "0")}</span>
                           <span className="order-name">{section.name}</span>
                           <span className="order-tools">
-                            {pinned
-                              ? <span className="order-pinned" title="Admin always closes the deck">Last</span>
-                              : <>
-                                  <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
-                                  <button type="button" aria-label={`Move ${section.name} down`} disabled={i >= deckOrder.length - 2} onClick={() => moveSlide(i, i + 1)}>↓</button>
-                                </>}
+                            <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
+                            <button type="button" aria-label={`Move ${section.name} down`} disabled={i === deckOrder.length - 1} onClick={() => moveSlide(i, i + 1)}>↓</button>
                             <button type="button" aria-label={`Remove ${section.name}`} onClick={() => setSelected((v) => v.filter((x) => x !== id))}><X size={14}/></button>
                           </span>
                         </li>;
@@ -1105,7 +1089,7 @@ function App() {
                     // from the images themselves.
                     const sectionId = sections.some((x) => x.id === s.id) ? s.id : null;
                     const snippetId = s.snippet?.id || null;
-                    const movable = Boolean(sectionId) && sectionId !== PINNED_LAST;
+                    const movable = Boolean(sectionId);
                     return <div
                       key={`${s.id}${i}`}
                       className={`slide-row ${page === i ? "current" : ""} ${dragId && dragId === sectionId ? "is-dragging" : ""}`}
@@ -1133,7 +1117,7 @@ function App() {
                             disabled={deckOrder.indexOf(sectionId) === 0}
                             onClick={() => moveSlide(deckOrder.indexOf(sectionId), deckOrder.indexOf(sectionId) - 1)}>↑</button>
                           <button type="button" aria-label={`Move ${s.name} down`}
-                            disabled={deckOrder.indexOf(sectionId) >= deckOrder.length - 2}
+                            disabled={deckOrder.indexOf(sectionId) === deckOrder.length - 1}
                             onClick={() => moveSlide(deckOrder.indexOf(sectionId), deckOrder.indexOf(sectionId) + 1)}>↓</button>
                         </>}
                         <button type="button" aria-label={`Remove ${s.name}`} onClick={() => {
@@ -1143,6 +1127,16 @@ function App() {
                       </span>}
                     </div>;
                   })}
+                  {/* Adding a slide back belongs here too: this is where the
+                      deck is actually being read, so removing something and
+                      wanting it again should not mean going back a step. */}
+                  {sections.filter((x) => !selected.includes(x.id)).length > 0 && <div className="slide-list-add">
+                    {sections.filter((x) => !selected.includes(x.id)).map((x) => (
+                      <button key={x.id} type="button" onClick={() => setSelected((v) => [...v, x.id])}>
+                        <Plus size={12}/> {x.name}
+                      </button>
+                    ))}
+                  </div>}
                 </aside>
                 <div className="preview-stage">
                   <SlideFrame>{renderSlide({ slide: slides[page], index: page })}</SlideFrame>
