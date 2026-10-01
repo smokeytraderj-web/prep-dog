@@ -601,7 +601,7 @@ rect.navy-under { fill: var(--navy-under); }
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin: 4px 0 10px;
+  margin: 4px 0 24px;
 }
 .navy-admin-head h3 {
   font-family: var(--navy-serif);
@@ -620,7 +620,7 @@ rect.navy-under { fill: var(--navy-under); }
   padding: 8px 17px;
   white-space: nowrap;
 }
-.navy-admin-flow { display: flex; align-items: stretch; gap: 14px; margin: auto 0 22px; }
+.navy-admin-flow { display: flex; align-items: stretch; gap: 14px; margin: 0 0 24px; }
 .navy-admin-arrow { align-self: center; color: var(--navy-gold); font-size: 17px; }
 .navy-admin-chip {
   flex: 1;
@@ -645,31 +645,34 @@ rect.navy-under { fill: var(--navy-under); }
    the new custodian and the new portal are the only filled cards. */
 .navy-admin-chip.is-new { background: var(--navy-gold); border-color: var(--navy-gold); }
 .navy-admin-chip.is-new b, .navy-admin-chip.is-new small { color: var(--navy-ground); }
-/* Cards are sized by their content and the whole flow-and-cards group centres
-   in the space the heading leaves, so the slide is balanced top and bottom
-   whether it carries two cards or three. Stretching the cards to fill instead
-   just made two tall boxes with their text floating in the middle. */
-.navy-admin-cards {
+/* The lower half is one band, not a row of cards: a rule across the page and
+   hairlines between the columns, running to the foot of the slide. Boxes there
+   read as leftovers at any spacing, because two of them can never fill a
+   sixteen-by-nine page the way a band can. */
+.navy-admin-columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-  gap: 18px;
-  margin-bottom: auto;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--navy-rule);
+  margin-top: 6px;
 }
-.navy-admin-card {
-  border: 1px solid var(--navy-hair);
-  border-radius: 7px;
-  padding: 22px 22px 24px;
+.navy-admin-col {
+  padding: 24px 30px 0;
+  border-left: 1px solid var(--navy-hair);
   min-width: 0;
 }
-.navy-admin-card ul { list-style: none; margin: 15px 0 0; padding: 0; display: grid; gap: 13px; }
-.navy-admin-card li {
+.navy-admin-col:first-child { padding-left: 0; border-left: 0; }
+
+.navy-admin-col ul { list-style: none; margin: 15px 0 0; padding: 0; display: grid; gap: 13px; }
+.navy-admin-col li {
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--navy-ink-2);
   padding-left: 15px;
   position: relative;
 }
-.navy-admin-card li::before {
+.navy-admin-col li::before {
   content: "";
   position: absolute;
   left: 0; top: 7px;
@@ -677,9 +680,9 @@ rect.navy-under { fill: var(--navy-under); }
   border-radius: 50%;
   background: var(--navy-gold);
 }
-.navy-admin-card dl { margin: 13px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 14px; }
-.navy-admin-card dt { font-size: 12px; color: var(--navy-ink-3); }
-.navy-admin-card dd {
+.navy-admin-col dl { margin: 13px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 14px; }
+.navy-admin-col dt { font-size: 12px; color: var(--navy-ink-3); }
+.navy-admin-col dd {
   margin: 0;
   font-family: var(--navy-serif);
   font-style: italic;
@@ -689,5 +692,5 @@ rect.navy-under { fill: var(--navy-under); }
 @media(max-width: 900px) {
   .navy-allocation-layout { grid-template-columns: 1fr; gap: 24px; }
   .navy-admin-flow { flex-wrap: wrap; }
-  .navy-admin-cards { grid-template-columns: 1fr; }
+  .navy-admin-columns { grid-template-columns: 1fr; }
 }

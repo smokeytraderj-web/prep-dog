@@ -544,21 +544,25 @@ export function NavyAdmin({admin = {}}) {
         </div>
       </React.Fragment>)}
     </div>}
-    <div className="navy-admin-cards">
-      {same.length > 0 && <div className="navy-admin-card">
+    {/* Boxes floating in the lower half read as leftovers, however they are
+        spaced. These are columns of one band instead: a rule across the page,
+        hairlines between them running the full height, and the band carried to
+        the foot of the slide. Two columns or three, the page is used. */}
+    <div className="navy-admin-columns">
+      {same.length > 0 && <section className="navy-admin-col">
         <div className="navy-eyebrow is-gold">WHAT STAYS THE SAME</div>
         <ul>{same.map((s, i) => <li key={i}>{s}</li>)}</ul>
-      </div>}
-      {seen.length > 0 && <div className="navy-admin-card">
+      </section>}
+      {seen.length > 0 && <section className="navy-admin-col">
         <div className="navy-eyebrow is-gold">WHAT YOU WILL SEE</div>
         <ul>{seen.map((s, i) => <li key={i}>{s}</li>)}</ul>
-      </div>}
-      {contacts.length > 0 && <div className="navy-admin-card">
+      </section>}
+      {contacts.length > 0 && <section className="navy-admin-col">
         <div className="navy-eyebrow is-gold">PROFESSIONAL CONTACTS</div>
         <dl>{contacts.map((c, i) => <React.Fragment key={i}>
           <dt>{c.role}</dt><dd>{c.name}</dd>
         </React.Fragment>)}</dl>
-      </div>}
+      </section>}
     </div>
   </div>;
 }

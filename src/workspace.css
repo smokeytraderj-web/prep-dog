@@ -223,3 +223,10 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
    which lit the open button alone and made the hovered row read as a floating
    card next to its controls. The row owns the hover now. */
 .slide-list .slide-row button.slide-row-open:hover { background: transparent; }
+
+/* Admin's position is not the advisor's to change, so its row says so instead
+   of offering arrows that would do nothing. */
+.order-pinned {
+  font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase;
+  color: #8fa2b5; padding: 5px 4px;
+}

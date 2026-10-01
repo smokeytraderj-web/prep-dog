@@ -152,6 +152,15 @@ const sections = [
 // step the moment a slide was added.
 const AUTO_SLIDES = sections.filter(s => s.auto).map(s => s.id);
 
+// Admin closes the deck, always. It is the one slide whose position is not the
+// advisor's to choose, so it is pinned here rather than policed in the two
+// lists: the deck is built from this order, so nothing can land after it.
+const PINNED_LAST = "admin";
+const orderSelection = (ids) => [
+  ...ids.filter((id) => id !== PINNED_LAST),
+  ...(ids.includes(PINNED_LAST) ? [PINNED_LAST] : []),
+];
+
 // Four slide styles. 1 and 2 are the Dwyer template reproduced on white and on
 // navy. 3 and 4 are the September 2026 brand guide: Primary #001644, Stability
 // #BD603B, Playfair Display over Roboto. Style 3 is not style 4 repainted —
@@ -286,10 +295,12 @@ function App() {
   const [dragId, setDragId] = useState(null);
   function moveSlide(from, to) {
     setSelected(v => {
-      if (from === to || from < 0 || to < 0 || from >= v.length || to >= v.length) return v;
-      const next = [...v];
+      const order = orderSelection(v);
+      if (from === to || from < 0 || to < 0 || from >= order.length || to >= order.length) return v;
+      if (order[from] === PINNED_LAST) return v;
+      const next = [...order];
       next.splice(to, 0, ...next.splice(from, 1));
-      return next;
+      return orderSelection(next);
     });
   }
   const supportFile = useRef(null);
@@ -372,10 +383,12 @@ function App() {
     .split("\n")
     .filter(Boolean)
     .flatMap((line) => line.match(/.{1,140}(?:\s|$)|.{1,140}/g) || []);
+  const deckOrder = orderSelection(selected);
   const slides = [
     { id: "cover", name: "Account review" },
     { id: "contents", name: "Contents" },
-    ...selected
+    ...deckOrder
+      .filter((id) => id !== PINNED_LAST)
       .map((id) => sections.find((s) => s.id === id))
       .filter(Boolean)
       .flatMap((s) =>
@@ -386,6 +399,10 @@ function App() {
       ),
   ];
   slides.push(...snippetImages.map(image => ({id:`snippet-${image.id}`, name:image.title || 'Source image', snippet:image})));
+  if (selected.includes(PINNED_LAST)) {
+    const admin = sections.find((x) => x.id === PINNED_LAST);
+    if (admin) slides.push(admin);
+  }
   useEffect(() => {
     if (page > slides.length - 1) setPage(Math.max(0, slides.length - 1));
   }, [slides.length, page]);
@@ -890,24 +907,29 @@ function App() {
                   <div className="deck-order">
                     <div className="optional-heading"><span className="slide-kicker">DECK ORDER</span><p>Drag to reorder. The cover and contents always open the deck.</p></div>
                     <ol className="order-list">
-                      {selected.map((id, i) => {
+                      {deckOrder.map((id, i) => {
                         const section = sections.find((x) => x.id === id);
                         if (!section) return null;
+                        const pinned = id === PINNED_LAST;
                         return <li
                           key={id}
-                          draggable
+                          draggable={!pinned}
                           className={`order-row ${dragId === id ? "is-dragging" : ""}`}
                           onDragStart={(e) => { setDragId(id); e.dataTransfer.effectAllowed = "move"; }}
                           onDragEnd={() => setDragId(null)}
                           onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
-                          onDrop={(e) => { e.preventDefault(); moveSlide(selected.indexOf(dragId), i); setDragId(null); }}
+                          onDrop={(e) => { e.preventDefault(); if (!pinned) moveSlide(deckOrder.indexOf(dragId), i); setDragId(null); }}
                         >
                           <GripVertical className="order-grip" size={15} aria-hidden="true"/>
                           <span className="order-index">{String(i + 3).padStart(2, "0")}</span>
                           <span className="order-name">{section.name}</span>
                           <span className="order-tools">
-                            <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
-                            <button type="button" aria-label={`Move ${section.name} down`} disabled={i === selected.length - 1} onClick={() => moveSlide(i, i + 1)}>↓</button>
+                            {pinned
+                              ? <span className="order-pinned" title="Admin always closes the deck">Last</span>
+                              : <>
+                                  <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
+                                  <button type="button" aria-label={`Move ${section.name} down`} disabled={i >= deckOrder.length - 2} onClick={() => moveSlide(i, i + 1)}>↓</button>
+                                </>}
                             <button type="button" aria-label={`Remove ${section.name}`} onClick={() => setSelected((v) => v.filter((x) => x !== id))}><X size={14}/></button>
                           </span>
                         </li>;
@@ -1083,7 +1105,7 @@ function App() {
                     // from the images themselves.
                     const sectionId = sections.some((x) => x.id === s.id) ? s.id : null;
                     const snippetId = s.snippet?.id || null;
-                    const movable = Boolean(sectionId);
+                    const movable = Boolean(sectionId) && sectionId !== PINNED_LAST;
                     return <div
                       key={`${s.id}${i}`}
                       className={`slide-row ${page === i ? "current" : ""} ${dragId && dragId === sectionId ? "is-dragging" : ""}`}
@@ -1093,7 +1115,7 @@ function App() {
                       onDragOver={movable ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; } : undefined}
                       onDrop={movable ? (e) => {
                         e.preventDefault();
-                        moveSlide(selected.indexOf(dragId), selected.indexOf(sectionId));
+                        moveSlide(deckOrder.indexOf(dragId), deckOrder.indexOf(sectionId));
                         setDragId(null);
                       } : undefined}
                     >
@@ -1108,11 +1130,11 @@ function App() {
                       {(sectionId || snippetId) && <span className="slide-row-tools">
                         {movable && <>
                           <button type="button" aria-label={`Move ${s.name} up`}
-                            disabled={selected.indexOf(sectionId) === 0}
-                            onClick={() => moveSlide(selected.indexOf(sectionId), selected.indexOf(sectionId) - 1)}>↑</button>
+                            disabled={deckOrder.indexOf(sectionId) === 0}
+                            onClick={() => moveSlide(deckOrder.indexOf(sectionId), deckOrder.indexOf(sectionId) - 1)}>↑</button>
                           <button type="button" aria-label={`Move ${s.name} down`}
-                            disabled={selected.indexOf(sectionId) === selected.length - 1}
-                            onClick={() => moveSlide(selected.indexOf(sectionId), selected.indexOf(sectionId) + 1)}>↓</button>
+                            disabled={deckOrder.indexOf(sectionId) >= deckOrder.length - 2}
+                            onClick={() => moveSlide(deckOrder.indexOf(sectionId), deckOrder.indexOf(sectionId) + 1)}>↓</button>
                         </>}
                         <button type="button" aria-label={`Remove ${s.name}`} onClick={() => {
                           if (sectionId) setSelected((v) => v.filter((x) => x !== sectionId));

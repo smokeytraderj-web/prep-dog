@@ -191,8 +191,8 @@
   margin-bottom: 24px;
 }
 
-/* Cards carry a ground instead of a border. */
-.brand-doc .navy-admin-card,
+/* The chips carry a ground instead of a border; the band below is ruled, so
+   it needs no fill of its own. */
 .brand-doc .navy-admin-chip {
   background: #F4F6F9;
   border-color: transparent;
@@ -204,7 +204,7 @@
 .slide.navy-slide.brand-doc .navy-admin-chip.is-new b,
 .slide.navy-slide.brand-doc .navy-admin-chip.is-new small { color: var(--navy-ink); }
 .slide.navy-slide.brand-doc .navy-admin-when { color: #ffffff; background: var(--brand-stability); }
-.brand-doc .navy-admin-card li::before { background: var(--brand-stability); }
+.brand-doc .navy-admin-col li::before { background: var(--brand-stability); }
 
 /* Playfair is a didone: at display sizes its thin strokes need a little more
    room than Source Serif did, and less letter-spacing. */
