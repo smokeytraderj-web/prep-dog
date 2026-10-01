@@ -35,6 +35,7 @@ import "./slide-navy.css";
 import "./context-board.css";
 import { SectorYtdSlide, EarningsExpectationsSlide, ContentsSlide, AttributionSlide as PositionAttributionSlide } from "./ContextSlides";
 import { computeAttribution } from "./attribution";
+import { deckName } from "./deck-name";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
 import "./print-fidelity.css";
@@ -202,6 +203,17 @@ function App() {
   const [deckMarket, setDeckMarket] = useState({});
   const [positions, setPositions] = useState([]), [supporting, setSupporting] = useState({}), [supportError, setSupportError] = useState("");
   const [preparedFor, setPreparedFor] = useState(""), [advisor, setAdvisor] = useState(""), [reportDate, setReportDate] = useState(new Date().toLocaleDateString('en-CA'));
+  // Browsers offer document.title as the default name in the print dialog, so
+  // naming the deck here is what makes the saved PDF land as "Jane Smith
+  // Review 2026-10-01" instead of "Prep Dog · GSWM.pdf". The workspace tab
+  // keeps the product name until a deck is actually finished.
+  const savedDeckName = deckName(preparedFor, reportDate);
+  useEffect(() => {
+    if (!done) return;
+    const previous = document.title;
+    document.title = savedDeckName;
+    return () => { document.title = previous; };
+  }, [done, savedDeckName]);
   const supportFile = useRef(null);
   const assetReady = positions.length > 0 && positions.every(p => p.assetClass);
   const accountsReady = positions.length > 0 && positions.every(p => p.account);
@@ -822,7 +834,7 @@ function App() {
                     );
                   })()}
                   <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
-                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide, with an editable title and optional takeaway.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
+                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide. Give it a context sentence and the slide leads with your point, with the image as support.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
                 </section>
                 <aside className="deck-summary">
                   <div className="summary-icon">
@@ -956,7 +968,10 @@ function App() {
                   holdings.
                 </p>
                 {done ? (
-                  <div className="flex gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="saved-as">
+                      Saves as <strong>{savedDeckName}.pdf</strong>
+                    </span>
                     <button className="secondary" onClick={reset}>
                       Start a new deck
                     </button>

@@ -19,7 +19,7 @@ export function SourceSnippets({images, onChange}) {
         reader.onload = () => {
           const image = new Image();
           image.onerror = () => reject(Error(`Could not open ${file.name}. Please choose a valid image.`));
-          image.onload = () => resolve({id:crypto.randomUUID(), name:file.name, title:file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '), caption:'', dataUrl:reader.result});
+          image.onload = () => resolve({id:crypto.randomUUID(), name:file.name, title:file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '), context:'', caption:'', dataUrl:reader.result});
           image.src = reader.result;
         };
         reader.readAsDataURL(file);
@@ -41,15 +41,22 @@ export function SourceSnippets({images, onChange}) {
     {error && <p className="errors" role="alert">{error}</p>}
     {images.length > 0 && <div className="snippet-list">{images.map((image, i) => <div className="snippet-card" key={image.id}>
       <img src={image.dataUrl} alt={image.name}/><div><label className="field-label">Slide {i + 1} title<input maxLength={80} value={image.title} onChange={e => onChange(current => current.map(item => item.id === image.id ? {...item, title:e.target.value} : item))}/></label>
-      <label className="field-label">Context or takeaway (optional)<textarea maxLength={260} rows={2} value={image.caption} onChange={e => onChange(current => current.map(item => item.id === image.id ? {...item, caption:e.target.value} : item))}/></label></div>
+      <label className="field-label">Context sentence — the point this slide makes<textarea maxLength={240} rows={2} placeholder="One sentence in your words. The slide is built around it." value={image.context || ''} onChange={e => onChange(current => current.map(item => item.id === image.id ? {...item, context:e.target.value} : item))}/></label>
+      <label className="field-label">Takeaway under the image (optional)<textarea maxLength={260} rows={2} value={image.caption} onChange={e => onChange(current => current.map(item => item.id === image.id ? {...item, caption:e.target.value} : item))}/></label></div>
       <button type="button" className="text-button" aria-label={`Remove ${image.name}`} onClick={() => onChange(current => current.filter(item => item.id !== image.id))}><X size={17}/></button>
     </div>)}</div>}
   </div>;
 }
 
+// The image alone is evidence without a point. The advisor's context sentence
+// is what the slide leads with, so the client reads the claim first and the
+// screenshot supports it. Nothing here interprets the image: the sentence is
+// the advisor's, shown as supplied.
 export function SourceSnippetSlide({data}) {
+  const context = (data.context || '').trim();
   return <div className="source-snippet-slide"><div className="report-heading"><div><span className="slide-kicker">PORTFOLIO PERSPECTIVE</span><h2>{data.title || 'Portfolio perspective'}</h2></div></div>
-    <figure className="snippet-figure"><div className="snippet-frame"><img src={data.dataUrl} alt={data.title || data.name}/></div>{data.caption && <figcaption>{data.caption}</figcaption>}</figure>
+    {context && <p className="snippet-lead">{context}</p>}
+    <figure className={`snippet-figure ${context ? 'has-lead' : ''}`}><div className="snippet-frame"><img src={data.dataUrl} alt={data.title || data.name}/></div>{data.caption && <figcaption>{data.caption}</figcaption>}</figure>
     <p className="context-source">Source: {data.name}</p>
   </div>;
 }

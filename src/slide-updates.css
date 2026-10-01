@@ -44,3 +44,10 @@
 .snippet-figure figcaption{font-size:13px;line-height:1.6;color:var(--c-315574, #315574);border-left:3px solid var(--c-6288ae, #6288ae);padding-left:14px;overflow-wrap:anywhere}
 @media(max-width:760px){.index-chart-layout,.equity-visual-layout{grid-template-columns:1fr}.index-chart-layout .index-grid{grid-template-columns:1fr 1fr}.equity-table-panel{padding:15px 0 0;border-left:0;border-top:1px solid var(--c-d8e3ed, #d8e3ed)}.equity-table-panel .sector-table th,.equity-table-panel .sector-table td{font-size:11px}.index-legend{font-size:10px}.snippet-card{grid-template-columns:50px 1fr 20px;padding:10px;gap:8px}.snippet-card>img{width:50px;height:50px}.snippet-frame{flex:none;height:270px}.index-chart-layout .index-card>div:first-child{flex-direction:column;gap:4px}}
 @media print{.print-slide .index-chart-layout{grid-template-columns:minmax(0,1.7fr) minmax(220px,1fr)}.print-slide .index-chart-layout .index-card{padding:10px 14px}.print-slide .index-chart-layout .index-card b{font-size:20pt}.print-slide .index-chart-layout .index-card span{font-size:9pt}.print-slide .index-legend{font-size:8pt}.print-slide .equity-chart-panel svg{max-height:none;width:100%}.print-slide .equity-table-panel .sector-table td{font-size:8pt;padding:6px 3px}.print-slide .equity-table-panel .sector-table th{font-size:7pt}.print-slide .snippet-frame{min-height:240px}.print-slide .snippet-figure figcaption{font-size:11pt}}
+
+/* The advisor's context sentence leads the image slide. It reads as the
+   claim, so it is set larger than the caption and sits above the frame. */
+.snippet-lead{margin:0 0 16px;font-size:17px;line-height:1.5;color:var(--c-173b5a, #173b5a);font-weight:500;max-width:62ch;overflow-wrap:anywhere}
+.snippet-figure.has-lead .snippet-frame{min-height:150px}
+@media(max-width:760px){.snippet-lead{font-size:15px;margin-bottom:12px}}
+@media print{.print-slide .snippet-lead{font-size:13pt;margin-bottom:14px}}

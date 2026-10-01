@@ -106,3 +106,10 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
 @media(prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
 @media print { :root,body { background:white; color:#142f49; }.app-shell { display:none; }.slide { box-shadow:none; } }
 @media(min-width:761px) { .slide .sector-table th,.slide .sector-table td { font-size:9px; }.slide .equity-source { font-size:9px; line-height:1.4; }.slide .equity-slide svg { max-height:190px; }.slide .equity-heading>span,.slide .chart-caption { font-size:10px; } }
+
+/* The deck's saved filename, shown next to Print so the advisor sees the name
+   before the browser dialog offers it. */
+.saved-as { font-size:12px; color:#486480; margin-right:4px; white-space:nowrap; }
+.saved-as strong { color:#173b5a; font-weight:600; }
+@media(max-width:760px) { .saved-as { white-space:normal; width:100%; margin:0 0 4px; } }
+@media print { .saved-as { display:none; } }
