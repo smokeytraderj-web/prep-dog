@@ -72,6 +72,17 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
 .builder-layout { grid-template-columns:minmax(0,1fr) 325px; gap:28px; }
 .component-grid { gap:16px; }
 .component-card { background:#ffffff; border-color:#cbd9e7; border-radius:12px; min-height:182px; padding:24px; color:#1b2a4a; }
+/* Auto cards are read-only: they state what the deck builds, so they are set
+   smaller than the optional cards, which are targets the advisor clicks. */
+.component-grid.auto-components { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.auto-components .component-card { min-height:0; padding:14px 15px; border-radius:9px; }
+.auto-components .component-card h2 { font-size:13px; margin-top:11px; }
+.auto-components .component-card p { font-size:11.5px; line-height:1.5; margin-top:5px; }
+.auto-components .component-card svg { width:17px; height:17px; }
+.auto-components .auto-badge { font-size:8px; padding:3px 6px; letter-spacing:.8px; }
+/* A card for a slide that is not built yet: visible, never selectable. */
+.component-card.is-planned { opacity:.62; cursor:not-allowed; border-style:dashed; }
+.auto-badge.is-planned { color:#6a5b3d; border-color:#cdbc98; }
 .component-card.selected { border-color:#587ca6; background:#edf3fa; box-shadow:none; }
 .component-card svg { color:#315d8c; }.component-card h2 { font-size:16px; font-weight:500; margin-top:22px; }.component-card p { color:#486480; font-size:14px; max-width:none; }
 .checkbox { background:transparent; border-color:#8da7c1; border-radius:5px; width:21px; height:21px; }.selected .checkbox { background:#1b2a4a; border-color:#1b2a4a; }.selected .checkbox svg { color:#ffffff; }

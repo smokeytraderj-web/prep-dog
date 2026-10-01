@@ -125,6 +125,34 @@ export function EarningsExpectationsSlide({data = SP500_EARNINGS, navy = false})
   </div>;
 }
 
+
+// ---------------------------------------------------------------- contents
+
+// The contents page is built from the deck itself rather than a written list,
+// so it cannot fall out of step with what follows it. Page numbers are the
+// slide's position, counting the cover, which is what the footer and folio use.
+export function ContentsSlide({slides = [], navy = false}) {
+  const entries = slides
+    .map((slide, i) => ({name: slide.name, page: i + 1, id: slide.id}))
+    .filter(entry => entry.id !== 'cover' && entry.id !== 'contents');
+  // Two columns once the deck is long enough that one would run off the page.
+  const split = entries.length > 8 ? Math.ceil(entries.length / 2) : entries.length;
+  const columns = [entries.slice(0, split), entries.slice(split)].filter(c => c.length);
+
+  return <div className={`context-board contents-board ${navy ? 'is-navy' : ''}`}>
+    <Head navy={navy} kicker="IN THIS REVIEW" title="Contents" meta={`${entries.length} slides`}/>
+    <div className="contents-columns" style={{gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`}}>
+      {columns.map((column, c) => <ol key={c} className="contents-list">
+        {column.map(entry => <li key={entry.id + entry.page}>
+          <span className="contents-page">{String(entry.page).padStart(2, '0')}</span>
+          <span className="contents-name">{entry.name}</span>
+          <span className="contents-rule" aria-hidden="true"/>
+        </li>)}
+      </ol>)}
+    </div>
+  </div>;
+}
+
 // ----------------------------------------------------------------- shared
 
 function Head({navy, kicker, title, meta}) {

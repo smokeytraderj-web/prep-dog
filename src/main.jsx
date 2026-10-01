@@ -18,6 +18,7 @@ import {
   FileText,
   Sun,
   Moon,
+  Scissors,
 } from "lucide-react";
 import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
@@ -32,7 +33,7 @@ import "./slide-fit.css";
 import "./slide-theme.css";
 import "./slide-navy.css";
 import "./context-board.css";
-import { SectorYtdSlide, EarningsExpectationsSlide } from "./ContextSlides";
+import { SectorYtdSlide, EarningsExpectationsSlide, ContentsSlide } from "./ContextSlides";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
@@ -105,7 +106,7 @@ const sections = [
   },
   {
     id: "regional-attribution",
-    name: "Regional attribution",
+    name: "Attribution performance",
     description: "Client regional weights compared with the same market regions.",
     icon: ChartNoAxesColumnIncreasing,
     auto: true,
@@ -257,6 +258,7 @@ function App() {
     .flatMap((line) => line.match(/.{1,140}(?:\s|$)|.{1,140}/g) || []);
   const slides = [
     { id: "cover", name: "Portfolio review" },
+    { id: "contents", name: "Contents" },
     ...sections
       .filter((s) => selected.includes(s.id))
       .flatMap((s) =>
@@ -415,6 +417,7 @@ function App() {
           </span>
         </div>
       );
+    if (slide.id === "contents") return <ContentsSlide slides={slides}/>;
     if (slide.id === "account-summary") return <AccountSummarySlide positions={deckMarket.positions || enrichedPositions} source={importSource}/>;
     if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
     if (slide.id === "fixed-income") return <MarketIndexesSlide data={deckMarket.fixedIncome} kicker="MARKET CONTEXT" title="Fixed income, year to date"/>;
@@ -473,11 +476,12 @@ function App() {
   const NAVY_LABELS = {
     "cover": "IN-HOUSE PORTFOLIO ANALYTICS",
     "account-summary": "ACCOUNT SUMMARY",
+    "contents": "CONTENTS",
     "market-indexes": "MARKET SNAPSHOT",
     "fixed-income": "FIXED INCOME",
     "sector-ytd": "SECTOR PERFORMANCE",
     "earnings-expectations": "S&P 500 EARNINGS",
-    "regional-attribution": "REGIONAL ATTRIBUTION",
+    "regional-attribution": "ATTRIBUTION PERFORMANCE",
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
   };
@@ -492,6 +496,8 @@ function App() {
       return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={reportDate}/>};
     if (slide.id === "market-indexes")
       return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
+    if (slide.id === "contents")
+      return {label, body: <ContentsSlide slides={slides} navy/>};
     if (slide.id === "fixed-income")
       return {label, body: <NavyMarketIndexes data={deckMarket.fixedIncome} heading="Fixed income, year to date"
         title="What bonds did" note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
@@ -723,12 +729,20 @@ function App() {
               </div>
               <div className="builder-layout">
                 <section>
-                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>These first three slides are always included and are built from the confirmed holdings and sourced market context.</p></div>
+                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>A cover and contents page open every deck. These slides always follow, built from the confirmed holdings and live market data.</p></div>
                   <div className="component-grid auto-components">
                     {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
                   </div>
                   <div className="optional-heading"><span className="slide-kicker">OPTIONAL ADD-ONS</span><p>Add only the specialist slides you want reviewed.</p></div>
                   <div className="component-grid optional-components">
+                    {/* The skill behind this does not exist yet. The card is
+                        disabled rather than selectable so it cannot be added to
+                        a deck and then render nothing. */}
+                    <div className="component-card is-planned" aria-disabled="true">
+                      <div className="flex justify-between items-start"><Scissors size={23} strokeWidth={1.4}/><span className="auto-badge is-planned">PLANNED</span></div>
+                      <h2>Tax loss harvesting</h2>
+                      <p>Realised and unrealised losses by lot, with wash-sale windows flagged. Not built yet.</p>
+                    </div>
                     {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
                   </div>
                   {selected.includes("equity") && !equity && (

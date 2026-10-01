@@ -131,3 +131,45 @@
   .earnings-points li { font-size: 13px; }
   .board-source { font-size: 10px; }
 }
+
+/* Contents: a list that reads down, with the page number leading each line the
+   way the firm's deck sets it. */
+.contents-board .contents-columns {
+  display: grid;
+  gap: 0 56px;
+  flex-grow: 1;
+  min-height: 0;
+  margin-top: 26px;
+  align-content: start;
+}
+.contents-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.contents-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--board-grid);
+}
+.contents-list li:first-child { border-top: 1px solid var(--board-grid); }
+.contents-page {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--board-muted);
+  flex-shrink: 0;
+  min-width: 22px;
+}
+.context-board.is-navy .contents-page {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--board-rule);
+}
+.contents-name { font-size: 17px; }
+.context-board.is-navy .contents-name { font-size: 16px; }
+.contents-rule { flex-grow: 1; }
+@media (max-width: 760px) {
+  .contents-board .contents-columns { grid-template-columns: 1fr !important; gap: 0; }
+  .contents-name { font-size: 15px; }
+}
