@@ -34,6 +34,7 @@ import "./slide-navy.css";
 import "./context-board.css";
 import { SectorYtdSlide, EarningsExpectationsSlide } from "./ContextSlides";
 import { SP500_EARNINGS } from "./earnings-data";
+import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
@@ -506,13 +507,13 @@ function App() {
       return {label, body: <NavyRisk s={deckMarket.riskSnapshot}/>};
     return null;
   }
-  function renderSlide({ slide, index, print = false }) {
+  function renderSlide({ slide, index }) {
     const navy = slideTheme === "dark" ? navyContent(slide) : null;
     if (navy)
       return (
         <article
           data-slide-theme="dark"
-          className={`slide navy-slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
+          className={`slide navy-slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
         >
           <NavyFrame label={navy.label} page={String(index + 1).padStart(2, "0")} cover={slide.id === "cover"}>
             {navy.body}
@@ -522,7 +523,7 @@ function App() {
     return (
       <article
         data-slide-theme={slideTheme}
-        className={`slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""} ${print ? "print-slide" : ""}`}
+        className={`slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
       >
         <div className="slide-brand">
           <img src="/gswm-logo.png" alt=""/><div>GOTTFRIED & SOMBERG <span>WEALTH MANAGEMENT</span></div>
@@ -982,7 +983,7 @@ function App() {
         {done &&
           slides.map((s, i) => (
             <React.Fragment key={`${s.id}${i}`}>
-              {renderSlide({ slide: s, index: i, print: true })}
+              {renderSlide({ slide: s, index: i })}
             </React.Fragment>
           ))}
       </div>

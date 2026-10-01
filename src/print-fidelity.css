@@ -1,0 +1,56 @@
+/* The PDF is the preview, not a second layout of it.
+   ---------------------------------------------------------------------------
+   The preview renders each slide at its true page size, 1280x720, and scales
+   the whole box down to the stage (SlideFrame in main.jsx). The print sheet is
+   13.333in x 7.5in, which at 96dpi is exactly 1280x720 CSS px. So if the
+   printed slide is the same box with the same rules, the PDF cannot disagree
+   with what was reviewed.
+
+   What it used to do instead: `.print-slide` was sized in vw/vh with its own
+   5% padding, and roughly eighty `@media print` declarations across five files
+   re-stated type in points and changed grid templates, donut sizes and chart
+   heights. Every one of those was a chance for the PDF to differ, and it took
+   all of them.
+
+   Those rules are all scoped to `.print-slide`, and the print markup no longer
+   carries that class, so they no longer match. This file supplies the geometry
+   they used to, and nothing else. Anything added here that is not geometry is
+   a new way for the PDF to drift. */
+
+@media print {
+  html, body {
+    width: 1280px;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  /* Every slide is one page at exactly the page's own size. */
+  .print-deck > .slide {
+    width: 1280px;
+    height: 720px;
+    aspect-ratio: auto;
+    overflow: hidden;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .print-deck > .slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  /* The risk snapshot restated its type in points outside any .print-slide
+     scope, so unlike the rest it survived the class going away. Put it back on
+     the screen scale the preview uses. */
+  .snapshot-lede strong { font-size: 29px; }
+  .snapshot-outcomes strong { font-size: 24px; }
+  .snapshot-measures > div { font-size: 11px; }
+  .snapshot-explain { font-size: 9px; }
+  .snapshot-costs { font-size: 9px; }
+  .risk-snapshot-slide .context-source { font-size: 8px; }
+}
