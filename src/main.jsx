@@ -52,6 +52,7 @@ import { enrichPositions } from "./asset-class";
 import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 import HoldingsImport from "./HoldingsImport";
+import MultiAccountImport from "./MultiAccountImport";
 import { textToSheets, detectTable, extractHoldings } from "./holding-import";
 import { fetchMarketJson } from "./market-fetch";
 import { PortfolioOverview, PortfolioAllocation, ConcentrationSlide } from "./PortfolioSlides";
@@ -239,6 +240,7 @@ function App() {
   const [riskSnapshot, setRiskSnapshot] = useState(null);
   const [riskStatus, setRiskStatus] = useState({busy: false, error: "", retry: null});
   const [snippetImages, setSnippetImages] = useState([]);
+  const [multiAccount, setMultiAccount] = useState(false);
   const [importBook, setImportBook] = useState(null), [importBusy, setImportBusy] = useState(false), [importSource, setImportSource] = useState("");
   const [marketIndexes, setMarketIndexes] = useState(emptyMarketIndexes), [sectorPerformance, setSectorPerformance] = useState(emptySectorPerformance), [earnings, setEarnings] = useState(emptyEarnings);
   const [marketLoading, setMarketLoading] = useState(false), [marketError, setMarketError] = useState("");
@@ -781,7 +783,20 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(AUTO_SLIDES);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
+              {multiAccount ? <MultiAccountImport
+                onCancel={() => setMultiAccount(false)}
+                onConfirm={(merged) => {
+                  setRiskSnapshot(null);
+                  setHoldings(merged.holdings);
+                  setPositions(merged.positions);
+                  setSupporting({}); setSupportError("");
+                  setText(merged.holdings.map(h => `${h.ticker} ${h.value}`).join("\n"));
+                  setImportSource(merged.source);
+                  setMultiAccount(false);
+                  setReviewed(true);
+                  setSelected(AUTO_SLIDES);
+                  setEquity(null); setEquityError(""); setErrors([]);
+                }}/> : importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(AUTO_SLIDES);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
                 <section
                   aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -823,6 +838,13 @@ function App() {
                       onClick={() => file.current.click()}
                     >
                       <Plus size={17} /> {importBusy ? "Reading file…" : "Upload file"}
+                    </button>
+                    {/* One file per account, for a client whose holdings arrive
+                        as a file each rather than one book with an account
+                        column. */}
+                    <button className="upload-button" disabled={importBusy}
+                      onClick={() => setMultiAccount(true)}>
+                      <Layers size={16} /> Multiple accounts
                     </button>
                     <span className="file-types">XLSX, CSV, TXT</span>
                     {/* The pasted sample carries ticker and value only. This file

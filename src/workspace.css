@@ -235,3 +235,28 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
   padding: 8px 11px; border-radius: 6px; cursor: pointer;
 }
 .slide-list-add button:hover { border-style: solid; border-color: #8fa9c2; color: #173b5a; }
+
+/* Multiple-account import: one named account per row, each with its own file. */
+.multi-import .account-rows { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 14px; }
+.multi-import .account-row {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) minmax(0, 1.25fr) 32px;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8eef5;
+}
+.multi-import .account-no {
+  font-size: 11px; color: #7d94ab; padding-top: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.multi-import .account-file { display: flex; flex-direction: column; gap: 7px; padding-top: 21px; min-width: 0; }
+.multi-import .account-file small { font-size: 11px; color: #5c7a94; overflow-wrap: anywhere; }
+.multi-import .account-file .account-ok { color: #1c6b43; }
+.multi-import .account-file .account-bad { color: #9b2c2c; }
+.multi-import .account-row > .icon-button { margin-top: 24px; }
+.multi-import .add-account { margin-top: 16px; display: inline-flex; align-items: center; gap: 7px; }
+@media(max-width:760px) {
+  .multi-import .account-row { grid-template-columns: 22px minmax(0, 1fr) 30px; }
+  .multi-import .account-file { grid-column: 2 / 4; padding-top: 0; }
+}
