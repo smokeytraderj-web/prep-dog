@@ -3,6 +3,8 @@ import { BOARDS, boardFor, marketSnapshotFromYahoo, parseYahooChart } from '../s
 const YAHOO_CHARTS = ['https://query1.finance.yahoo.com/v8/finance/chart/', 'https://query2.finance.yahoo.com/v8/finance/chart/'];
 // One cache entry per board, so a sector refresh cannot evict the equity one.
 const cached = new Map();
+// A per-position request is one chart call per symbol, so this bounds the fan-out.
+const MAX_SYMBOLS = 60;
 
 const unix = date => Math.floor(date.getTime() / 1000);
 export async function fetchIndexChart(definition, period1, period2, year, fetcher=fetch) {
@@ -24,9 +26,22 @@ export async function marketResponse(request, fetcher = fetch, clock = () => new
   if (request.method !== 'GET') return Response.json({error:'Use GET.'}, {status:405, headers:{Allow:'GET'}});
   // An unknown board falls back to the equity one rather than erroring, so an
   // older client asking without a board keeps working.
-  const requested = new URL(request.url).searchParams.get('board') || 'indexes';
-  const key = BOARDS[requested] ? requested : 'indexes';
-  const board = boardFor(key);
+  const params = new URL(request.url).searchParams;
+  // An explicit symbol list builds an ad-hoc board: the attribution slide needs
+  // a YTD return for each position the client actually holds, which no fixed
+  // board can know in advance.
+  const symbols = (params.get('symbols') || '')
+    .split(',')
+    .map(symbol => symbol.trim().toUpperCase())
+    .filter(symbol => /^[A-Z][A-Z0-9.^-]{0,14}$/.test(symbol));
+  const unique = [...new Set(symbols)].slice(0, MAX_SYMBOLS);
+  const requested = params.get('board') || 'indexes';
+  const key = unique.length ? `symbols:${unique.join(',')}` : BOARDS[requested] ? requested : 'indexes';
+  const board = unique.length
+    ? {definitions: unique.map(symbol => ({id: symbol, symbol, label: symbol, region: '', proxy: false})),
+       source: 'Yahoo Finance historical chart data, by position.',
+       basis: 'YTD from prior year-end adjusted close, so distributions are included'}
+    : boardFor(key);
   const hit = cached.get(key);
   try {
     if (!hit || Date.now() - hit.time > 60 * 60 * 1000) {
@@ -37,7 +52,7 @@ export async function marketResponse(request, fetcher = fetch, clock = () => new
       const entries = await Promise.all(board.definitions.map(async definition => {
         return [definition.id, await fetchIndexChart(definition,period1,period2,now.getUTCFullYear(),fetcher)];
       }));
-      cached.set(key, {data:marketSnapshotFromYahoo(Object.fromEntries(entries), now, key), time:Date.now()});
+      cached.set(key, {data:marketSnapshotFromYahoo(Object.fromEntries(entries), now, key, board), time:Date.now()});
     }
     return Response.json(cached.get(key).data, {headers:{'Cache-Control':'public, max-age=300, s-maxage=3600','X-Content-Type-Options':'nosniff'}});
   } catch(error) {

@@ -33,7 +33,8 @@ import "./slide-fit.css";
 import "./slide-theme.css";
 import "./slide-navy.css";
 import "./context-board.css";
-import { SectorYtdSlide, EarningsExpectationsSlide, ContentsSlide } from "./ContextSlides";
+import { SectorYtdSlide, EarningsExpectationsSlide, ContentsSlide, AttributionSlide as PositionAttributionSlide } from "./ContextSlides";
+import { computeAttribution } from "./attribution";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
@@ -107,7 +108,7 @@ const sections = [
   {
     id: "regional-attribution",
     name: "Attribution performance",
-    description: "Client regional weights compared with the same market regions.",
+    description: "Which positions carried the portfolio, and which held it back.",
     icon: ChartNoAxesColumnIncreasing,
     auto: true,
   },
@@ -194,6 +195,9 @@ function App() {
   // equity one, each a separate request so a failure on one does not blank the
   // others.
   const [fixedIncome, setFixedIncome] = useState(null), [sectorBoard, setSectorBoard] = useState(null);
+  // Attribution needs a year-to-date return for each position the client holds,
+  // so unlike the fixed boards this request depends on the holdings.
+  const [positionReturns, setPositionReturns] = useState(null);
   const [deckMarket, setDeckMarket] = useState({});
   const [positions, setPositions] = useState([]), [supporting, setSupporting] = useState({}), [supportError, setSupportError] = useState("");
   const [preparedFor, setPreparedFor] = useState(""), [advisor, setAdvisor] = useState(""), [reportDate, setReportDate] = useState(new Date().toLocaleDateString('en-CA'));
@@ -246,6 +250,27 @@ function App() {
     refreshBoard('fixed-income', setFixedIncome);
     refreshBoard('sectors', setSectorBoard);
   }, []);
+  const tickerKey = holdings.map(h => h.ticker).sort().join(',');
+  useEffect(() => {
+    if (!tickerKey) { setPositionReturns(null); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await fetchMarketJson(`/api/market/ytd?symbols=${encodeURIComponent(tickerKey)}`);
+        if (cancelled || !Array.isArray(data?.indexes)) return;
+        setPositionReturns({
+          asOf: data.asOf,
+          source: data.source,
+          returns: Object.fromEntries(data.indexes.map(index => [index.symbol, index.return])),
+        });
+      } catch { if (!cancelled) setPositionReturns(null); }
+    })();
+    return () => { cancelled = true; };
+  }, [tickerKey]);
+  const attribution = React.useMemo(
+    () => (positionReturns ? computeAttribution(holdings, positionReturns.returns) : null),
+    [holdings, positionReturns],
+  );
   const comparison = benchmark.snapshot && holdings.length ? comparePortfolio(holdings, benchmark.snapshot, fundSectors) : null;
   const equity = importedEquity || (benchmark.snapshot && !isBenchmarkStale(benchmark.snapshot) ? comparison?.data : null);
   const equityFile = useRef(null);
@@ -423,7 +448,7 @@ function App() {
     if (slide.id === "fixed-income") return <MarketIndexesSlide data={deckMarket.fixedIncome} kicker="MARKET CONTEXT" title="Fixed income, year to date"/>;
     if (slide.id === "sector-ytd") return <SectorYtdSlide data={deckMarket.sectorBoard}/>;
     if (slide.id === "earnings-expectations") return <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS}/>;
-    if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={deckMarket.positions || enrichedPositions} data={deckMarket.marketIndexes}/>;
+    if (slide.id === "regional-attribution") return <PositionAttributionSlide result={deckMarket.attribution} asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source}/>;
     if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot} theme={slideTheme}/>;
     if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
     if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
@@ -506,7 +531,7 @@ function App() {
     if (slide.id === "earnings-expectations")
       return {label, body: <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS} navy/>};
     if (slide.id === "regional-attribution")
-      return {label, body: <NavyRegional positions={positions} data={deckMarket.marketIndexes}/>};
+      return {label, body: <PositionAttributionSlide result={deckMarket.attribution} asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source} navy/>};
     if (slide.id === "equity" && deckEquity)
       return {label, body: <NavyEquity data={deckEquity}/>};
     if (slide.id === "risk" && deckMarket.riskSnapshot)
@@ -838,7 +863,7 @@ function App() {
                       (selected.includes("equity") && !equity) ||
                       (selected.includes("risk") && !supporting.risk && !riskSnapshot && riskStatus.busy)
                     }
-                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), fixedIncome: structuredClone(fixedIncome), sectorBoard: structuredClone(sectorBoard), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
+                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), attribution: structuredClone(attribution), positionReturns: structuredClone(positionReturns), fixedIncome: structuredClone(fixedIncome), sectorBoard: structuredClone(sectorBoard), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
                   >
                     Preview deck
                   </button>

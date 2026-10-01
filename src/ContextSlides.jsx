@@ -1,5 +1,6 @@
 import React from 'react';
 import { SP500_EARNINGS, earningsGrowth } from './earnings-data.js';
+import { contributors } from './attribution.js';
 
 // The two slides the firm's existing deck already has: sector leadership as a
 // ranked bar chart, and the S&P 500 earnings path. Each is written once and
@@ -150,6 +151,64 @@ export function ContentsSlide({slides = [], navy = false}) {
         </li>)}
       </ol>)}
     </div>
+  </div>;
+}
+
+
+// ------------------------------------------------------------- attribution
+
+const usd = n => new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(n);
+const pp = n => `${n > 0 ? '+' : ''}${n.toFixed(2)}`;
+
+export function AttributionSlide({result, asOf, source, navy = false}) {
+  if (!result || !result.rows.length) return <Waiting navy={navy} kicker="ATTRIBUTION PERFORMANCE"
+    title="What moved the portfolio"
+    body="This slide builds once the market service returns a year-to-date return for the confirmed holdings."/>;
+
+  const {positive, negative} = contributors(result, 5);
+  const column = (rows, heading) => <section>
+    <h3>{heading}</h3>
+    <div className="attrib-rows">
+      {rows.map(row => <div className="attrib-row" key={row.ticker}>
+        <span className="attrib-ticker">{row.ticker}{row.name && <small>{row.name}</small>}</span>
+        <span className="attrib-fig">{pp(row.ytdReturn)}%</span>
+        <span className="attrib-contribution">{pp(row.contribution)}</span>
+      </div>)}
+      {!rows.length && <p className="attrib-empty">None in the confirmed holdings.</p>}
+    </div>
+  </section>;
+
+  return <div className={`context-board attrib-board ${navy ? 'is-navy' : ''}`}>
+    <Head navy={navy} kicker="ATTRIBUTION PERFORMANCE" title="What moved the portfolio"
+      meta={asOf ? `Year-to-date through ${asOf}` : ''}/>
+
+    <div className="attrib-lede">
+      <div>
+        <div className={navy ? 'navy-eyebrow is-gold' : 'attrib-label'}>PORTFOLIO RETURN, YEAR TO DATE</div>
+        <div className="attrib-headline">{pp(result.portfolioReturn)}%</div>
+      </div>
+      <p className="attrib-note">
+        {positive[0] ? `${positive[0].ticker} added the most at ${pp(positive[0].contribution)} points. ` : ''}
+        {negative[0] ? `${negative[0].ticker} cost the most at ${pp(negative[0].contribution)}. ` : ''}
+        Gains are {usd(result.gainTotal)} on a starting value of {usd(result.startTotal)}.
+      </p>
+    </div>
+
+    <div className="attrib-columns">
+      <div className="attrib-head"><span>POSITION</span><span>YTD RETURN</span><span>CONTRIBUTION (PP)</span></div>
+      <div className="attrib-head"><span>POSITION</span><span>YTD RETURN</span><span>CONTRIBUTION (PP)</span></div>
+      {column(positive, 'Top contributors')}
+      {column(negative, 'Top detractors')}
+    </div>
+
+    <p className="board-source">
+      Contribution is each position’s share of the portfolio’s year-to-date return, in percentage points, and the
+      figures sum to that return. It is calculated from each position’s start-of-year value, so a position held
+      unchanged all year is measured exactly; a position bought or sold during the year is not, and the holdings file
+      does not say which those are.
+      {result.unpriced.length > 0 && ` ${result.unpriced.length} position${result.unpriced.length === 1 ? '' : 's'} (${result.unpriced.slice(0, 6).join(', ')}) had no year-to-date price history and are excluded; the table covers ${result.coverage.toFixed(1)}% of portfolio value.`}
+      {source ? ` ${source}` : ''}
+    </p>
   </div>;
 }
 

@@ -87,8 +87,8 @@ export function emptyMarketSnapshot() {
   return {asOf:'', source:'', basis:'', indexes:MARKET_INDEXES.map(({id,label,region}) => ({id,label,region,return:''}))};
 }
 
-export function marketSnapshotFromYahoo(payloads, now = new Date(), boardKey = 'indexes') {
-  const board = boardFor(boardKey);
+export function marketSnapshotFromYahoo(payloads, now = new Date(), boardKey = 'indexes', explicit = null) {
+  const board = explicit || boardFor(boardKey);
   const indexes = board.definitions.map(definition => parseYahooChart(payloads[definition.id], definition, now.getUTCFullYear()));
   const asOf = indexes.map(index => index.endDate).sort().at(-1);
   return {
