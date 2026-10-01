@@ -33,26 +33,47 @@
 .index-legend { margin: 5px 0 0 25px; gap: 4px 12px; }
 .index-readout { padding-top: 12px; }
 
-/* --- Risk snapshot ------------------------------------------------------
-   The grid gets a fixed share of the slide, and grid items overflow rather
-   than shrink, so the column content is trimmed to fit inside that share
-   instead of spilling over the basis line below it. */
-.snapshot-lede { padding-bottom: 9px; margin-bottom: 11px; }
-.snapshot-lede strong { font-size: 26px; }
-.snapshot-lede > svg { max-height: 88px; }
-.snapshot-outcomes strong { font-size: 21px; }
-.snapshot-outcomes span { margin-top: 5px; }
-.snapshot-grid { min-height: 0; gap: 28px; }
-.snapshot-grid h3 { margin: 0 0 8px; }
-.snapshot-endpoints b { font-size: 16px; }
-.snapshot-endpoints small { margin: 3px 0; }
-.snapshot-range-track { height: 12px; margin: 6px 0 8px; }
-.snapshot-explain { margin: 0 0 9px; }
-.snapshot-allocation { height: 15px; }
-.snapshot-legend { margin-top: 6px; gap: 5px 15px; }
-.snapshot-measures > div { padding: 5px 0; }
-.snapshot-costs { margin-top: 7px; }
-.risk-snapshot-slide .context-source { margin: 8px 0 4px; }
+/* --- Risk snapshot -------------------------------------------------------
+   Three stacked zones: what the portfolio is worth, how far the model says it
+   could move, and what it is made of. Each gets its own band so none of them
+   has to be read out of a dense column. */
+.risk-snapshot-slide { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 14px; }
+
+.snapshot-hero { display: flex; justify-content: space-between; align-items: center; gap: 30px; padding-bottom: 13px; border-bottom: 1px solid var(--c-e6edf3, #e6edf3); }
+.hero-value strong { display: block; font-size: 38px; font-weight: 400; letter-spacing: -1.4px; line-height: 1.05; margin-top: 4px; }
+.hero-value p { font-size: 11px; color: var(--c-385875, #385875); margin: 5px 0 0; }
+.hero-score { display: flex; align-items: center; gap: 13px; }
+.hero-score svg { width: 78px; height: 78px; flex: none; }
+.hero-score p { font-size: 11px; color: var(--c-385875, #385875); margin: 3px 0 0; }
+
+.snapshot-band h3,
+.snapshot-split h3 { font-size: 11px; font-weight: 600; letter-spacing: .4px; margin: 0 0 9px; color: var(--c-385875, #385875); }
+.range-anchors { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: end; margin: 0 0 9px; }
+.range-anchor { display: flex; flex-direction: column; gap: 2px; }
+.range-anchor span { font-size: 8px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; color: var(--c-466887, #466887); }
+.range-anchor b { font-size: 19px; font-weight: 400; letter-spacing: -.4px; }
+.range-anchor small { font-size: 10px; color: var(--c-385875, #385875); font-weight: 500; }
+.range-anchor.is-today { text-align: center; }
+.range-anchor.is-up { text-align: right; }
+.range-scale { position: relative; height: 14px; background: var(--c-e7eef5, #e7eef5); border-radius: 2px; overflow: hidden; }
+.range-band { position: absolute; top: 0; height: 100%; }
+.range-band.is-down { left: 0; background: var(--ramp-2, #91b2d2); }
+.range-band.is-up { background: var(--ramp-1, #254e7a); }
+.range-today { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--c-142f49, #142f49); z-index: 1; }
+.range-ticks { display: flex; justify-content: space-between; gap: 16px; font-size: 8.5px; color: var(--c-385875, #385875); margin: 6px 0 0; }
+.range-ticks span:nth-child(2) { text-align: center; }
+
+.snapshot-split { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; align-items: start; }
+.snapshot-allocation { display: flex; height: 16px; gap: 2px; }
+.snapshot-allocation i { display: block; }
+.snapshot-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 15px; margin-top: 9px; }
+.snapshot-legend span { display: flex; gap: 6px; align-items: center; font-size: 10px; text-transform: capitalize; }
+.snapshot-legend i { width: 7px; height: 7px; flex: none; }
+.snapshot-legend b { margin-left: auto; font-weight: 500; }
+.snapshot-measures { margin: 0; }
+.snapshot-measures > div { display: flex; justify-content: space-between; gap: 14px; padding: 5px 0; border-bottom: 1px solid var(--c-e6edf3, #e6edf3); font-size: 10.5px; }
+.snapshot-measures dd { margin: 0; white-space: nowrap; font-weight: 500; }
+.risk-snapshot-slide .context-source { margin: auto 0 4px; padding-top: 10px; }
 
 /* The mobile breakpoint drops the fixed ratio, so the caps above must not
    squash the chart when the slide is free to grow. */
