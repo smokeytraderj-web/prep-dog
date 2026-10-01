@@ -240,8 +240,7 @@
 /* 1. Type. The light deck sets headings in Georgia. Navy answers with a light
       sans at a larger size and open tracking, over an italic serif kicker --
       the serif/sans pairing is the signature of the reference. */
-[data-slide-theme="dark"] h2,
-[data-slide-theme="dark"] .equity-heading h2 {
+[data-slide-theme="dark"] h2 {
   font-family: var(--font-sans);
   font-weight: 300;
   letter-spacing: -0.9px;
@@ -250,7 +249,7 @@
 }
 [data-slide-theme="dark"] .cover-content h2 { font-size: 58px; font-weight: 200; letter-spacing: -2.2px; }
 [data-slide-theme="dark"] .report-heading .slide-kicker,
-[data-slide-theme="dark"] .equity-heading + .equity-rule + .equity-caption {
+[data-slide-theme="dark"] .report-heading .slide-kicker {
   font-family: Georgia, 'Times New Roman', serif;
   font-style: italic;
   font-weight: 400;
@@ -262,15 +261,13 @@
 }
 
 /* 2. Almost no chrome. One gold hairline under the title does the dividing. */
-[data-slide-theme="dark"] .report-heading,
-[data-slide-theme="dark"] .equity-heading {
+[data-slide-theme="dark"] .report-heading {
   align-items: flex-start;
   padding-bottom: 16px;
   margin-bottom: 30px;
   border-bottom: 1px solid #e0c1844d;
 }
-[data-slide-theme="dark"] .report-heading > span,
-[data-slide-theme="dark"] .equity-heading > span {
+[data-slide-theme="dark"] .report-heading > span {
   font-size: 10px;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -348,7 +345,6 @@
 [data-slide-theme="dark"] .index-bar i { min-width: 2px; }
 
 /* 7. The equity page keeps to neutrals, so gold is the only colour on it. */
-[data-slide-theme="dark"] .equity-rule { background: linear-gradient(90deg, #e0c184, #e0c18400); height: 1px; opacity: 1; }
 [data-slide-theme="dark"] .gold-rule { background: linear-gradient(90deg, #e0c184, #e0c18400); height: 1px; width: 150px; }
 [data-slide-theme="dark"] .equity-allocation .equity-groups th {
   background: transparent;
@@ -417,15 +413,13 @@
 /* The header becomes a band: kicker and title stacked on the left, the date
    dropped to its own baseline on the right, over a full-bleed hairline. The
    light deck keeps them on one aligned row. */
-[data-slide-theme="dark"] .report-heading,
-[data-slide-theme="dark"] .equity-heading {
+[data-slide-theme="dark"] .report-heading {
   align-items: flex-start;
   padding-bottom: 14px;
   margin-bottom: 22px;
   border-bottom: 1px solid #3c4d82;
 }
-[data-slide-theme="dark"] .report-heading > span,
-[data-slide-theme="dark"] .equity-heading > span {
+[data-slide-theme="dark"] .report-heading > span {
   font-size: 9px;
   letter-spacing: 1.6px;
   text-transform: uppercase;
@@ -488,14 +482,12 @@
 .slide[data-slide-theme="dark"] > * { position: relative; z-index: 1; }
 
 /* The band supplies the division, so the heading drops its own rule. */
-[data-slide-theme="dark"] .report-heading,
-[data-slide-theme="dark"] .equity-heading {
+[data-slide-theme="dark"] .report-heading {
   border-bottom: 0;
   padding-bottom: 0;
   margin-bottom: 26px;
 }
-[data-slide-theme="dark"] .report-heading h2,
-[data-slide-theme="dark"] .equity-heading h2 { font-size: 30px; }
+[data-slide-theme="dark"] .report-heading h2 { font-size: 30px; }
 
 /* Figures run much larger than the light deck's. */
 [data-slide-theme="dark"] .hero-value strong { font-size: 52px; }
@@ -511,3 +503,44 @@
 
 /* Cards in the band's shadow lose their top rule, which would double it. */
 [data-slide-theme="dark"] .index-chart-layout .index-card:first-child { border-top: 0; }
+
+/* --- navy risk slide: a console, not a document -------------------------
+   A fixed left rail carries the score, the value and the allocation. The
+   field beside it holds the range and the measures as tiles. This is a
+   different composition from the light slide, not a restyling of it. */
+.risk-console { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.risk-console-grid { display: grid; grid-template-columns: 300px 1fr; gap: 0; flex: 1; min-height: 0; align-items: start; }
+
+.rc-rail { padding-right: 38px; border-right: 1px solid #ffffff2e; display: flex; flex-direction: column; min-height: 0; }
+.rc-score { margin-bottom: 10px; }
+.rc-scale { font-size: 20px; font-weight: 200; margin: 4px 0 0; letter-spacing: -.5px; }
+.rc-scale em { font-style: normal; font-size: 11px; color: #c3cee7; margin-left: 4px; }
+.rc-rule { height: 1px; background: #ffffff2e; margin: 16px 0 14px; }
+.rc-value { font-size: 32px; font-weight: 200; letter-spacing: -1.4px; display: block; margin-top: 5px; font-variant-numeric: tabular-nums; }
+.rc-client { font-size: 11px; color: #c3cee7; margin: 6px 0 0; }
+.rc-alloc { list-style: none; margin: 9px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 7px 16px; }
+.rc-alloc li { display: flex; align-items: center; gap: 9px; font-size: 11px; text-transform: capitalize; }
+.rc-alloc i { width: 8px; height: 8px; flex: none; }
+.rc-alloc b { margin-left: auto; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.rc-field { padding-left: 38px; display: flex; flex-direction: column; gap: 24px; min-width: 0; min-height: 0; }
+.rc-range-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 12px 0 11px; }
+.rc-stop { display: flex; flex-direction: column; gap: 3px; }
+.rc-stop.is-mid { text-align: center; }
+.rc-stop.is-end { text-align: right; }
+.rc-stop em { font-style: normal; font-size: 8.5px; letter-spacing: 2.2px; text-transform: uppercase; color: #aebbd8; }
+.rc-stop b { font-size: 24px; font-weight: 200; letter-spacing: -.8px; font-variant-numeric: tabular-nums; }
+.rc-stop i { font-style: normal; font-size: 10px; color: #c3cee7; }
+.rc-rail-bar { position: relative; height: 10px; background: #ffffff1f; border-radius: 5px; overflow: hidden; }
+.rc-fill { position: absolute; top: 0; height: 100%; }
+.rc-fill.is-down { left: 0; background: #93a4cc; }
+.rc-fill.is-up { background: #eef2fa; }
+.rc-now { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #e0c184; }
+.rc-note { font-size: 9px; color: #aebbd8; margin: 9px 0 0; letter-spacing: .3px; }
+
+.rc-tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 26px; margin-top: 10px; }
+.rc-tile { padding: 12px 0 11px; border-top: 1px solid #ffffff2e; display: flex; flex-direction: column; gap: 4px; }
+.rc-tile b { font-size: 25px; font-weight: 200; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.rc-tile b em { font-style: normal; font-size: 12px; color: #c3cee7; margin-left: 4px; }
+.rc-tile span { font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; color: #aebbd8; }
+.risk-console .context-source { margin-top: auto; padding-top: 14px; }

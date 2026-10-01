@@ -340,7 +340,7 @@ function App() {
     if (slide.id === "account-summary") return <AccountSummarySlide positions={deckMarket.positions || enrichedPositions} source={importSource}/>;
     if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
     if (slide.id === "regional-attribution") return <RegionalAttributionSlide positions={deckMarket.positions || enrichedPositions} data={deckMarket.marketIndexes}/>;
-    if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot}/>;
+    if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot} theme={slideTheme}/>;
     if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
     if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
     if (slide.id === "overview") return <PortfolioOverview holdings={holdings} equity={deckEquity}/>;

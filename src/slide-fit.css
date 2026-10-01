@@ -123,7 +123,7 @@
 /* These two sat just under 4.5:1 against white at 8-10px. Use a token the dark
    theme actually defines, or the override survives into the navy deck as dark
    text on a dark page. */
-.equity-slide .equity-heading > span { color: var(--c-315574, #315574); }
+.equity-slide .report-heading > span { color: var(--c-315574, #315574); }
 .equity-slide .equity-source { color: var(--c-315574, #315574); }
 
 
@@ -133,11 +133,8 @@
    columns grouped Cyclical / Sensitive / Defensive, over a vertical
    relative-weight chart. */
 .equity-slide { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.equity-slide .equity-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
-.equity-slide .equity-heading h2 { font-size: 27px; }
-.equity-slide .equity-heading > span { font-size: 12px; font-style: italic; white-space: nowrap; }
-.equity-rule { height: 2px; background: var(--c-bfa775, #bfa775); margin: 9px 0 16px; }
-.equity-caption { font-size: 11px; font-style: italic; font-weight: 600; margin: 0 0 7px; color: var(--c-1b2a4a, #1b2a4a); }
+/* Section captions match the h3 the other slides use for their sections. */
+.equity-caption { font-size: 11px; font-weight: 600; letter-spacing: .4px; margin: 0 0 9px; color: var(--c-385875, #385875); }
 
 .equity-allocation { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0 0 18px; }
 .equity-allocation th:first-child, .equity-allocation td:first-child { width: 168px; }
@@ -153,8 +150,8 @@
 .equity-diff { width: 100%; height: auto; display: block; flex: 0 1 auto; min-height: 0; max-height: none; }
 .slide .equity-slide .equity-diff { max-height: none; }
 .eq-zero { stroke: var(--c-1b2a4a, #1b2a4a); stroke-width: 1; }
-.eq-up { fill: var(--ramp-1, #2b3647); }
-.eq-down { fill: var(--ramp-2, #aab3c2); }
+.eq-up { fill: var(--ramp-1, #1b2a4a); }
+.eq-down { fill: var(--ramp-2, #a8b4c6); }
 .eq-value { font-size: 11px; font-weight: 600; fill: var(--c-1b2a4a, #1b2a4a); }
 .eq-label { font-size: 10px; fill: var(--c-42617e, #42617e); }
 .equity-slide .equity-source { font-size: 9.5px; font-style: italic; margin-top: auto; padding-top: 10px; }

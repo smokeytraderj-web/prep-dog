@@ -24,8 +24,11 @@ export default function EquitySlide({data, example = false}) {
   const benchmarkLabel = data.benchmark_label || 'Benchmark';
 
   return <div className="equity-slide">
-    <div className="equity-heading"><h2>Equity Sector Exposure</h2><span>{data.as_of}</span></div>
-    <div className="equity-rule"/>
+    {/* Same heading structure as every other slide: kicker, title, as-of. */}
+    <div className="report-heading">
+      <div><span className="slide-kicker">EQUITY EXPOSURE</span><h2>Equity Sector Exposure</h2></div>
+      <span>{data.as_of}</span>
+    </div>
     {example && <p className="example-banner">EXAMPLE ONLY · Supplied sample data, not your portfolio</p>}
 
     <p className="equity-caption">Allocation (%)</p>

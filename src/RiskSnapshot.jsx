@@ -39,7 +39,96 @@ export function RiskSnapshotStatus({holdings, positions, benchmark, asOf, client
       {data.warnings.map(warning=><p key={warning}>{warning}</p>)}</div>}
   </section>;
 }
-export function RiskSnapshotSlide({data:s}) {
+// The two themes are different presentations, not one layout in two palettes.
+// Light is a stacked document: hero row, range band, two-column split. Navy is
+// a console: a fixed left rail carrying the score and the value, with the range
+// and the measures laid out as tiles in the field beside it. They share the
+// model and the wording, not the composition.
+export function RiskSnapshotSlide({data, theme}) {
+  return theme === 'dark' ? <RiskConsole s={data}/> : <RiskDocument s={data}/>;
+}
+
+function useRiskParts(s) {
+  const allocation = [...s.allocation].sort((a, b) => b.percent - a.percent);
+  const r = s.range;
+  const costs = Object.values(s.costs);
+  const costTotal = costs.every(Number.isFinite) ? costs.reduce((a, b) => a + b, 0) : null;
+  const measures = [
+    ['Annualized volatility', s.metrics.annual_volatility_pct],
+    ['Drawdown', s.metrics.max_drawdown_pct],
+    ['Annual range midpoint', s.metrics.annual_range_midpoint_pct],
+    ['Annual dividend', s.metrics.annual_dividend_pct],
+    ['Total annual cost', costTotal],
+  ].filter(([, v]) => v != null);
+  if (s.metrics.grade != null) measures.push(['Risk-adjusted grade', s.metrics.grade, '/ 4.3']);
+  const min = Math.min(0, r.downside_pct), max = Math.max(0, r.upside_pct);
+  const span = max - min || 1, zero = (-min / span) * 100;
+  const basis = `${s.basis.method} Six-month modeled 90% range. ${s.basis.covariance}. ${s.basis.drawdown_basis} ${s.basis.risk_free_pct != null ? `Risk-free rate ${s.basis.risk_free_pct.toFixed(2)}%.` : ''} ${s.warnings.join(' ')}`;
+  return {allocation, r, measures, span, zero, basis};
+}
+
+function ScoreRing({score, size}) {
+  return <svg viewBox="0 0 120 120" width={size} height={size} role="img" aria-label={`In-house risk score ${score} of 99`}>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--c-e7eef5, #e7eef5)" strokeWidth="7"/>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--ramp-1, #142f49)" strokeWidth="7"
+      strokeDasharray={`${(score - 1) / 98 * 314.16} 314.16`} strokeLinecap="round" transform="rotate(-90 60 60)"/>
+    <text x="60" y="71" textAnchor="middle" fontSize="34" fill="var(--c-142f49, #142f49)">{score}</text>
+  </svg>;
+}
+
+// --- navy: a console, not a document ---------------------------------------
+function RiskConsole({s}) {
+  const {allocation, r, measures, span, zero, basis} = useRiskParts(s);
+  return <div className="risk-console">
+    <div className="report-heading"><div><span className="slide-kicker">IN-HOUSE PORTFOLIO ANALYTICS</span><h2>Risk snapshot</h2></div><span>As of {s.as_of}</span></div>
+    <div className="risk-console-grid">
+
+      <aside className="rc-rail">
+        <div className="rc-score"><ScoreRing score={s.risk_score} size={116}/></div>
+        <span className="slide-kicker">Risk score</span>
+        <p className="rc-scale">{s.risk_score} <em>of 99</em></p>
+        <div className="rc-rule"/>
+        <span className="slide-kicker">{s.portfolio_label}</span>
+        <strong className="rc-value">{usd(s.total_value)}</strong>
+        {s.client_label && <p className="rc-client">{s.client_label}</p>}
+        <div className="rc-rule"/>
+        <span className="slide-kicker">Allocation</span>
+        <ul className="rc-alloc">{allocation.map((a, i) => <li key={a.name}>
+          <i style={{background: ramp[i]}}/><span>{a.name}</span><b>{a.percent.toFixed(1)}%</b>
+        </li>)}</ul>
+      </aside>
+
+      <div className="rc-field">
+        <section className="rc-range">
+          <span className="slide-kicker">Six-month modeled range</span>
+          <div className="rc-range-row">
+            <div className="rc-stop"><em>Downside</em><b>{usd(s.total_value + r.downside_value)}</b><i>{pct(r.downside_pct)}</i></div>
+            <div className="rc-stop is-mid"><em>Today</em><b>{usd(s.total_value)}</b><i>Starting value</i></div>
+            <div className="rc-stop is-end"><em>Upside</em><b>{usd(s.total_value + r.upside_value)}</b><i>{pct(r.upside_pct)}</i></div>
+          </div>
+          <div className="rc-rail-bar">
+            <div className="rc-fill is-down" style={{width: `${(0 - r.downside_pct) / span * 100}%`}}/>
+            <div className="rc-fill is-up" style={{left: `${zero}%`, width: `${r.upside_pct / span * 100}%`}}/>
+            <div className="rc-now" style={{left: `${zero}%`}}/>
+          </div>
+          <p className="rc-note">90% central coverage · outcomes may fall outside this range · not a guarantee or maximum loss</p>
+        </section>
+
+        <section className="rc-tiles">
+          <span className="slide-kicker">Portfolio measures</span>
+          <div className="rc-tile-grid">{measures.map(([label, value, suffix]) => <div className="rc-tile" key={label}>
+            <b>{value.toFixed(suffix ? 1 : 2)}{suffix ? '' : '%'}{suffix && <em>{suffix}</em>}</b>
+            <span>{label}</span>
+          </div>)}</div>
+        </section>
+      </div>
+    </div>
+    <p className="context-source">{basis}</p>
+  </div>;
+}
+
+// --- light: the stacked document -------------------------------------------
+function RiskDocument({s}) {
   const allocation=[...s.allocation].sort((a,b)=>b.percent-a.percent), r=s.range;
   const costs=Object.values(s.costs), costTotal=costs.every(Number.isFinite)?costs.reduce((a,b)=>a+b,0):null;
   const measures=[['Annualized volatility',s.metrics.annual_volatility_pct],['Drawdown',s.metrics.max_drawdown_pct],['Annual range midpoint',s.metrics.annual_range_midpoint_pct],['Annual dividend',s.metrics.annual_dividend_pct],['Total annual cost',costTotal]].filter(([,value])=>value!=null);
