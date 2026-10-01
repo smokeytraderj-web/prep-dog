@@ -207,15 +207,17 @@
   --c-547796: #b6c2dd;
   --c-a9bcd0: #4c5e95;
 
-  /* Gold leads; the rest step through sand and cool slate. No light blue. */
-  --series-1: #e0bd77;
-  --series-2: #a3b0cf;
-  --series-3: #6d7ca5;
-  --series-4: #46568a;
-  --ramp-1: #e0bd77;
-  --ramp-2: #a3b0cf;
-  --ramp-3: #62719c;
-  --ramp-4: #41507f;
+  /* Four series that are told apart by hue, not by shade. Four blues on a
+     navy page were indistinguishable; these stay distinct in print and for
+     the common colour-vision deficiencies. */
+  --series-1: #e3c178;
+  --series-2: #e0896b;
+  --series-3: #5fb8a6;
+  --series-4: #b794d4;
+  --ramp-1: #e3c178;
+  --ramp-2: #e0896b;
+  --ramp-3: #5fb8a6;
+  --ramp-4: #b794d4;
 }
 
 /* --- navy is a different design, not a recoloured light deck -------------
@@ -225,12 +227,12 @@
    tabular figures, no panel fills, and a single gold accent. */
 
 .slide[data-slide-theme="dark"] {
-  background: #1a2a57;
+  background: #16254d;
   border-color: #3c4d82;
   box-shadow: 0 16px 48px #00000059;
   color: #f3f6fc;
 }
-.slide.cover[data-slide-theme="dark"] { background: #1a2a57; border-left-color: #d8b870; }
+.slide.cover[data-slide-theme="dark"] { background: #16254d; border-left-color: #d8b870; }
 
 /* 1. Type system. The light deck sets its headings in Georgia; the navy deck
       answers in the UI sans, tighter and heavier. This is the change that makes
@@ -413,3 +415,50 @@
 /* Footers are quieter and wider-tracked. */
 [data-slide-theme="dark"] .slide footer,
 .slide[data-slide-theme="dark"] footer { letter-spacing: 1.4px; text-transform: uppercase; font-size: 7px; }
+
+/* --- navy reads as a different deck, not a restyled one ------------------
+   Light is an inset document: a white page with margins, serif headings and
+   a rule under the title. Navy is a canvas: a full-bleed header band the
+   title sits inside, a gold spine, oversized figures, and a page number
+   instead of a footer line. */
+
+/* The band bleeds past the slide's padding because it is painted on the
+   slide itself rather than on an element inside it. */
+.slide[data-slide-theme="dark"]:not(.cover)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 166px;
+  background: linear-gradient(180deg, #1e3062 0%, #1b2b58 100%);
+  border-bottom: 1px solid #d8b870;
+  pointer-events: none;
+}
+/* Content sits above the band. */
+.slide[data-slide-theme="dark"] > * { position: relative; z-index: 1; }
+
+/* The band supplies the division, so the heading drops its own rule. */
+[data-slide-theme="dark"] .report-heading,
+[data-slide-theme="dark"] .equity-heading {
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: 26px;
+}
+[data-slide-theme="dark"] .report-heading h2,
+[data-slide-theme="dark"] .equity-heading h2 { font-size: 30px; }
+
+/* Figures run much larger than the light deck's. */
+[data-slide-theme="dark"] .hero-value strong { font-size: 52px; }
+[data-slide-theme="dark"] .account-summary-head strong { font-size: 46px; }
+[data-slide-theme="dark"] .index-chart-layout .index-card b { font-size: 30px; }
+[data-slide-theme="dark"] .range-anchor b { font-size: 22px; }
+
+/* A page number, not a footer sentence. */
+[data-slide-theme="dark"] .slide footer,
+.slide[data-slide-theme="dark"] footer { border-top: 0; }
+.slide[data-slide-theme="dark"] footer span:first-child { display: none; }
+.slide[data-slide-theme="dark"] footer { justify-content: flex-end; }
+
+/* Cards in the band's shadow lose their top rule, which would double it. */
+[data-slide-theme="dark"] .index-chart-layout .index-card:first-child { border-top: 0; }

@@ -2,15 +2,15 @@ import React from 'react';
 // Light values are the fallbacks, so an unthemed deck is unchanged; the dark
 // theme defines --series-* and the chart follows it.
 export const indexColors = [
-  'var(--series-1, #183452)', 'var(--series-2, #3976b6)',
-  'var(--series-3, #648c9e)', 'var(--series-4, #8cabe0)',
+  'var(--series-1, #1b3a5c)', 'var(--series-2, #b8762f)',
+  'var(--series-3, #2f8777)', 'var(--series-4, #8a5fa8)',
 ];
 // The slide gives this panel a fixed share of a 16:9 page, so the chart is drawn
 // wide and shallow: at full column width its natural height lands inside that
 // share instead of pushing the readout and footer off the bottom.
-const VIEW_W = 590, VIEW_H = 143;
-const PLOT_TOP = 10, PLOT_BOTTOM = 118, PLOT_H = PLOT_BOTTOM - PLOT_TOP;
-const AXIS_Y = 136, PLOT_LEFT = 54, PLOT_RIGHT = 564, PLOT_W = PLOT_RIGHT - PLOT_LEFT;
+const VIEW_W = 590, VIEW_H = 196;
+const PLOT_TOP = 12, PLOT_BOTTOM = 166, PLOT_H = PLOT_BOTTOM - PLOT_TOP;
+const AXIS_Y = 187, PLOT_LEFT = 54, PLOT_RIGHT = 564, PLOT_W = PLOT_RIGHT - PLOT_LEFT;
 export default function MarketChart({indexes}) {
   const series = indexes.map(index => ({...index, points:(index.points || []).filter(point => Number.isFinite(point.return) && Number.isFinite(Date.parse(point.date)))}));
   const hasHistory = series.every(index => index.points.length > 1 && Math.abs(index.points.at(-1).return - Number(index.return)) < .01);
