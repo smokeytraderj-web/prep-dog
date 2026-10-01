@@ -64,8 +64,13 @@
 .board-name { fill: var(--board-ink); font-size: 14px; }
 .context-board.is-navy .board-name { fill: var(--board-muted); font-size: 12px; }
 .board-axis { fill: var(--board-muted); font-size: 12px; }
-.board-growth { fill: var(--board-growth); font-size: 15px; font-weight: 600; }
-.board-arrow { stroke: var(--board-bar-estimate); stroke-width: 2.4; fill: none; }
+.board-growth { fill: var(--board-growth); font-size: 16px; font-weight: 600; letter-spacing: 0.2px; }
+.board-arrow {
+  stroke: var(--board-bar-estimate);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+}
 .board-arrow-head { fill: var(--board-bar-estimate); }
 
 .board-source {
@@ -94,8 +99,8 @@
 /* Earnings: the bullets carry the reading, the chart carries the shape. */
 .earnings-split {
   display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.4fr);
-  gap: 36px;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.35fr);
+  gap: 42px;
   align-items: center;
   flex-grow: 1;
   min-height: 0;
@@ -107,11 +112,11 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 .earnings-points li {
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.6;
   position: relative;
   padding-left: 18px;
 }
@@ -119,16 +124,16 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 9px;
+  top: 10px;
   width: 6px;
   height: 6px;
   background: var(--board-rule);
 }
-.context-board.is-navy .earnings-points li { font-size: 14px; color: var(--navy-ink-2, #cbd5ec); }
+.context-board.is-navy .earnings-points li { font-size: 17px; color: var(--navy-ink-2, #cbd5ec); }
 
 @media (max-width: 760px) {
   .earnings-split { grid-template-columns: 1fr; gap: 20px; }
-  .earnings-points li { font-size: 13px; }
+  .earnings-points li { font-size: 14px; }
   .board-source { font-size: 10px; }
 }
 
