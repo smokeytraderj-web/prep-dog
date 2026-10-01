@@ -1,41 +1,43 @@
 // Reading several accounts out of one pasted block.
 //
-// An advisor's notes look like this:
+// An advisor's notes look like either of these:
 //
-//   Holdings
-//   Joint :
-//
-//   IVV 2000000
+//   Holdings            Joint Taxable
+//   Joint :             IVV 2000000
+//   IVV 2000000         AAPL 5000
 //   AAPL 5000
+//                       Roth IRA
+//   Trust :             IEMG 92000
+//   AGG 1000000         AGG 300000
 //
-//   Trust :
-//   AGG 1000000
-//
-// A line ending in a colon names the account that follows it. Everything after
-// it belongs to that account until the next such line.
-//
-// A bare label like "Holdings" is dropped, but only when it cannot be a ticker
-// someone forgot to price: a plausible ticker is short and upper case, so
-// "Holdings" is a heading and "AAPL" on its own is still an error the parser
-// will report. Silently dropping a holding would be worse than refusing one.
+// A line that names an account — with or without a trailing colon — opens one,
+// and the holdings under it belong to it until the next such line. A heading
+// that never gets any holdings, like "Holdings" above, ends up an empty
+// account and is dropped.
 
 const HEADER = /^\s*(.{1,60}?)\s*:\s*$/;
 const PLAUSIBLE_TICKER = /^[A-Z][A-Z0-9.^/-]{0,5}$/;
+const SUMMARY = /^(total|grand total|sub ?total|sum|portfolio)$/i;
+const NAMEABLE = /^[A-Za-z][A-Za-z0-9 &'().\-/]*$/;
 
+// A colon is the explicit form. A bare line is read as an account name only
+// when it cannot be a holding whose value was left off: a ticker has no spaces
+// and is written in capitals, so "Roth IRA" and "Joint Taxable" are accounts
+// while "AAPL" and "MU" stay the errors they were. Losing a position silently
+// would be worse than any convenience here.
 export function isAccountHeader(line) {
-  const match = HEADER.exec(line);
-  if (!match) return null;
-  const name = match[1].trim();
-  // "Total:" and the like name a summary row, not an account.
-  if (!name || /^(total|grand total|subtotal|sum)$/i.test(name)) return null;
-  return name;
-}
-
-export function isStrayLabel(line) {
-  const text = line.trim();
-  if (!text || /\d/.test(text)) return false;
-  if (PLAUSIBLE_TICKER.test(text)) return false;   // a ticker missing its value
-  return /^[A-Za-z][A-Za-z0-9 &'().\-/]*$/.test(text);
+  const colon = HEADER.exec(line);
+  const text = (colon ? colon[1] : line).trim();
+  if (!text || SUMMARY.test(text)) return null;
+  if (colon) return text;
+  if (/\d/.test(text)) return null;
+  if (!NAMEABLE.test(text)) return null;
+  // One word, in capitals, short enough to be a symbol: that is a holding
+  // missing its value, and the parser must still refuse it.
+  const bare = !/\s/.test(text);
+  if (bare && PLAUSIBLE_TICKER.test(text)) return null;
+  if (bare && text === text.toUpperCase() && text.length <= 6) return null;
+  return text;
 }
 
 // Returns one entry per named account. A paste with no headers at all returns
@@ -51,7 +53,6 @@ export function splitAccountBlocks(text) {
       continue;
     }
     if (!raw.trim()) continue;
-    if (!current && isStrayLabel(raw)) continue;   // a title above the first account
     if (!current) {
       current = {name: '', lines: []};
       blocks.push(current);
