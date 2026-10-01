@@ -33,8 +33,9 @@
   --navy-ink-3: #a3b1d4;
   /* The gradient's lightest point is #2c3f7e, and the old index grey only
      reached 3.21:1 against it. This clears 4.5:1 everywhere the gradient can
-     fall behind a row numeral. */
-  --navy-index: #a3b1d4;
+  /* 5.3:1 on the flat ground. It was lifted while the gradient ran deck-wide;
+     with that gone it sits back below the muted text again. */
+  --navy-index: #8392bb;
   --navy-gold: #d8b870;
   --navy-gold-bright: #e8c98a;
   --navy-hair: rgba(255, 255, 255, 0.1);
@@ -50,16 +51,14 @@
   --navy-series-4: #6f85bc;
 }
 
-/* The gradient runs through the whole deck, not just the cover. On content
-   slides it is pulled further toward the corner and lands darker, so the light
-   never sits under a figure or a column of numbers; the cover keeps the
-   brighter, more open version. */
+/* The gradient is the cover's alone. Carried across the whole deck it read as
+   a wash behind the data rather than an opening, so every other slide is flat
+   ground. */
 .navy-shell {
   width: 100%;
   height: 100%;
   display: flex;
   overflow: hidden;
-  background: radial-gradient(102% 76% at 88% 4%, #233566 0%, #182a57 42%, #111e42 72%);
 }
 .navy-shell.is-cover {
   background: radial-gradient(118% 88% at 76% 8%, #2c3f7e 0%, #1a2a58 38%, #111e42 68%);
