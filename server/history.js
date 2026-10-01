@@ -1,3 +1,4 @@
+import { mapPool } from '../src/pool.js';
 import { HISTORY_INTERVAL, HISTORY_RANGE, MAX_SYMBOLS, alignHistories, historySymbol, parseYahooHistory, validSymbol } from '../src/price-history.js';
 
 // 13-week Treasury bill yield: the risk-free rate the model needs for a grade.
@@ -48,13 +49,13 @@ export async function historyResponse(request, fetcher = fetch, clock = () => ne
 
   const asOf = clock().toISOString().slice(0, 10);
   try {
-    const histories = await Promise.all(symbols.map(async symbol => {
+    const histories = await mapPool(symbols, async symbol => {
       const hit = cache.get(symbol);
       if (hit && Date.now() - hit.time < TTL) return hit.history;
       const history = await fetchHistory(symbol, fetcher);
       cache.set(symbol, {history, time: Date.now()});
       return history;
-    }));
+    });
     const aligned = alignHistories(histories, asOf);
     if (!aligned) return Response.json({error: 'These holdings do not share enough overlapping monthly history to model together.'}, {status: 422, headers: {'Cache-Control': 'no-store'}});
     const riskFree = await fetchRiskFreePct(fetcher);

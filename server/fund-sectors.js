@@ -1,3 +1,4 @@
+import { mapPool } from '../src/pool.js';
 import { EQUITY_ASSET_CLASSES, ISHARES_SCREENER, holdingsUrl, parseFundSectors, parseScreener } from '../src/fund-lookthrough.js';
 import { normalizeTicker } from '../src/benchmark.js';
 
@@ -59,11 +60,11 @@ export async function fundSectorsResponse(request, fetcher = fetch) {
   if (!symbols.length) return Response.json({error: 'Supply at least one ticker.'}, {status: 400});
   if (symbols.length > MAX_SYMBOLS) return Response.json({error: `Supply at most ${MAX_SYMBOLS} tickers.`}, {status: 400});
   try {
-    const results = await Promise.all(symbols.map(async symbol => {
+    const results = await mapPool(symbols, async symbol => {
       // One fund failing must not lose the look-through for the others.
       try { return await fetchFundSectors(symbol, fetcher); }
       catch (error) { console.warn('fund_sectors_failed', symbol, error.message); return {symbol, available: false, reason: 'error', detail: error.message}; }
-    }));
+    });
     // A transient failure must not be cached like a settled answer, or a brief
     // provider hiccup keeps a fund looking unknown long after it recovered.
     const transient = results.some(r => r.reason === 'error');

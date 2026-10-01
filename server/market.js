@@ -1,4 +1,5 @@
 import { BOARDS, boardFor, marketSnapshotFromYahoo, parseYahooChart } from '../src/market-indexes.js';
+import { mapPool } from '../src/pool.js';
 
 const YAHOO_CHARTS = ['https://query1.finance.yahoo.com/v8/finance/chart/', 'https://query2.finance.yahoo.com/v8/finance/chart/'];
 // One cache entry per board, so a sector refresh cannot evict the equity one.
@@ -49,9 +50,9 @@ export async function marketResponse(request, fetcher = fetch, clock = () => new
       const start = new Date(Date.UTC(now.getUTCFullYear() - 1, 11, 20));
       const period1 = unix(start);
       const period2 = unix(new Date(now.getTime() + 24 * 60 * 60 * 1000));
-      const entries = await Promise.all(board.definitions.map(async definition => {
+      const entries = await mapPool(board.definitions, async definition => {
         return [definition.id, await fetchIndexChart(definition,period1,period2,now.getUTCFullYear(),fetcher)];
-      }));
+      });
       cached.set(key, {data:marketSnapshotFromYahoo(Object.fromEntries(entries), now, key, board), time:Date.now()});
     }
     return Response.json(cached.get(key).data, {headers:{'Cache-Control':'public, max-age=300, s-maxage=3600','X-Content-Type-Options':'nosniff'}});

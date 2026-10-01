@@ -79,9 +79,21 @@ export function createAutoRiskSnapshot(options) {
 
 export async function fetchRiskHistory(holdings, fetcher = fetch) {
   const symbols = [...new Set(holdings.map(holding => normalize(holding.ticker)))];
-  const response = await fetcher(`/api/history?symbols=${encodeURIComponent(symbols.join(','))}`, {headers: {Accept: 'application/json'}});
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw Error(payload?.error || 'Price history is unavailable right now.');
-  if (!payload?.dates?.length || !payload.series) throw Error('The price-history service returned an incomplete response.');
-  return payload;
+  const path = `/api/history?symbols=${encodeURIComponent(symbols.join(','))}`;
+  // Every other client fetch retries once; this one did not, so a single
+  // transient upstream failure surfaced to the advisor as "Load failed".
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetcher(path, {headers: {Accept: 'application/json'}});
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) throw Error(payload?.error || 'Price history is unavailable right now.');
+      if (!payload?.dates?.length || !payload.series) throw Error('The price-history service returned an incomplete response.');
+      return payload;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) await new Promise(resolve => setTimeout(resolve, 700));
+    }
+  }
+  throw lastError;
 }
