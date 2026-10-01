@@ -42,7 +42,7 @@ import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
 import "./slide-brand.css";
 import "./print-fidelity.css";
-import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
+import { NavyFrame, NavyCover, NavyCoverClassic, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -620,8 +620,12 @@ function App() {
     const label = NAVY_LABELS[slide.id];
     if (!label) return null;
     const positions = deckMarket.positions || enrichedPositions;
-    if (slide.id === "cover")
-      return {label, body: <NavyCover title={title} preparedFor={preparedFor} advisor={advisor} reportDate={reportDate} total={total}/>};
+    if (slide.id === "cover") {
+      // Only the light deck was rebuilt on the Dwyer file's split cover; navy
+      // keeps the cover it already had.
+      const Cover = themeOf(slideTheme).dark ? NavyCoverClassic : NavyCover;
+      return {label, body: <Cover title={title} preparedFor={preparedFor} advisor={advisor} reportDate={reportDate} total={total}/>};
+    }
     if (slide.id === "account-summary")
       return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={reportDate}/>};
     if (slide.id === "market-indexes")
