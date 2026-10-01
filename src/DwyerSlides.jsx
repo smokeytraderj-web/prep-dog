@@ -35,6 +35,8 @@ export function DwyerRisk({s}) {
   const costs = Object.values(s.costs || {});
   const costTotal = costs.length && costs.every(Number.isFinite)
     ? costs.reduce((a, b) => a + b, 0) : null;
+  const span = (Math.max(0, r.upside_pct || 0) - Math.min(0, r.downside_pct || 0)) || 1;
+  const zero = (-Math.min(0, r.downside_pct || 0) / span) * 100;
   const measures = [
     ['Risk-adjusted grade', s.metrics?.grade == null ? null : `${s.metrics.grade.toFixed(1)} / 4.3`],
     ['Annual dividend', s.metrics?.annual_dividend_pct == null ? null : `${s.metrics.annual_dividend_pct.toFixed(2)}%`],
@@ -43,6 +45,13 @@ export function DwyerRisk({s}) {
     ['Maximum drawdown', s.metrics?.max_drawdown_pct == null ? null : `${s.metrics.max_drawdown_pct.toFixed(2)}%`],
     ['Total annual cost', costTotal == null ? null : `${costTotal.toFixed(2)}%`],
   ].filter(([, v]) => v != null && !String(v).includes('undefined')).slice(0, 4);
+
+  // The score on its own tells a client nothing: 42 out of 99 is only meaningful
+  // next to what the scale means and what is driving it.
+  const band = score < 34 ? 'Conservative' : score < 67 ? 'Moderate' : 'Aggressive';
+  const lead = allocation[0];
+  const reading = `${band} — ${score < 50 ? 'below' : score > 50 ? 'above' : 'at'} the midpoint of the 1–${scaleMax} scale`
+    + (lead ? `, driven by a ${lead.percent.toFixed(0)}% ${lead.name.toLowerCase()} sleeve.` : '.');
 
   // The gauge is a half circle drawn as one stroked arc with the filled part
   // laid over it, so the score's share of the scale is the arc's own length
@@ -75,6 +84,7 @@ export function DwyerRisk({s}) {
             <span><b>{scaleMax}</b>Aggressive</span>
           </figcaption>
         </figure>
+        <p className="dw-risk-read">{reading}</p>
         <div className="dw-risk-total">
           <div className="dw-eyebrow">PORTFOLIO TOTAL</div>
           <b>{usd(s.total_value)}</b>
@@ -83,16 +93,33 @@ export function DwyerRisk({s}) {
 
       <section className="dw-risk-side">
         {Number.isFinite(r.downside_pct) && Number.isFinite(r.upside_pct) && <>
-          <div className="dw-eyebrow">95% HISTORICAL RANGE (6 MONTHS)</div>
-          <p className="dw-risk-range">
-            <span className="is-down">{usd(s.total_value + r.downside_value)} ({r.downside_pct.toFixed(2)}%)</span>
-            <i>to</i>
-            <span className="is-up">+{usd(s.total_value + r.upside_value)} ({'+'}{r.upside_pct.toFixed(2)}%)</span>
-          </p>
+          <div className="dw-eyebrow">WHERE THIS PORTFOLIO COULD SIT IN SIX MONTHS</div>
+          <div className="dw-range">
+            <div className="dw-range-ends">
+              <div>
+                <span>DOWNSIDE {r.downside_pct.toFixed(1)}%</span>
+                <b className="is-down">{usd(s.total_value + r.downside_value)}</b>
+              </div>
+              <div className="dw-range-today">
+                <span>TODAY</span>
+                <b>{usd(s.total_value)}</b>
+              </div>
+              <div className="dw-range-up">
+                <span>UPSIDE +{r.upside_pct.toFixed(1)}%</span>
+                <b className="is-up">{usd(s.total_value + r.upside_value)}</b>
+              </div>
+            </div>
+            <div className="dw-range-track">
+              <i className="dw-range-down" style={{width: `${zero}%`}}/>
+              <i className="dw-range-up-fill" style={{width: `${100 - zero}%`}}/>
+              <span className="dw-range-mark" style={{left: `${zero}%`}}/>
+            </div>
+            <p className="dw-range-note">A 90% central range from six months of this portfolio's own history. Outcomes can fall outside it; it is not a guarantee and not a maximum loss.</p>
+          </div>
         </>}
 
         {allocation.length > 0 && <>
-          <div className="dw-eyebrow">ALLOCATION</div>
+          <div className="dw-eyebrow">WHAT IT HOLDS</div>
           <div className="dw-alloc-bar">
             {allocation.map((a, i) => <i key={a.name} className={`dw-fill-${i % 4}`}
               style={{width: `${a.percent}%`}}/>)}
@@ -104,11 +131,11 @@ export function DwyerRisk({s}) {
           </div>
         </>}
 
-        {measures.length > 0 && <dl className="dw-measures">
+        {measures.length > 0 && <><div className="dw-eyebrow">THE MEASURES BEHIND IT</div><dl className="dw-measures">
           {measures.map(([label, value]) => <div key={label}>
             <dt>{label}</dt><dd>{value}</dd>
           </div>)}
-        </dl>}
+        </dl></>}
       </section>
     </div>
     <p className="dw-source">

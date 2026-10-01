@@ -2,12 +2,13 @@ import React, {useRef, useState} from 'react';
 import {Upload, X, Check, Plus, FileSpreadsheet} from 'lucide-react';
 import {detectTable, extractHoldings, textToSheets} from './holding-import.js';
 import {accountErrors, mergeAccounts, MIN_ACCOUNTS, MAX_ACCOUNTS} from './multi-account.js';
+import {parseHoldings} from './holdings.js';
 
 const usd = n => new Intl.NumberFormat('en-US', {
   style: 'currency', currency: 'USD', maximumFractionDigits: 0,
 }).format(n);
 
-const blank = () => ({id: crypto.randomUUID(), name: '', fileName: '', positions: [], holdings: [], errors: [], busy: false});
+const blank = () => ({id: crypto.randomUUID(), name: '', mode: 'file', text: '', fileName: '', positions: [], holdings: [], errors: [], busy: false});
 
 // One file per account, each named by the advisor. The columns are detected the
 // same way the single-file import detects them; what is different is that the
@@ -54,6 +55,22 @@ export default function MultiAccountImport({onConfirm, onCancel}) {
     }
   }
 
+  function readPaste(id, text) {
+    if (!text.trim()) {
+      patch(id, {text, positions: [], holdings: [], errors: []});
+      return;
+    }
+    const {holdings, errors} = parseHoldings(text);
+    patch(id, {
+      text,
+      holdings,
+      // Ticker and value only; asset class and region are filled in from the
+      // fund table afterwards, exactly as a pasted single portfolio is.
+      positions: holdings.map(h => ({ticker: h.ticker, value: h.value})),
+      errors: errors.slice(0, 3),
+    });
+  }
+
   const merged = mergeAccounts(rows);
   const problems = accountErrors(rows);
   const rowErrors = rows.some(r => r.errors.length);
@@ -64,7 +81,7 @@ export default function MultiAccountImport({onConfirm, onCancel}) {
       <div>
         <span className="section-kicker"><FileSpreadsheet size={16}/> MULTIPLE ACCOUNTS</span>
         <h2>One file per account</h2>
-        <p>Name each account and attach its holdings file. The name you type is what the deck groups by, so a file with no account column, or the custodian's own number, is fine. Between {MIN_ACCOUNTS} and {MAX_ACCOUNTS} accounts.</p>
+        <p>Name each account, then attach its file or paste its holdings. The name you type is what the deck groups by, so a file with no account column, or the custodian's own number, is fine. Between {MIN_ACCOUNTS} and {MAX_ACCOUNTS} accounts.</p>
       </div>
       <button className="icon-button" onClick={onCancel} aria-label="Cancel multiple account import"><X size={19}/></button>
     </div>
@@ -77,13 +94,26 @@ export default function MultiAccountImport({onConfirm, onCancel}) {
             onChange={e => patch(row.id, {name: e.target.value})}/>
         </label>
         <div className="account-file">
-          <button type="button" className="secondary" disabled={row.busy}
-            onClick={() => inputs.current[row.id]?.click()}>
-            <Upload size={14}/> {row.busy ? 'Reading…' : row.fileName ? 'Replace file' : 'Choose file'}
-          </button>
-          <input ref={el => {inputs.current[row.id] = el;}} className="hidden" type="file"
-            accept=".xlsx,.csv,.tsv,.txt"
-            onChange={e => {readFile(row.id, e.target.files[0]); e.target.value = '';}}/>
+          <div className="account-mode" role="group" aria-label={`How account ${i + 1} is supplied`}>
+            <button type="button" className={row.mode === 'file' ? 'current' : ''}
+              onClick={() => patch(row.id, {mode: 'file', text: '', positions: [], holdings: [], errors: []})}>File</button>
+            <button type="button" className={row.mode === 'paste' ? 'current' : ''}
+              onClick={() => patch(row.id, {mode: 'paste', fileName: '', positions: [], holdings: [], errors: []})}>Paste</button>
+          </div>
+          {row.mode === 'paste'
+            ? <textarea className="account-paste" rows={3} spellCheck="false"
+                placeholder={'IVV 420000\nAAPL 95000'}
+                value={row.text}
+                onChange={e => readPaste(row.id, e.target.value)}/>
+            : <>
+                <button type="button" className="secondary" disabled={row.busy}
+                  onClick={() => inputs.current[row.id]?.click()}>
+                  <Upload size={14}/> {row.busy ? 'Reading…' : row.fileName ? 'Replace file' : 'Choose file'}
+                </button>
+                <input ref={el => {inputs.current[row.id] = el;}} className="hidden" type="file"
+                  accept=".xlsx,.csv,.tsv,.txt"
+                  onChange={e => {readFile(row.id, e.target.files[0]); e.target.value = '';}}/>
+              </>}
           {row.fileName && <small>{row.fileName}</small>}
           {row.positions.length > 0 && <small className="account-ok">
             {row.positions.length} positions · {usd(row.positions.reduce((n, p) => n + p.value, 0))}

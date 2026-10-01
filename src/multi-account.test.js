@@ -78,12 +78,21 @@ test('two accounts cannot share a name, however it is cased', () => {
   assert.match(errors.join(' '), /both called/);
 });
 
-test('the source names the files the deck was built from', () => {
+test('the source names where each account came from', () => {
   const {source} = mergeAccounts([
     entry('Joint', [{ticker: 'IVV', value: 1}], 'joint.xlsx'),
     entry('IRA', [{ticker: 'AGG', value: 1}], 'ira.csv'),
   ]);
-  assert.match(source, /2 account files/);
+  assert.match(source, /2 accounts/);
   assert.match(source, /joint\.xlsx/);
   assert.match(source, /ira\.csv/);
+});
+
+test('a pasted account is not credited to a file it does not have', () => {
+  const {source} = mergeAccounts([
+    entry('Joint', [{ticker: 'IVV', value: 1}], 'joint.xlsx'),
+    entry('John IRA', [{ticker: 'AGG', value: 1}]),
+  ]);
+  assert.match(source, /joint\.xlsx/);
+  assert.match(source, /John IRA \(pasted\)/);
 });

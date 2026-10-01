@@ -52,6 +52,8 @@ export function mergeAccounts(entries) {
     positions,
     holdings: [...totals].map(([ticker, value]) => ({ticker, value})),
     accounts: filled.map(e => e.name.trim()),
-    source: `${filled.length} account files: ${filled.map(e => e.fileName || e.name.trim()).join(', ')}`,
+    // Not "account files": an account can be pasted, and a source line that
+    // names a file for it would be wrong.
+    source: `${filled.length} accounts: ${filled.map(e => e.fileName ? e.fileName : `${e.name.trim()} (pasted)`).join(', ')}`,
   };
 }

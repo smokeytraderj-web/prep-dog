@@ -213,3 +213,58 @@
 @media screen and (max-width: 900px) {
   .navy-light .dw-contents { grid-template-columns: 1fr; gap: 0; }
 }
+
+/* The score's reading, directly under the gauge. */
+.navy-light .dw-risk-read {
+  margin: 14px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--navy-ink-2);
+  text-align: center;
+}
+
+/* The range, as a range: two ends, today's value between them, and a track
+   showing where today sits. Two coloured numbers with "to" between them made
+   the client do that work in their head. */
+.navy-light .dw-range { margin-bottom: 30px; }
+.navy-light .dw-range-ends {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.navy-light .dw-range-ends > div { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.navy-light .dw-range-ends span {
+  font-size: 9px; letter-spacing: 1.6px; font-weight: 600;
+  color: var(--navy-ink-3);
+}
+.navy-light .dw-range-ends b {
+  font-family: var(--navy-serif);
+  font-size: 21px; font-weight: 400; white-space: nowrap;
+  color: var(--navy-ink);
+}
+.navy-light .dw-range-ends .is-down { color: #a4342c; }
+.navy-light .dw-range-ends .is-up { color: #1c7a47; }
+.navy-light .dw-range-today { text-align: center; }
+.navy-light .dw-range-up { text-align: right; }
+.navy-light .dw-range-track {
+  position: relative;
+  display: flex;
+  height: 8px;
+  border-radius: 2px;
+  overflow: visible;
+}
+.navy-light .dw-range-track i { display: block; height: 100%; }
+.navy-light .dw-range-down { background: #e3c5c1; border-radius: 2px 0 0 2px; }
+.navy-light .dw-range-up-fill { background: #c3dbcd; border-radius: 0 2px 2px 0; }
+.navy-light .dw-range-mark {
+  position: absolute; top: -4px; bottom: -4px; width: 2px;
+  background: var(--navy-gold-bright);
+  transform: translateX(-1px);
+}
+.navy-light .dw-range-note {
+  margin: 12px 0 0;
+  font-size: 10.5px; line-height: 1.55; color: var(--navy-ink-3);
+  max-width: 76ch;
+}

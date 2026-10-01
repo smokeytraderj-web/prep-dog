@@ -260,3 +260,18 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
   .multi-import .account-row { grid-template-columns: 22px minmax(0, 1fr) 30px; }
   .multi-import .account-file { grid-column: 2 / 4; padding-top: 0; }
 }
+
+/* Each account is supplied either way: a file, or pasted lines. */
+.multi-import .account-mode { display: inline-flex; gap: 2px; margin-bottom: 2px; }
+.multi-import .account-mode button {
+  border: 1px solid #d4e0ea; background: #fff; color: #5c7a94;
+  font-size: 11px; padding: 4px 11px; cursor: pointer;
+}
+.multi-import .account-mode button:first-child { border-radius: 5px 0 0 5px; }
+.multi-import .account-mode button:last-child { border-radius: 0 5px 5px 0; border-left: 0; }
+.multi-import .account-mode button.current { background: #173b5a; border-color: #173b5a; color: #fff; }
+.multi-import .account-paste {
+  width: 100%; resize: vertical; min-height: 64px;
+  border: 1px solid #d4e0ea; border-radius: 6px; padding: 9px 11px;
+  font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.5; color: #173b5a;
+}
