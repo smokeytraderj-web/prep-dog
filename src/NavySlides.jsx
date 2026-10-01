@@ -453,6 +453,13 @@ export function NavyFrame({label, page, children, cover = false}) {
       </div>
       {!cover && <div className="navy-kicker">{label}</div>}
       {children}
+      {/* The Dwyer file signs every page along the foot: the firm's name at
+          x=58 and the folio at x=1174, both gold, on the same baseline. Navy
+          carries the folio alone, so the name only shows on the light deck. */}
+      <div className="navy-foot">
+        <span className="navy-foot-firm">GOTTFRIED &amp; SOMBERG WEALTH MANAGEMENT, LLC</span>
+        <span className="navy-foot-page">{page}</span>
+      </div>
       <span className="navy-folio" aria-hidden="true">{page}</span>
     </div>
   </div>;

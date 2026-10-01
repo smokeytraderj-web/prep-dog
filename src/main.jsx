@@ -615,7 +615,16 @@ function App() {
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
   };
+  // The file writes its as-of as a date a client would read. Navy keeps the ISO
+  // stamp it already had; only the light deck spells it out.
+  const longDate = (iso) => {
+    const d = iso ? new Date(`${iso}T12:00:00`) : null;
+    return d && !Number.isNaN(d.getTime())
+      ? d.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
+      : iso;
+  };
   function navyContent(slide) {
+    const asOfLabel = themeOf(slideTheme).dark ? reportDate : longDate(reportDate);
     if (slide.snippet) return null;
     const label = NAVY_LABELS[slide.id];
     if (!label) return null;
@@ -627,7 +636,7 @@ function App() {
       return {label, body: <Cover title={title} preparedFor={preparedFor} advisor={advisor} reportDate={reportDate} total={total}/>};
     }
     if (slide.id === "account-summary")
-      return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={reportDate}/>};
+      return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={asOfLabel}/>};
     if (slide.id === "market-indexes")
       return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
     if (slide.id === "contents")
@@ -646,7 +655,7 @@ function App() {
     if (slide.id === "risk" && deckMarket.riskSnapshot)
       return {label, body: <NavyRisk s={deckMarket.riskSnapshot}/>};
     if (slide.id === "allocation")
-      return {label, body: <NavyAllocation positions={positions} asOf={reportDate} source={importSource}/>};
+      return {label, body: <NavyAllocation positions={positions} asOf={asOfLabel} source={importSource}/>};
     if (slide.id === "asset-class-performance")
       return {label, body: <NavyAssetClassPerformance positions={positions} returns={deckMarket.positionReturns?.returns}
         asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source}/>};

@@ -278,3 +278,59 @@
 .navy-light .navy-admin-chip.is-new b { color: var(--navy-ink); }
 .navy-light .navy-admin-chip.is-new small { color: var(--navy-ink-3); }
 .navy-light .navy-admin-when { color: #ffffff; background: #8a6b25; }
+
+/* --- the footer, from the file -------------------------------------------
+   Every content slide in the Dwyer deck is signed along the foot: the firm's
+   name at x=58 and the folio at x=1174, gold, 8pt and 9pt Calibri, on the
+   baseline at y=672 of 720. Navy keeps its bare folio in the spine, so this
+   only ever shows on the light deck. */
+.slide.navy-slide .navy-foot { display: none; }
+.slide.navy-slide.navy-light .navy-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: auto;
+  padding-top: 14px;
+  font-family: var(--navy-sans);
+  color: var(--navy-gold);
+}
+.slide.navy-slide.navy-light .navy-foot-firm {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 2.1px;
+}
+.slide.navy-slide.navy-light .navy-foot-page {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+/* The folio in the spine would then print twice. */
+.slide.navy-slide.navy-light .navy-folio { display: none; }
+/* The cover has its own confidentiality line at the foot and is not signed. */
+.slide.navy-slide.navy-light.cover .navy-foot { display: none; }
+
+/* The as-of is gold and set in the serif in the file, not grey and monospaced. */
+.slide.navy-slide.navy-light .navy-meta {
+  font-family: var(--navy-serif);
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: var(--navy-gold);
+  text-transform: none;
+}
+
+/* The file rules the full width under the title on every content slide, at
+   y=136 of 720. Navy separates the head with air instead, so this is light's. */
+.slide.navy-slide.navy-light .navy-head {
+  border-bottom: 1px solid var(--navy-gold-bright);
+  padding-bottom: 12px;
+  margin-bottom: 26px;
+}
+.slide.navy-slide.navy-light.cover .navy-head { border-bottom: 0; }
+
+/* The donut's largest arc is the file's gold. The darkened text gold turns
+   olive across that much area; a fill carries no contrast minimum, so this
+   takes #d3bb81 exactly as the file has it. */
+.slide.navy-slide.navy-light .navy-slice-1 { stroke: #d3bb81; }
+.slide.navy-slide.navy-light .navy-swatch-cell i.navy-slice-1 { background: #d3bb81; }
+.slide.navy-slide.navy-light .navy-fill-equities { background: #d3bb81; }
