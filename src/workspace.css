@@ -275,3 +275,14 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
   border: 1px solid #d4e0ea; border-radius: 6px; padding: 9px 11px;
   font-family: ui-monospace, monospace; font-size: 12px; line-height: 1.5; color: #173b5a;
 }
+
+/* The logo is the way home, so it has to stay reachable. The header was static,
+   so on a long page — the components step, or a finished deck — it scrolled off
+   the top and the button sat at a negative y with nothing at its coordinates.
+   It was not broken, it was simply not on screen. */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+@media print { .app-header { position: static; } }

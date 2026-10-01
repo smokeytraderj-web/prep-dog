@@ -105,32 +105,17 @@ export function EarningsExpectationsSlide({data = SP500_EARNINGS, navy = false})
           })}
           {/* Growth callouts are drawn from the series, so an arrow can never
               disagree with the bars it spans. */}
-          <defs>
-            <marker id="earn-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="5" markerHeight="5"
-              orient="auto-start-reverse" markerUnits="strokeWidth">
-              <path d="M 1 1 L 11 6 L 1 11 Z" className="board-arrow-head"/>
-            </marker>
-          </defs>
-          {/* A shallow arc rather than a straight diagonal: it lifts clear of
-              the bars it spans, carries its label at the apex instead of over a
-              gridline, and the arrowhead follows the curve's own tangent so it
-              meets the next bar square. */}
+          {/* The growth between periods, set quietly above the bar it belongs
+              to. Swooping arrows across the plot read as a sales chart; the
+              figure itself is the point, and a short tick is enough to tie it
+              to its bar. */}
           {steps.map(stepItem => {
-            const x1 = cx(stepItem.from) + bar * 0.5, x2 = cx(stepItem.to) - bar * 0.46;
-            const y1 = y(series[stepItem.from].eps) - 13;
-            const y2 = y(series[stepItem.to].eps) - 24;
-            // The control point sits level with the start and most of the way
-            // across, so the curve leaves flat and arrives climbing. An arc
-            // bulging over the midpoint instead comes down into the bar, which
-            // is the wrong gesture for growth and points the head at the floor.
-            const ctrlX = x1 + (x2 - x1) * 0.72;
-            // Near the ceiling the clamp would drop the label back under its own
-            // arrowhead, so it sits to the left of the tip rather than over it.
-            const labelY = Math.max(E.top + 13, y2 - 13);
+            const x = cx(stepItem.to);
+            const barTop = y(series[stepItem.to].eps);
+            const labelY = Math.max(E.top + 11, barTop - 20);
             return <g key={stepItem.to}>
-              <path d={`M ${x1} ${y1} Q ${ctrlX} ${y1} ${x2} ${y2}`}
-                className="board-arrow" markerEnd="url(#earn-arrow)"/>
-              <text x={x2 - 24} y={labelY} textAnchor="middle" className="board-growth">
+              <line x1={x} x2={x} y1={labelY + 6} y2={barTop - 5} className="board-growth-tick"/>
+              <text x={x} y={labelY} textAnchor="middle" className="board-growth">
                 {signed0(stepItem.growth)}</text>
             </g>;
           })}
