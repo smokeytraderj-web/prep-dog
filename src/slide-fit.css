@@ -153,8 +153,8 @@
 .equity-diff { width: 100%; height: auto; display: block; flex: 0 1 auto; min-height: 0; max-height: none; }
 .slide .equity-slide .equity-diff { max-height: none; }
 .eq-zero { stroke: var(--c-1b2a4a, #1b2a4a); stroke-width: 1; }
-.eq-up { fill: var(--ramp-1, #1b2a4a); }
-.eq-down { fill: var(--ramp-2, #b9cce4); }
+.eq-up { fill: var(--ramp-1, #2b3647); }
+.eq-down { fill: var(--ramp-2, #aab3c2); }
 .eq-value { font-size: 11px; font-weight: 600; fill: var(--c-1b2a4a, #1b2a4a); }
 .eq-label { font-size: 10px; fill: var(--c-42617e, #42617e); }
 .equity-slide .equity-source { font-size: 9.5px; font-style: italic; margin-top: auto; padding-top: 10px; }
