@@ -41,7 +41,7 @@ Draft app-module specifications are in `docs/slide-skills/attribution-report.md`
 
 ## Deployment
 
-Sites is the primary host and publishes the Worker build, including the benchmark endpoint. The repository keeps a `vercel.json` compatibility file with Git deployments disabled, so GitHub pushes do not create a competing Vercel deployment. A GitHub push alone does not publish Sites; publish the updated source through Sites after changes.
+The app runs locally with `npm run dev`. `npm run build` also packages the app and the benchmark endpoint for Sites, which stays available as a host; a GitHub push alone does not publish it.
 
 Checks: parser and benchmark tests, actual provider/API fetch, browser paste/upload → selection → sector comparison → PDF flow, mobile layout and provider-failure state. Export is browser print/PDF; PPTX and remote skill execution are not implemented.
 
@@ -53,7 +53,7 @@ The upload review preserves per-row account and asset-class detail. This powers 
 
 The Max Bender reference informs the report structure: a client cover, portfolio overview, asset allocation, account summary, market context, risk metrics and performance contribution. The supplied Bloom pages 5 and 8 informed the sector-performance and earnings layouts. Their fixed example values are not shipped as production data.
 
-Sites is the primary publication. Vercel Git deployments are disabled in `vercel.json` so a GitHub push does not create a competing Vercel deployment. GitHub remains the source of truth and every Sites publication is built from the pushed commit.
+GitHub is the source of truth, and any publication is built from the pushed commit.
 
 ## Image source slides
 

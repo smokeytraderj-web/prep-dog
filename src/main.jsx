@@ -395,6 +395,27 @@ function App() {
   useEffect(() => {
     if (page > slides.length - 1) setPage(Math.max(0, slides.length - 1));
   }, [slides.length, page]);
+
+  // Arrow keys step through the deck while it is on screen. Typing in a field
+  // has to keep its own arrow behaviour — the report date, the admin fields and
+  // every slide title are inputs — so a keystroke aimed at one is left alone,
+  // as is any modified key, which belongs to the browser.
+  useEffect(() => {
+    if (step !== 2) return;
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target;
+      if (el?.isContentEditable) return;
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName || "")) return;
+      const last = slides.length - 1;
+      if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); setPage((n) => Math.min(last, n + 1)); }
+      else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); setPage((n) => Math.max(0, n - 1)); }
+      else if (e.key === "Home") { e.preventDefault(); setPage(0); }
+      else if (e.key === "End") { e.preventDefault(); setPage(last); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [step, slides.length]);
   const navigate = (n) => {
     setStep(n);
     setDone(false);
