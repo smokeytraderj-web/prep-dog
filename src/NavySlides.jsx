@@ -1,5 +1,6 @@
 import React from 'react';
 import { groupPositions } from './supporting-data.js';
+import { allocationRows, allocationNote, assetClassPerformance } from './allocation.js';
 
 // Navy is a separate deck, not the light deck repainted. Light is an inset
 // document: white page, margins, a rule under the title, a brand lockup on top
@@ -65,19 +66,9 @@ export function NavyCover({title, preparedFor, advisor, reportDate, total}) {
   </div>;
 }
 
-const assetBucket = value => {
-  const v = String(value || '').toLowerCase();
-  if (/fixed|bond|income|treas|municipal|muni/.test(v)) return 'Fixed income';
-  if (/cash|money market|cd\b|certificate/.test(v)) return 'Cash';
-  if (/equity|stock|common|preferred|reit|etf|large cap|small cap|mid cap/.test(v)) return 'Equities';
-  return 'Other';
-};
-const bucketOrder = ['Equities', 'Fixed income', 'Other', 'Cash'];
 
 export function NavyAccountSummary({positions, source, asOf}) {
   const total = positions.reduce((n, p) => n + p.value, 0);
-  const buckets = groupPositions(positions.map(p => ({...p, bucket: assetBucket(p.assetClass)})), 'bucket')
-    .sort((a, b) => bucketOrder.indexOf(a.name) - bucketOrder.indexOf(b.name));
   const allAccounts = groupPositions(positions, 'account');
   // A file without an account column groups into a single "Unclassified" row
   // holding the whole portfolio, which tells the client nothing. Fall back to
@@ -102,18 +93,6 @@ export function NavyAccountSummary({positions, source, asOf}) {
         <b>{positions.length}<span>{byAccount ? ` across ${accounts.length} account${accounts.length === 1 ? '' : 's'}` : ' supplied'}</span></b>
       </div>
     </div>
-
-    {total > 0 && <div className="navy-allocation">
-      <div className="navy-allocation-bar">
-        {buckets.map(g => <i key={g.name} className={`navy-fill-${g.name.split(' ')[0].toLowerCase()}`} style={{width: `${g.value / total * 100}%`}}/>)}
-      </div>
-      <div className="navy-allocation-keys">
-        {buckets.map(g => <span key={g.name}>
-          <i className={`navy-fill-${g.name.split(' ')[0].toLowerCase()}`}/>{g.name}
-          <b>{(g.value / total * 100).toFixed(1)}%</b>
-        </span>)}
-      </div>
-    </div>}
 
     <div className="navy-rows navy-rows-accounts">
       <div className="navy-row navy-row-head">
@@ -421,6 +400,158 @@ export function NavyFrame({label, page, children, cover = false}) {
       {!cover && <div className="navy-kicker">{label}</div>}
       {children}
       <span className="navy-folio" aria-hidden="true">{page}</span>
+    </div>
+  </div>;
+}
+
+// --- Overall asset allocation ---------------------------------------------
+// The firm's own slide: a donut with the total in its hole, the class table
+// beside it, and a sentence underneath restating the equity split. The donut is
+// drawn as stroked arcs on one circle rather than as paths, so a class worth
+// 0.56% still renders as a visible sliver instead of a rounding error.
+const SLICE = ['navy-slice-1', 'navy-slice-2', 'navy-slice-3', 'navy-slice-4', 'navy-slice-5', 'navy-slice-6'];
+
+export function NavyAllocation({positions, asOf, source}) {
+  const {rows, total} = allocationRows(positions);
+  if (!total) return <div className="navy-slide-body">
+    <div className="navy-head"><h2>Overall asset allocation</h2></div>
+    <p className="navy-pending">Confirm holdings with an asset class column to build this slide. Classes are read from the file and are never inferred from a ticker.</p>
+  </div>;
+  const note = allocationNote({rows, total});
+  const R = 54, C = 2 * Math.PI * R;
+  let offset = 0;
+  const arcs = rows.map((row, i) => {
+    const len = (row.percent / 100) * C;
+    const arc = {key: row.name, cls: SLICE[i % SLICE.length], dash: `${len} ${C - len}`, off: -offset};
+    offset += len;
+    return arc;
+  });
+  return <div className="navy-slide-body">
+    <div className="navy-head">
+      <h2>Overall asset allocation</h2>
+      {asOf && <span className="navy-meta">AS OF {asOf}</span>}
+    </div>
+    <div className="navy-allocation-layout">
+      <figure className="navy-donut">
+        <svg viewBox="0 0 140 140" role="img" aria-label={`Allocation by asset class: ${rows.map(r => `${r.name} ${r.percent.toFixed(2)}%`).join(', ')}`}>
+          <g transform="rotate(-90 70 70)">
+            {arcs.map(a => <circle key={a.key} className={a.cls} cx="70" cy="70" r={R}
+              strokeDasharray={a.dash} strokeDashoffset={a.off}/>)}
+          </g>
+        </svg>
+        <figcaption>
+          <b>{total >= 1e6 ? `$${(total / 1e6).toFixed(2)}M` : usd(total)}</b>
+          <span className="navy-eyebrow">TOTAL PORTFOLIO</span>
+        </figcaption>
+      </figure>
+      <div className="navy-allocation-table">
+        <div className="navy-eyebrow is-gold">ASSET CLASS PRIMARY</div>
+        <div className="navy-rows navy-rows-allocation">
+          <div className="navy-row navy-row-head"><span>ASSET CLASS</span><span>ALLOCATION</span><span>EST. VALUE</span></div>
+          {rows.map((row, i) => <div className="navy-row" key={row.name}>
+            <span className="navy-swatch-cell"><i className={SLICE[i % SLICE.length]}/>{row.name}</span>
+            <span><b>{row.percent.toFixed(2)}%</b></span>
+            <span>{usd(row.value)}</span>
+          </div>)}
+          <div className="navy-row navy-row-total">
+            <span>Total</span><span><b>100.00%</b></span><span>{usd(total)}</span>
+          </div>
+        </div>
+        {note && <p className="navy-allocation-note">{note}</p>}
+      </div>
+    </div>
+    <p className="navy-source">{source ? `Source: ${source}. ` : ''}Estimated values apply allocation percentages to the confirmed portfolio value of {usd(total)}. Asset class and region are read from your file.</p>
+  </div>;
+}
+
+// --- Performance by asset class -------------------------------------------
+// Sector performance answers what the market did; this answers what the
+// client's own classes did, on the same start-value basis as the per-position
+// attribution so the two slides cannot disagree.
+export function NavyAssetClassPerformance({positions, returns, asOf, source}) {
+  const result = assetClassPerformance(positions, returns);
+  if (!result.rows.length) return <div className="navy-slide-body">
+    <div className="navy-head"><h2>Performance by asset class</h2></div>
+    <p className="navy-pending">This slide builds once year-to-date returns load for the confirmed holdings. No class return is estimated from a current snapshot.</p>
+  </div>;
+  const span = Math.max(...result.rows.map(r => Math.abs(r.ytdReturn)), 1);
+  return <div className="navy-slide-body">
+    <div className="navy-head">
+      <h2>Performance by asset class</h2>
+      {asOf && <span className="navy-meta">YTD {asOf}</span>}
+    </div>
+    <div className="navy-lede">
+      <div>
+        <div className="navy-eyebrow">PORTFOLIO, YEAR TO DATE</div>
+        <Display value={signed(result.portfolioReturn)} gold={result.portfolioReturn >= 0}/>
+      </div>
+    </div>
+    <div className="navy-rows navy-rows-classperf">
+      <div className="navy-row navy-row-head"><span>ASSET CLASS</span><span>WEIGHT</span><span/><span>YTD RETURN</span></div>
+      {result.rows.map(row => {
+        const weight = result.rows.reduce((n, r) => n + r.value, 0);
+        return <div className="navy-row" key={row.name}>
+          <span>{row.name}</span>
+          <span className="navy-index">{weight > 0 ? `${(row.value / weight * 100).toFixed(1)}%` : ''}</span>
+          <span className="navy-classperf-track">
+            <i className={row.ytdReturn >= 0 ? 'is-up' : 'is-down'}
+               style={{width: `${Math.abs(row.ytdReturn) / span * 100}%`}}/>
+          </span>
+          <span><b>{signed(row.ytdReturn)}</b></span>
+        </div>;
+      })}
+    </div>
+    <p className="navy-source">
+      {source ? `${source}. ` : ''}Class returns are each class's gain over its own start-of-year value, the same basis as the attribution slide — not an average of its holdings' returns.
+      {result.coverage < 99.5 && ` Covers ${result.coverage.toFixed(1)}% of portfolio value; ${result.unpriced.length} position${result.unpriced.length === 1 ? '' : 's'} without price history ${result.unpriced.length === 1 ? 'is' : 'are'} excluded.`}
+    </p>
+  </div>;
+}
+
+// --- Administrative updates ------------------------------------------------
+// A standing slide for the custodian move. Everything on it is editable in the
+// review step: the names are a specific client's professional contacts, so
+// nothing is hardcoded into every deck, and a card with nothing in it is left
+// off rather than printed empty.
+export function NavyAdmin({admin = {}}) {
+  const chips = [
+    {label: admin.fromCustodian, note: 'Current custodian', to: false},
+    {label: admin.toCustodian, note: 'New custodian', to: true},
+    {label: admin.fromPortal, note: 'Current client portal', to: false},
+    {label: admin.toPortal, note: 'New client portal', to: true},
+  ].filter(c => c.label?.trim());
+  const same = (admin.staysTheSame || []).filter(s => s.trim());
+  const seen = (admin.whatYouSee || []).filter(s => s.trim());
+  const contacts = (admin.contacts || []).filter(c => c.name?.trim());
+  return <div className="navy-slide-body">
+    <div className="navy-head"><h2>Admin</h2></div>
+    <div className="navy-admin-head">
+      <h3>{admin.heading?.trim() || 'Administrative updates'}</h3>
+      {admin.when?.trim() && <span className="navy-admin-when">{admin.when.toUpperCase()}</span>}
+    </div>
+    {chips.length > 0 && <div className="navy-admin-flow">
+      {chips.map((c, i) => <React.Fragment key={`${c.label}-${i}`}>
+        {i > 0 && <span className="navy-admin-arrow" aria-hidden="true">→</span>}
+        <div className={`navy-admin-chip ${c.to ? 'is-new' : ''}`}>
+          <b>{c.label}</b><small>{c.note}</small>
+        </div>
+      </React.Fragment>)}
+    </div>}
+    <div className="navy-admin-cards">
+      {same.length > 0 && <div className="navy-admin-card">
+        <div className="navy-eyebrow is-gold">WHAT STAYS THE SAME</div>
+        <ul>{same.map((s, i) => <li key={i}>{s}</li>)}</ul>
+      </div>}
+      {seen.length > 0 && <div className="navy-admin-card">
+        <div className="navy-eyebrow is-gold">WHAT YOU WILL SEE</div>
+        <ul>{seen.map((s, i) => <li key={i}>{s}</li>)}</ul>
+      </div>}
+      {contacts.length > 0 && <div className="navy-admin-card">
+        <div className="navy-eyebrow is-gold">PROFESSIONAL CONTACTS</div>
+        <dl>{contacts.map((c, i) => <React.Fragment key={i}>
+          <dt>{c.role}</dt><dd>{c.name}</dd>
+        </React.Fragment>)}</dl>
+      </div>}
     </div>
   </div>;
 }

@@ -514,3 +514,171 @@ rect.navy-under { fill: var(--navy-under); }
     print-color-adjust: exact;
   }
 }
+
+/* --- overall asset allocation ------------------------------------------- */
+/* The donut is one circle with a stroked arc per class, rotated so the first
+   class starts at twelve o'clock. Arcs, not paths: a 0.56% cash sliver still
+   draws as a visible mark rather than disappearing into a rounding error. */
+.navy-allocation-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.35fr);
+  gap: 48px;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+}
+.navy-donut { position: relative; margin: 0; display: flex; align-items: center; justify-content: center; }
+.navy-donut svg { width: 100%; max-width: 310px; height: auto; }
+.navy-donut circle { fill: none; stroke-width: 19; }
+.navy-donut figcaption {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+.navy-donut figcaption b {
+  font-family: var(--navy-serif);
+  font-size: 35px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--navy-ink);
+}
+.navy-slice-1 { stroke: var(--navy-gold); }
+.navy-slice-2 { stroke: var(--navy-ink-3); }
+.navy-slice-3 { stroke: var(--navy-series-3); }
+.navy-slice-4 { stroke: var(--navy-series-4); }
+/* No gold past the first slice: the donut wraps, so a second gold class lands
+   next to the first and the two read as one arc. */
+.navy-slice-5 { stroke: var(--navy-ink-2); }
+.navy-slice-6 { stroke: var(--navy-under); }
+.navy-swatch-cell { display: flex; align-items: center; gap: 10px; }
+.navy-swatch-cell i {
+  width: 8px; height: 8px; border-radius: 50%; flex: none;
+  background: currentColor;
+}
+.navy-swatch-cell i.navy-slice-1 { background: var(--navy-gold); }
+.navy-swatch-cell i.navy-slice-2 { background: var(--navy-ink-3); }
+.navy-swatch-cell i.navy-slice-3 { background: var(--navy-series-3); }
+.navy-swatch-cell i.navy-slice-4 { background: var(--navy-series-4); }
+.navy-swatch-cell i.navy-slice-5 { background: var(--navy-ink-2); }
+.navy-swatch-cell i.navy-slice-6 { background: var(--navy-under); }
+.navy-rows-allocation .navy-row { grid-template-columns: minmax(0, 1.9fr) 0.7fr 0.9fr; }
+.navy-rows-allocation .navy-row > span:nth-child(2),
+.navy-rows-allocation .navy-row > span:nth-child(3) { text-align: right; }
+.navy-row-total { border-top: 1px solid var(--navy-rule); border-bottom: 0; font-weight: 500; }
+.navy-row-total > span:last-child { color: var(--navy-gold); }
+.navy-allocation-note {
+  font-family: var(--navy-serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--navy-ink-2);
+  margin: 20px 0 0;
+  max-width: 62ch;
+}
+
+/* --- performance by asset class ----------------------------------------- */
+.navy-rows-classperf .navy-row { grid-template-columns: minmax(0, 1.5fr) 0.5fr minmax(90px, 2fr) 0.7fr; }
+.navy-rows-classperf .navy-row > span:nth-child(2) { text-align: right; }
+.navy-rows-classperf .navy-row > span:last-child { text-align: right; }
+.navy-classperf-track {
+  display: flex;
+  align-items: center;
+  height: 9px;
+  background: var(--navy-hair);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.navy-classperf-track i { display: block; height: 100%; border-radius: 2px; min-width: 2px; }
+.navy-classperf-track i.is-up { background: var(--navy-gold); }
+.navy-classperf-track i.is-down { background: var(--navy-under); }
+
+/* --- administrative updates --------------------------------------------- */
+.navy-admin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 4px 0 26px;
+}
+.navy-admin-head h3 {
+  font-family: var(--navy-serif);
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0;
+  color: var(--navy-ink);
+}
+.navy-admin-when {
+  font-size: 10px;
+  letter-spacing: 1.6px;
+  font-weight: 600;
+  color: var(--navy-ground);
+  background: var(--navy-gold);
+  border-radius: 999px;
+  padding: 8px 17px;
+  white-space: nowrap;
+}
+.navy-admin-flow { display: flex; align-items: stretch; gap: 14px; margin: 0 0 20px; }
+.navy-admin-arrow { align-self: center; color: var(--navy-gold); font-size: 17px; }
+.navy-admin-chip {
+  flex: 1;
+  border: 1px solid var(--navy-hair);
+  border-radius: 7px;
+  padding: 18px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.navy-admin-chip b {
+  font-family: var(--navy-serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--navy-ink);
+  overflow-wrap: anywhere;
+}
+.navy-admin-chip small { font-size: 10px; font-style: italic; color: var(--navy-ink-3); }
+/* The destination of each move is the one thing the client has to notice, so
+   the new custodian and the new portal are the only filled cards. */
+.navy-admin-chip.is-new { background: var(--navy-gold); border-color: var(--navy-gold); }
+.navy-admin-chip.is-new b, .navy-admin-chip.is-new small { color: var(--navy-ground); }
+.navy-admin-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.navy-admin-card {
+  border: 1px solid var(--navy-hair);
+  border-radius: 7px;
+  padding: 17px 18px 19px;
+  min-width: 0;
+}
+.navy-admin-card ul { list-style: none; margin: 13px 0 0; padding: 0; display: grid; gap: 10px; }
+.navy-admin-card li {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--navy-ink-2);
+  padding-left: 15px;
+  position: relative;
+}
+.navy-admin-card li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 7px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--navy-gold);
+}
+.navy-admin-card dl { margin: 13px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 14px; }
+.navy-admin-card dt { font-size: 12px; color: var(--navy-ink-3); }
+.navy-admin-card dd {
+  margin: 0;
+  font-family: var(--navy-serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--navy-ink);
+}
+@media(max-width: 900px) {
+  .navy-allocation-layout { grid-template-columns: 1fr; gap: 24px; }
+  .navy-admin-flow { flex-wrap: wrap; }
+  .navy-admin-cards { grid-template-columns: 1fr; }
+}

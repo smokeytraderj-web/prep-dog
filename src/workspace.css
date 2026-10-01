@@ -119,3 +119,60 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
    as reference. The 32px separator belongs to whichever section is second. */
 .builder-layout .optional-heading { margin-top: 0; }
 .builder-layout .auto-flow-note { margin-top: 32px; }
+
+/* Deck order.
+   The brief was that reordering should be easy to do and hard to notice, so
+   this reads as a numbered contents list first and a control surface second:
+   no borders, no buttons on show. The grip and the move/remove controls fade
+   in on hover, and appear outright on keyboard focus so they are reachable
+   without a mouse. */
+.deck-order { margin-top: 32px; }
+.order-list { list-style: none; margin: 0; padding: 0; }
+.order-row {
+  display: grid;
+  grid-template-columns: 15px 26px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px 9px 0;
+  border-bottom: 1px solid #e8eef5;
+  font-size: 13px;
+  color: #173b5a;
+  cursor: grab;
+}
+.order-row:last-child { border-bottom: 0; }
+.order-row.is-dragging { opacity: .4; }
+.order-grip { color: #9fb4ca; opacity: 0; transition: opacity .12s; }
+.order-index { font-size: 11px; color: #7d94ab; font-variant-numeric: tabular-nums; }
+.order-tools { display: flex; gap: 2px; opacity: 0; transition: opacity .12s; }
+.order-row:hover .order-grip,
+.order-row:hover .order-tools,
+.order-row:focus-within .order-grip,
+.order-row:focus-within .order-tools { opacity: 1; }
+.order-tools button {
+  border: 0;
+  background: none;
+  color: #5c7a94;
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.order-tools button:hover:not(:disabled) { background: #e8eef5; color: #173b5a; }
+.order-tools button:disabled { opacity: .25; cursor: default; }
+.order-add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.order-add button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px dashed #c3d2e0;
+  background: none;
+  color: #486480;
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.order-add button:hover { border-style: solid; border-color: #8fa9c2; color: #173b5a; }
+.admin-fields .admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; margin-top: 14px; }
+@media(max-width:760px) { .admin-fields .admin-grid { grid-template-columns: 1fr; } }

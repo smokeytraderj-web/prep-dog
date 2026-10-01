@@ -19,6 +19,8 @@ import {
   Sun,
   Moon,
   Scissors,
+  Landmark,
+  GripVertical,
 } from "lucide-react";
 import { parseHoldings, totalValue } from "./holdings";
 import "./styles.css";
@@ -39,7 +41,7 @@ import { deckName } from "./deck-name";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
 import "./print-fidelity.css";
-import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk } from "./NavySlides";
+import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
 import { validateEquity } from "./equity";
@@ -80,6 +82,13 @@ const sections = [
     auto: true,
   },
   {
+    id: "allocation",
+    name: "Overall asset allocation",
+    description: "The donut and class table, with estimated values and the equity split.",
+    icon: PieChart,
+    auto: true,
+  },
+  {
     id: "market-indexes",
     name: "YTD market snapshot",
     description: "S&P 500, Nasdaq, emerging markets, and MSCI returns.",
@@ -101,6 +110,13 @@ const sections = [
     auto: true,
   },
   {
+    id: "asset-class-performance",
+    name: "Asset class performance",
+    description: "Year-to-date return for each asset class the portfolio holds.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
     id: "earnings-expectations",
     name: "S&P 500 earnings",
     description: "The earnings path, with consensus estimates for the forward years.",
@@ -115,6 +131,13 @@ const sections = [
     auto: true,
   },
   {
+    id: "admin",
+    name: "Admin",
+    description: "Custodian and portal transition, what stays the same, and professional contacts.",
+    icon: Landmark,
+    auto: true,
+  },
+  {
     id: "equity",
     name: "Equity exposure",
     description: "Sector weights versus the current S&P 500 proxy.",
@@ -122,6 +145,11 @@ const sections = [
   },
   { id: "risk", name: "Risk snapshot", description: "Risk score, modeled range, and allocation from the confirmed holdings.", icon: ShieldCheck },
 ];
+
+// Every slide marked auto is part of the standing deck. Derived, not listed:
+// the reset paths below used to carry their own copies of this and fell out of
+// step the moment a slide was added.
+const AUTO_SLIDES = sections.filter(s => s.auto).map(s => s.id);
 // The deck prints at 13.333in x 7.5in (96dpi), so the preview renders a slide at
 // exactly that pixel size and scales it to the stage. Reviewing a true miniature
 // of the page means the preview and the PDF cannot disagree about what fits.
@@ -168,7 +196,7 @@ function App() {
     [holdings, setHoldings] = useState([]),
     [errors, setErrors] = useState([]),
     [reviewed, setReviewed] = useState(false),
-    [selected, setSelected] = useState(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]),
+    [selected, setSelected] = useState(AUTO_SLIDES),
     [title, setTitle] = useState("Portfolio review"),
     [notes, setNotes] = useState(""),
     [page, setPage] = useState(0),
@@ -214,6 +242,37 @@ function App() {
     document.title = savedDeckName;
     return () => { document.title = previous; };
   }, [done, savedDeckName]);
+  const [admin, setAdmin] = useState({
+    heading: "Transition to LPL Financial",
+    when: "",
+    fromCustodian: "NFS",
+    toCustodian: "LPL Financial",
+    fromPortal: "Investor360\u00b0",
+    toPortal: "Account View",
+    staysTheSame: [
+      "Your advisory team at Gottfried & Somberg",
+      "Your investment strategy and portfolios",
+      "Your planning relationship with us",
+    ],
+    whatYouSee: [
+      "Custody and statements with LPL",
+      "Online access through Account View",
+      "New login details ahead of the transition",
+    ],
+    contacts: [{role: "CPA", name: ""}, {role: "Estate Attorney", name: ""}],
+  });
+  // Reordering the deck. The handle is deliberately quiet — an advisor who
+  // never drags anything should not have to look at a row of controls — so the
+  // affordance appears on hover and focus rather than sitting on the page.
+  const [dragId, setDragId] = useState(null);
+  function moveSlide(from, to) {
+    setSelected(v => {
+      if (from === to || from < 0 || to < 0 || from >= v.length || to >= v.length) return v;
+      const next = [...v];
+      next.splice(to, 0, ...next.splice(from, 1));
+      return next;
+    });
+  }
   const supportFile = useRef(null);
   const assetReady = positions.length > 0 && positions.every(p => p.assetClass);
   const accountsReady = positions.length > 0 && positions.every(p => p.account);
@@ -297,8 +356,9 @@ function App() {
   const slides = [
     { id: "cover", name: "Account review" },
     { id: "contents", name: "Contents" },
-    ...sections
-      .filter((s) => selected.includes(s.id))
+    ...selected
+      .map((id) => sections.find((s) => s.id === id))
+      .filter(Boolean)
       .flatMap((s) =>
         s.id === "risk" && riskSnapshot ? [{...s, name:"Risk snapshot"}] : s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
         : s.id === "risk" ? []
@@ -387,7 +447,7 @@ function App() {
       // which rebuilds positions from the textarea and so drops the account,
       // asset class and region the CSV carries.
       setReviewed(true);
-      setSelected(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]);
+      setSelected(AUTO_SLIDES);
     } catch {
       // The sample still works without the file; it just has no account column.
       setText(sample);
@@ -405,7 +465,7 @@ function App() {
     refreshMarketIndexes(); setSectorPerformance(emptySectorPerformance()); setEarnings(emptyEarnings());
     setHoldings([]);
     setReviewed(false);
-    setSelected(["account-summary", "market-indexes", "fixed-income", "sector-ytd", "earnings-expectations", "regional-attribution"]);
+    setSelected(AUTO_SLIDES);
     setTitle("Portfolio review");
     setNotes("");
     setErrors([]);
@@ -521,6 +581,9 @@ function App() {
     "sector-ytd": "SECTOR PERFORMANCE",
     "earnings-expectations": "S&P 500 EARNINGS",
     "regional-attribution": "ATTRIBUTION PERFORMANCE",
+    "allocation": "ASSET ALLOCATION",
+    "asset-class-performance": "ASSET CLASS PERFORMANCE",
+    "admin": "ADMINISTRATIVE UPDATES",
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
   };
@@ -550,6 +613,13 @@ function App() {
       return {label, body: <NavyEquity data={deckEquity}/>};
     if (slide.id === "risk" && deckMarket.riskSnapshot)
       return {label, body: <NavyRisk s={deckMarket.riskSnapshot}/>};
+    if (slide.id === "allocation")
+      return {label, body: <NavyAllocation positions={positions} asOf={reportDate} source={importSource}/>};
+    if (slide.id === "asset-class-performance")
+      return {label, body: <NavyAssetClassPerformance positions={positions} returns={deckMarket.positionReturns?.returns}
+        asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source}/>};
+    if (slide.id === "admin")
+      return {label, body: <NavyAdmin admin={admin}/>};
     return null;
   }
   function renderSlide({ slide, index }) {
@@ -629,7 +699,7 @@ function App() {
         <main className={step === 0 ? "input-main" : "workspace-main"}>
           {step === 0 && (
             <>
-              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(["account-summary","market-indexes","fixed-income","sector-ytd","earnings-expectations","regional-attribution"]);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
+              {importBook ? <HoldingsImport book={importBook} onCancel={() => setImportBook(null)} onConfirm={(values, source, importedPositions) => {setRiskSnapshot(null);setHoldings(values);setPositions(importedPositions);setSupporting({});setSupportError("");setText(values.map(h => `${h.ticker} ${h.value}`).join("\n"));setImportSource(source);setImportBook(null);setReviewed(true);setSelected(AUTO_SLIDES);setEquity(null);setEquityError("");setErrors([]);}}/> : !reviewed ? (
                 <section
                   aria-label="Add portfolio holdings"
                   className={`input-card ${drag ? "dragging" : ""}`}
@@ -781,6 +851,64 @@ function App() {
                   <div className="component-grid auto-components">
                     {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
                   </div>
+                  {/* Deck order. Quiet by design: a plain numbered list that
+                      happens to be draggable, with the handle and the remove
+                      control surfacing on hover or keyboard focus. Arrow-key
+                      buttons do the same job for anyone not using a mouse. */}
+                  <div className="deck-order">
+                    <div className="optional-heading"><span className="slide-kicker">DECK ORDER</span><p>Drag to reorder. The cover and contents always open the deck.</p></div>
+                    <ol className="order-list">
+                      {selected.map((id, i) => {
+                        const section = sections.find((x) => x.id === id);
+                        if (!section) return null;
+                        return <li
+                          key={id}
+                          draggable
+                          className={`order-row ${dragId === id ? "is-dragging" : ""}`}
+                          onDragStart={(e) => { setDragId(id); e.dataTransfer.effectAllowed = "move"; }}
+                          onDragEnd={() => setDragId(null)}
+                          onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
+                          onDrop={(e) => { e.preventDefault(); moveSlide(selected.indexOf(dragId), i); setDragId(null); }}
+                        >
+                          <GripVertical className="order-grip" size={15} aria-hidden="true"/>
+                          <span className="order-index">{String(i + 3).padStart(2, "0")}</span>
+                          <span className="order-name">{section.name}</span>
+                          <span className="order-tools">
+                            <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
+                            <button type="button" aria-label={`Move ${section.name} down`} disabled={i === selected.length - 1} onClick={() => moveSlide(i, i + 1)}>↓</button>
+                            <button type="button" aria-label={`Remove ${section.name}`} onClick={() => setSelected((v) => v.filter((x) => x !== id))}><X size={14}/></button>
+                          </span>
+                        </li>;
+                      })}
+                    </ol>
+                    {sections.filter((x) => !selected.includes(x.id)).length > 0 && <div className="order-add">
+                      {sections.filter((x) => !selected.includes(x.id)).map((x) => (
+                        <button key={x.id} type="button" onClick={() => setSelected((v) => [...v, x.id])}>
+                          <Plus size={13}/> {x.name}
+                        </button>
+                      ))}
+                    </div>}
+                  </div>
+
+                  <details className="data-drawer">
+                    <summary><span>Admin slide</span><small>{admin.contacts.some((c) => c.name.trim()) ? "Contacts added" : "Optional"}</small><ChevronRight size={16}/></summary>
+                    <section className="supporting-upload admin-fields">
+                      <p>The custodian move is the same for every client; the professional contacts are not, so they start empty and the card is left off the slide until you fill them in.</p>
+                      <div className="admin-grid">
+                        <label className="field-label">Heading<input maxLength={70} value={admin.heading} onChange={(e) => setAdmin((a) => ({...a, heading: e.target.value}))}/></label>
+                        <label className="field-label">When<input maxLength={40} placeholder="Weekend of Nov. 13, 2026" value={admin.when} onChange={(e) => setAdmin((a) => ({...a, when: e.target.value}))}/></label>
+                        <label className="field-label">Current custodian<input maxLength={40} value={admin.fromCustodian} onChange={(e) => setAdmin((a) => ({...a, fromCustodian: e.target.value}))}/></label>
+                        <label className="field-label">New custodian<input maxLength={40} value={admin.toCustodian} onChange={(e) => setAdmin((a) => ({...a, toCustodian: e.target.value}))}/></label>
+                        <label className="field-label">Current portal<input maxLength={40} value={admin.fromPortal} onChange={(e) => setAdmin((a) => ({...a, fromPortal: e.target.value}))}/></label>
+                        <label className="field-label">New portal<input maxLength={40} value={admin.toPortal} onChange={(e) => setAdmin((a) => ({...a, toPortal: e.target.value}))}/></label>
+                        {admin.contacts.map((c, i) => (
+                          <label className="field-label" key={c.role}>{c.role}<input maxLength={60} placeholder="Name" value={c.name}
+                            onChange={(e) => setAdmin((a) => ({...a, contacts: a.contacts.map((x, j) => j === i ? {...x, name: e.target.value} : x)}))}/></label>
+                        ))}
+                      </div>
+                    </section>
+                  </details>
+
                   {selected.includes("equity") && !equity && (
                     <details className="data-drawer" open><summary><span>Equity benchmark</span><small>Review needed</small><ChevronRight size={16}/></summary><div className="equity-input">
                       <div>

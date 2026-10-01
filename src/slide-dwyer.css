@@ -266,3 +266,15 @@
   --board-bar-estimate: #b08d3e;/* estimates stay the gold, darkened for white */
   --board-growth: #8a6b25;
 }
+
+/* On navy the destination chips are a cream block holding dark text. Filling
+   them with the darkened text gold on white makes two heavy mustard slabs, so
+   light keeps the same idea the other way up: the template's own gold as a
+   tint and a border, with the ink unchanged. */
+.navy-light .navy-admin-chip.is-new {
+  background: #faf5e9;
+  border-color: #d3bb81;
+}
+.navy-light .navy-admin-chip.is-new b { color: var(--navy-ink); }
+.navy-light .navy-admin-chip.is-new small { color: var(--navy-ink-3); }
+.navy-light .navy-admin-when { color: #ffffff; background: #8a6b25; }
