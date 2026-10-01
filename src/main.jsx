@@ -169,7 +169,12 @@ const SLIDE_THEMES = [
   {id: "brand-light", label: "Style 3", dark: false, brand: true},
   {id: "brand-navy",  label: "Style 4", dark: true,  brand: true},
 ];
-const themeOf = id => SLIDE_THEMES.find(t => t.id === id) || SLIDE_THEMES[0];
+const DEFAULT_THEME = "dark";
+// Not themeOf(DEFAULT_THEME) as the fallback: that recurses forever the moment
+// DEFAULT_THEME stops naming a style that exists.
+const themeOf = id => SLIDE_THEMES.find(t => t.id === id)
+  || SLIDE_THEMES.find(t => t.id === DEFAULT_THEME)
+  || SLIDE_THEMES[0];
 // The deck prints at 13.333in x 7.5in (96dpi), so the preview renders a slide at
 // exactly that pixel size and scales it to the stage. Reviewing a true miniature
 // of the page means the preview and the PDF cannot disagree about what fits.
@@ -227,8 +232,8 @@ function App() {
   const [slideTheme, setSlideTheme] = useState(() => {
     try {
       const saved = localStorage.getItem("prepdog.slideTheme");
-      return SLIDE_THEMES.some(t => t.id === saved) ? saved : "light";
-    } catch { return "light"; }
+      return SLIDE_THEMES.some(t => t.id === saved) ? saved : DEFAULT_THEME;
+    } catch { return DEFAULT_THEME; }
   });
   useEffect(() => {
     try { localStorage.setItem("prepdog.slideTheme", slideTheme); } catch { /* private window */ }
@@ -1232,7 +1237,7 @@ function App() {
                         className="draft-reveal"
                         aria-expanded={showDrafts}
                         aria-label={showDrafts ? "Hide draft styles" : "Show draft styles"}
-                        onClick={() => { if (showDrafts && themeOf(slideTheme).brand) setSlideTheme("light"); setShowDrafts((v) => !v); }}
+                        onClick={() => { if (showDrafts && themeOf(slideTheme).brand) setSlideTheme(DEFAULT_THEME); setShowDrafts((v) => !v); }}
                       >
                         {showDrafts ? "\u00d7" : "\u22ef"}
                       </button>
