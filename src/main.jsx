@@ -40,6 +40,7 @@ import { computeAttribution } from "./attribution";
 import { deckName } from "./deck-name";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
+import "./slide-brand.css";
 import "./print-fidelity.css";
 import { NavyFrame, NavyCover, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
@@ -150,6 +151,18 @@ const sections = [
 // the reset paths below used to carry their own copies of this and fell out of
 // step the moment a slide was added.
 const AUTO_SLIDES = sections.filter(s => s.auto).map(s => s.id);
+
+// Four slide styles. 1 and 2 are the Dwyer template reproduced on white and on
+// navy. 3 and 4 are the September 2026 brand guide: Primary #001644, Stability
+// #BD603B, Playfair Display over Roboto. Style 3 is not style 4 repainted —
+// white gets its own document layout, which is the whole point of having both.
+const SLIDE_THEMES = [
+  {id: "light",       label: "Light",   dark: false, brand: false},
+  {id: "dark",        label: "Navy",    dark: true,  brand: false},
+  {id: "brand-light", label: "Style 3", dark: false, brand: true},
+  {id: "brand-navy",  label: "Style 4", dark: true,  brand: true},
+];
+const themeOf = id => SLIDE_THEMES.find(t => t.id === id) || SLIDE_THEMES[0];
 // The deck prints at 13.333in x 7.5in (96dpi), so the preview renders a slide at
 // exactly that pixel size and scales it to the stage. Reviewing a true miniature
 // of the page means the preview and the PDF cannot disagree about what fits.
@@ -205,8 +218,10 @@ function App() {
   // Slides only: the app chrome keeps its own palette. Persisted so an advisor
   // who works in one theme is not flipped back on every deck.
   const [slideTheme, setSlideTheme] = useState(() => {
-    try { return localStorage.getItem("prepdog.slideTheme") === "dark" ? "dark" : "light"; }
-    catch { return "light"; }
+    try {
+      const saved = localStorage.getItem("prepdog.slideTheme");
+      return SLIDE_THEMES.some(t => t.id === saved) ? saved : "light";
+    } catch { return "light"; }
   });
   useEffect(() => {
     try { localStorage.setItem("prepdog.slideTheme", slideTheme); } catch { /* private window */ }
@@ -264,6 +279,10 @@ function App() {
   // Reordering the deck. The handle is deliberately quiet — an advisor who
   // never drags anything should not have to look at a row of controls — so the
   // affordance appears on hover and focus rather than sitting on the page.
+  // Styles 3 and 4 are drafts: visible only once the advisor asks for them, and
+  // the deck drops back to Light when they are put away, so a half-finished
+  // style cannot be the one that gets printed by accident.
+  const [showDrafts, setShowDrafts] = useState(false);
   const [dragId, setDragId] = useState(null);
   function moveSlide(from, to) {
     setSelected(v => {
@@ -628,12 +647,21 @@ function App() {
     // palette is what changes — light serves it on white. The theme is on the
     // article, which is where slide-dwyer.css redefines the colours; the
     // components below are the same ones in either theme.
+    const theme = themeOf(slideTheme);
     const dwyer = navyContent(slide);
     if (dwyer)
       return (
         <article
-          data-slide-theme={slideTheme}
-          className={`slide navy-slide ${slideTheme === "light" ? "navy-light" : ""} slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
+          data-slide-theme={theme.dark ? "dark" : "light"}
+          data-slide-style={slideTheme}
+          className={[
+            "slide", "navy-slide",
+            theme.dark ? "" : "navy-light",
+            theme.brand ? "brand-slide" : "",
+            theme.brand && !theme.dark ? "brand-doc" : "",
+            `slide-${slide.id}`,
+            slide.id === "cover" ? "cover" : "",
+          ].filter(Boolean).join(" ")}
         >
           <NavyFrame label={dwyer.label} page={String(index + 1).padStart(2, "0")} cover={slide.id === "cover"}>
             {dwyer.body}
@@ -642,7 +670,8 @@ function App() {
       );
     return (
       <article
-        data-slide-theme={slideTheme}
+        data-slide-theme={themeOf(slideTheme).dark ? "dark" : "light"}
+        data-slide-style={slideTheme}
         className={`slide slide-${slide.id} ${slide.id === "cover" ? "cover" : ""}`}
       >
         <div className="slide-brand">
@@ -1063,18 +1092,31 @@ function App() {
                       {page + 1} / {slides.length}
                     </span>
                     <div className="theme-toggle" role="group" aria-label="Slide theme">
-                      {["light", "dark"].map((option) => (
+                      {SLIDE_THEMES.filter((o) => !o.brand || showDrafts).map((option) => (
                         <button
-                          key={option}
+                          key={option.id}
                           type="button"
-                          className={slideTheme === option ? "current" : ""}
-                          aria-pressed={slideTheme === option}
-                          onClick={() => setSlideTheme(option)}
+                          className={`${slideTheme === option.id ? "current" : ""} ${option.brand ? "is-draft" : ""}`}
+                          aria-pressed={slideTheme === option.id}
+                          onClick={() => setSlideTheme(option.id)}
+                          title={option.brand ? "In progress: brand guide palette and type" : "Dwyer template"}
                         >
-                          {option === "light" ? <Sun size={13} /> : <Moon size={13} />}
-                          {option === "light" ? "Light" : "Navy"}
+                          {option.dark ? <Moon size={13} /> : <Sun size={13} />}
+                          {option.label}
                         </button>
                       ))}
+                      {/* The two brand styles are still being worked on, so they
+                          are not offered alongside the two finished ones. This
+                          opens them without announcing them. */}
+                      <button
+                        type="button"
+                        className="draft-reveal"
+                        aria-expanded={showDrafts}
+                        aria-label={showDrafts ? "Hide draft styles" : "Show draft styles"}
+                        onClick={() => { if (showDrafts && themeOf(slideTheme).brand) setSlideTheme("light"); setShowDrafts((v) => !v); }}
+                      >
+                        {showDrafts ? "\u00d7" : "\u22ef"}
+                      </button>
                     </div>
                     <div className="flex gap-2">
                       <button

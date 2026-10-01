@@ -397,6 +397,13 @@ export function NavyRisk({s}) {
 export function NavyFrame({label, page, children, cover = false}) {
   return <div className={`navy-shell ${cover ? 'is-cover' : ''}`}>
     <div className="navy-field">
+      {/* Only style 3 shows this; CSS hides it everywhere else. The white deck
+          is a document and signs each page, which is one of the things that
+          keeps it from being the navy deck repainted. */}
+      <div className="brand-lockup">
+        <img src="/gswm-logo.png" alt=""/>
+        <span>Gottfried &amp; Somberg<small>Wealth Management</small></span>
+      </div>
       {!cover && <div className="navy-kicker">{label}</div>}
       {children}
       <span className="navy-folio" aria-hidden="true">{page}</span>

@@ -176,3 +176,14 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
 .order-add button:hover { border-style: solid; border-color: #8fa9c2; color: #173b5a; }
 .admin-fields .admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; margin-top: 14px; }
 @media(max-width:760px) { .admin-fields .admin-grid { grid-template-columns: 1fr; } }
+
+/* The draft style switch. Styles 3 and 4 are unfinished, so the control that
+   reveals them is a single quiet glyph rather than two more buttons competing
+   with the two styles that are actually ready. */
+.theme-toggle .draft-reveal {
+  border: 0; background: none; cursor: pointer;
+  color: #a8bccd; font-size: 13px; line-height: 1;
+  padding: 6px 7px; border-radius: 5px; margin-left: 1px;
+}
+.theme-toggle .draft-reveal:hover { color: #486480; background: #e8eef5; }
+.theme-toggle button.is-draft { font-style: italic; }
