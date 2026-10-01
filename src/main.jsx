@@ -23,6 +23,7 @@ import {
   GripVertical,
 } from "lucide-react";
 import { parseHoldings, totalValue } from "./holdings";
+import { splitAccountBlocks, hasNamedAccounts } from "./account-blocks";
 import "./styles.css";
 import "./workspace.css";
 import "./report.css";
@@ -432,18 +433,30 @@ function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const parse = () => {
-    const r = parseHoldings(text);
-    setErrors(
-      r.errors.length
-        ? r.errors
-        : r.holdings.length
-          ? []
-          : ["Add at least one holding to continue."],
-    );
-    if (r.holdings.length && !r.errors.length) {
-      setImportSource("");
-      setRiskSnapshot(null); setPositions(r.holdings); setSupporting({}); setSupportError("");
-      setHoldings(r.holdings);
+    // A paste that names its accounts ("Joint :" over its holdings, then
+    // "Trust :" over theirs) builds those accounts, so the account slide works
+    // without going through the multiple-accounts panel. A paste with no
+    // headers is one portfolio, exactly as before.
+    const blocks = hasNamedAccounts(text) ? splitAccountBlocks(text) : null;
+    const parsed = blocks
+      ? blocks.map(b => ({name: b.name, ...parseHoldings(b.text)}))
+      : [{name: '', ...parseHoldings(text)}];
+    const errors = parsed.flatMap(b =>
+      b.errors.map(e => (b.name ? `${b.name} — ${e}` : e)));
+    const totals = new Map();
+    const positions = [];
+    for (const block of parsed) {
+      for (const holding of block.holdings) {
+        totals.set(holding.ticker, (totals.get(holding.ticker) || 0) + holding.value);
+        positions.push(block.name ? {...holding, account: block.name} : {...holding});
+      }
+    }
+    const holdings = [...totals].map(([ticker, value]) => ({ticker, value}));
+    setErrors(errors.length ? errors : holdings.length ? [] : ["Add at least one holding to continue."]);
+    if (holdings.length && !errors.length) {
+      setImportSource(blocks ? `Pasted holdings: ${blocks.map(b => b.name).join(', ')}` : "");
+      setRiskSnapshot(null); setPositions(positions); setSupporting({}); setSupportError("");
+      setHoldings(holdings);
       setEquity(null);
       setEquityError("");
       setReviewed(true);

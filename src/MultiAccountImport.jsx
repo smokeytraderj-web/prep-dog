@@ -3,6 +3,7 @@ import {Upload, X, Check, Plus, FileSpreadsheet} from 'lucide-react';
 import {detectTable, extractHoldings, textToSheets} from './holding-import.js';
 import {accountErrors, mergeAccounts, MIN_ACCOUNTS, MAX_ACCOUNTS} from './multi-account.js';
 import {parseHoldings} from './holdings.js';
+import {splitAccountBlocks} from './account-blocks.js';
 
 const usd = n => new Intl.NumberFormat('en-US', {
   style: 'currency', currency: 'USD', maximumFractionDigits: 0,
@@ -71,6 +72,29 @@ export default function MultiAccountImport({onConfirm, onCancel}) {
     });
   }
 
+  // The whole set in one paste: the advisor's own notes, with each account
+  // named by the line above its holdings. It replaces the rows rather than
+  // adding to them, because it describes the entire set.
+  const [bulk, setBulk] = useState('');
+  const [bulkOpen, setBulkOpen] = useState(false);
+  function applyBulk() {
+    const blocks = splitAccountBlocks(bulk).filter(b => b.name);
+    if (!blocks.length) return;
+    setRows(blocks.slice(0, MAX_ACCOUNTS).map(block => {
+      const {holdings, errors} = parseHoldings(block.text);
+      return {
+        ...blank(),
+        name: block.name,
+        mode: 'paste',
+        text: block.text,
+        holdings,
+        positions: holdings.map(h => ({ticker: h.ticker, value: h.value})),
+        errors: errors.slice(0, 3),
+      };
+    }));
+    setBulkOpen(false);
+  }
+
   const merged = mergeAccounts(rows);
   const problems = accountErrors(rows);
   const rowErrors = rows.some(r => r.errors.length);
@@ -84,6 +108,23 @@ export default function MultiAccountImport({onConfirm, onCancel}) {
         <p>Name each account, then attach its file or paste its holdings. The name you type is what the deck groups by, so a file with no account column, or the custodian's own number, is fine. Between {MIN_ACCOUNTS} and {MAX_ACCOUNTS} accounts.</p>
       </div>
       <button className="icon-button" onClick={onCancel} aria-label="Cancel multiple account import"><X size={19}/></button>
+    </div>
+
+    <div className="bulk-paste">
+      {bulkOpen ? <>
+        <label className="field-label">Paste every account at once
+          <textarea rows={8} spellCheck="false" value={bulk} onChange={e => setBulk(e.target.value)}
+            placeholder={'Joint :\nIVV 2000000\nAAPL 5000\n\nTrust :\nAGG 1000000\nMSFT 110000'}/>
+        </label>
+        <p className="helper">A line ending in a colon names the account below it.</p>
+        <div className="flex gap-3">
+          <button type="button" className="primary" disabled={!splitAccountBlocks(bulk).some(b => b.name)}
+            onClick={applyBulk}>Split into accounts</button>
+          <button type="button" className="text-button" onClick={() => setBulkOpen(false)}>Cancel</button>
+        </div>
+      </> : <button type="button" className="text-button" onClick={() => setBulkOpen(true)}>
+        <FileSpreadsheet size={14}/> Paste every account at once
+      </button>}
     </div>
 
     <ol className="account-rows">

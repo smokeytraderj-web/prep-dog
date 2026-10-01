@@ -286,3 +286,12 @@ button:hover:not(:disabled) { filter:brightness(1.09); }
   z-index: 40;
 }
 @media print { .app-header { position: static; } }
+
+/* One paste describing every account, for an advisor working from notes. */
+.multi-import .bulk-paste { margin-top: 18px; padding-bottom: 4px; }
+.multi-import .bulk-paste textarea {
+  width: 100%; resize: vertical; min-height: 150px;
+  border: 1px solid #d4e0ea; border-radius: 6px; padding: 11px 13px;
+  font-family: ui-monospace, monospace; font-size: 12.5px; line-height: 1.6; color: #173b5a;
+}
+.multi-import .bulk-paste .helper { margin: 8px 0 12px; }
