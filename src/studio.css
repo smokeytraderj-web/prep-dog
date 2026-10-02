@@ -161,3 +161,27 @@
 }
 
 @media (max-width: 1000px) { .preview-layout { grid-template-columns: 186px minmax(0, 1fr); } }
+
+/* Deck presets. A quiet row of three, not a mode switch: the deck underneath is
+   the same machinery whichever is chosen, and rearranging it drops the mark. */
+.deck-presets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: -8px 0 22px;
+}
+.deck-presets button {
+  font-size: 12px;
+  color: #486480;
+  background: #fff;
+  border: 1px solid #cfdcea;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+.deck-presets button:hover { background: #f2f7fc; }
+.deck-presets button.current { background: #1b3553; border-color: #1b3553; color: #fff; }
+.deck-presets button:focus-visible { outline: 2px solid #7d9dc3; outline-offset: 2px; }
+.deck-preset-note { font-size: 12px; color: #6b8299; margin-left: 4px; }
+@media (max-width: 760px) { .deck-preset-note { width: 100%; margin: 4px 0 0; } }

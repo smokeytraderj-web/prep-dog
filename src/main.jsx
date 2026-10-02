@@ -158,6 +158,41 @@ const sections = [
 // leave the reset paths behind.
 const AUTO_SLIDES = sections.map(s => s.id);
 
+// Three meetings, three decks. The slides and the order are the same machinery
+// either way -- a preset only says which ones to start from, and every one of
+// them can still be dragged, removed or added back afterwards.
+export const DECK_PRESETS = [
+  {
+    id: "quarterly",
+    name: "Quarterly review",
+    note: "The full review: holdings, markets, positioning and what we are doing.",
+    ids: AUTO_SLIDES,
+  },
+  {
+    id: "transition",
+    name: "Transition meeting",
+    // The custodian move is the reason for the meeting, so it opens rather than
+    // closes, and the market pages that would pad it out are left behind.
+    note: "Led by the custodian move, with just enough of the portfolio behind it.",
+    ids: ["admin", "account-summary", "allocation", "risk"],
+  },
+  {
+    id: "prospect",
+    name: "Prospect",
+    // No attribution: contribution figures assume positions we have not held.
+    // No admin: they are not a client yet, so there is nothing to transition.
+    note: "What they hold today, the risk in it, and how we read the market.",
+    ids: ["account-summary", "allocation", "risk", "equity", "market-indexes", "sector-ytd", "fixed-income"],
+  },
+];
+
+// The preset a deck is currently on, or null once it has been rearranged. The
+// order matters: moving a slide makes the deck this advisor's, not the preset's.
+export const presetOf = (selected) =>
+  DECK_PRESETS.find(preset =>
+    preset.ids.length === selected.length && preset.ids.every((id, i) => selected[i] === id),
+  )?.id || null;
+
 // Every slide's position is the advisor's to choose, Admin included, so the
 // selected list is the deck order exactly as it stands.
 const orderSelection = (ids) => ids;
@@ -969,6 +1004,31 @@ function App() {
                       : "Built from your holdings. Drag to reorder, remove what you do not need, add anything back."}
                   </p>
                 </div>
+              </div>
+              {/* A preset is a starting point, not a mode: it sets which
+                  slides are in the deck and in what order, and everything
+                  after that is the list below. */}
+              <div className="deck-presets" role="group" aria-label="Deck preset">
+                {DECK_PRESETS.map((preset) => {
+                  const current = presetOf(selected) === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      className={current ? "current" : ""}
+                      aria-pressed={current}
+                      title={preset.note}
+                      onClick={() => { setSelected(preset.ids); setPage(0); }}
+                    >
+                      {preset.name}
+                    </button>
+                  );
+                })}
+                <span className="deck-preset-note">
+                  {presetOf(selected)
+                    ? DECK_PRESETS.find((preset) => preset.id === presetOf(selected)).note
+                    : "Rearranged from a preset. Pick one again to start over."}
+                </span>
               </div>
               <div className="preview-layout">
                 <aside className="slide-list">
