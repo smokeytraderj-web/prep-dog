@@ -38,7 +38,7 @@ import { computeAttribution } from "./attribution";
 import { deckName } from "./deck-name";
 import { SP500_EARNINGS } from "./earnings-data";
 import "./slide-dwyer.css";
-import "./slide-brand.css";
+import "./slide-styles.css";
 import "./slide-dwyer-layouts.css";
 import { DwyerRisk, DwyerContents } from "./DwyerSlides";
 import "./print-fidelity.css";
@@ -214,15 +214,16 @@ export const presetOf = (selected) =>
 // selected list is the deck order exactly as it stands.
 const orderSelection = (ids) => ids;
 
-// Four slide styles. 1 and 2 are the Dwyer template reproduced on white and on
-// navy. 3 and 4 are the September 2026 brand guide: Primary #001644, Stability
-// #BD603B, Playfair Display over Roboto. Style 3 is not style 4 repainted —
-// white gets its own document layout, which is the whole point of having both.
+// Five slide styles. Light and Navy are the Dwyer template on white and on
+// navy. The three drafts are the October 2026 style directions, each a skin
+// over the same slides (slide-styles.css): E is a data desk and F a statement
+// deck, both on navy and gold; G is a soft light deck in the light blues.
 const SLIDE_THEMES = [
-  {id: "light",       label: "Light",   dark: false, brand: false},
-  {id: "dark",        label: "Navy",    dark: true,  brand: false},
-  {id: "brand-light", label: "Style 3", dark: false, brand: true},
-  {id: "brand-navy",  label: "Style 4", dark: true,  brand: true},
+  {id: "light",     label: "Light",         dark: false, draft: false},
+  {id: "dark",      label: "Navy",          dark: true,  draft: false},
+  {id: "desk",      label: "E \u00b7 Desk",      dark: true,  draft: true, note: "Data desk: panels and monospaced figures on navy"},
+  {id: "statement", label: "F \u00b7 Statement", dark: true,  draft: true, note: "Statement: one large serif figure per page on navy"},
+  {id: "soft",      label: "G \u00b7 Soft",      dark: false, draft: true, note: "Soft modern: rounded panels on a light ground"},
 ];
 const DEFAULT_THEME = "dark";
 // Not themeOf(DEFAULT_THEME) as the fallback: that recurses forever the moment
@@ -817,8 +818,7 @@ function App() {
           className={[
             "slide", "navy-slide",
             theme.dark ? "" : "navy-light",
-            theme.brand ? "brand-slide" : "",
-            theme.brand && !theme.dark ? "brand-doc" : "",
+            theme.draft ? `style-${theme.id}` : "",
             `slide-${slide.id}`,
             slide.id === "cover" ? "cover" : "",
           ].filter(Boolean).join(" ")}
@@ -1136,28 +1136,28 @@ function App() {
                       {page + 1} / {slides.length}
                     </span>
                     <div className="theme-toggle" role="group" aria-label="Slide theme">
-                      {SLIDE_THEMES.filter((o) => !o.brand || showDrafts).map((option) => (
+                      {SLIDE_THEMES.filter((o) => !o.draft || showDrafts).map((option) => (
                         <button
                           key={option.id}
                           type="button"
-                          className={`${slideTheme === option.id ? "current" : ""} ${option.brand ? "is-draft" : ""}`}
+                          className={`${slideTheme === option.id ? "current" : ""} ${option.draft ? "is-draft" : ""}`}
                           aria-pressed={slideTheme === option.id}
                           onClick={() => setSlideTheme(option.id)}
-                          title={option.brand ? "In progress: brand guide palette and type" : "Dwyer template"}
+                          title={option.note || "Dwyer template"}
                         >
                           {option.dark ? <Moon size={13} /> : <Sun size={13} />}
                           {option.label}
                         </button>
                       ))}
-                      {/* The two brand styles are still being worked on, so they
-                          are not offered alongside the two finished ones. This
+                      {/* The draft styles are still being decided, so they are
+                          not offered alongside the two finished ones. This
                           opens them without announcing them. */}
                       <button
                         type="button"
                         className="draft-reveal"
                         aria-expanded={showDrafts}
                         aria-label={showDrafts ? "Hide draft styles" : "Show draft styles"}
-                        onClick={() => { if (showDrafts && themeOf(slideTheme).brand) setSlideTheme(DEFAULT_THEME); setShowDrafts((v) => !v); }}
+                        onClick={() => { if (showDrafts && themeOf(slideTheme).draft) setSlideTheme(DEFAULT_THEME); setShowDrafts((v) => !v); }}
                       >
                         {showDrafts ? "\u00d7" : "\u22ef"}
                       </button>

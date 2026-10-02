@@ -1,0 +1,625 @@
+/* The draft style directions, E to G.
+   ===========================================================================
+   Each is a skin over the same slide components: the theme's id lands on the
+   article as .style-<id>, and everything below is scoped to it, so nothing
+   here can reach Light or Navy.
+
+     E  Desk       navy and gold. Panels on the ground, IBM Plex Sans with
+                   monospaced figures; reads like a well-kept dashboard.
+     F  Statement  navy and gold. DM Serif Display at very large sizes; one
+                   figure owns each page and everything else steps back.
+     G  Soft       light. Manrope on a pale ground, white rounded panels,
+                   the light deck's blues for the accent.
+
+   E and F keep the firm's navy (#111e42) and gold (#d8b870); G keeps the light
+   deck's ink (#17233f) and blue (#456b92). Only the type, the surfaces and the
+   scale change.
+   =========================================================================== */
+
+
+/* The lockup in NavyFrame belongs to G's cover alone. Hidden by default, not
+   per style: Light and Navy carry no style class, so a rule scoped to the
+   drafts would never reach them and the bare markup would render full-size. */
+.navy-slide .brand-lockup { display: none; }
+
+
+/* ======================================================================== */
+/* E · Desk                                                                  */
+/* ======================================================================== */
+.slide.navy-slide.style-desk {
+  --navy-ground: #0f1a3c;
+  --navy-ink: #ffffff;
+  --navy-ink-2: #cdd6ec;
+  --navy-ink-3: #9fadd0;
+  --navy-index: #8796bf;
+  --navy-hair: rgba(255, 255, 255, 0.08);
+  --navy-rule: rgba(255, 255, 255, 0.16);
+  --navy-serif: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --navy-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --navy-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --desk-panel: #17244b;
+  --desk-edge: rgba(255, 255, 255, 0.07);
+}
+.slide.navy-slide.style-desk .navy-shell.is-cover {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 24px 24px,
+    #0f1a3c;
+}
+.slide.navy-slide.style-desk .navy-field { padding: 32px 40px 28px; }
+
+/* The section label is a tag, not a whisper. */
+.slide.navy-slide.style-desk .navy-kicker {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.6px;
+  color: var(--navy-gold);
+  background: rgba(216, 184, 112, 0.1);
+  border: 1px solid rgba(216, 184, 112, 0.28);
+  border-radius: 4px;
+  padding: 4px 9px;
+  margin-bottom: 12px;
+}
+.slide.navy-slide.style-desk .navy-head h2 {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+}
+.slide.navy-slide.style-desk .navy-meta {
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+  background: var(--desk-panel);
+  border: 1px solid var(--desk-edge);
+  border-radius: 4px;
+  padding: 4px 9px;
+}
+.slide.navy-slide.style-desk .navy-eyebrow { font-size: 9px; letter-spacing: 1.6px; }
+
+/* Figures are monospaced throughout. */
+.slide.navy-slide.style-desk .navy-display {
+  font-family: var(--navy-mono);
+  font-size: 66px;
+  font-weight: 400;
+  letter-spacing: -3px;
+}
+.slide.navy-slide.style-desk .navy-display.is-score { font-size: 86px; }
+.slide.navy-slide.style-desk .navy-display.is-compact { font-size: 52px; }
+.slide.navy-slide.style-desk .navy-row-display,
+.slide.navy-slide.style-desk .navy-stat-figure,
+.slide.navy-slide.style-desk .navy-measure-figure,
+.slide.navy-slide.style-desk .navy-range-anchors b,
+.slide.navy-slide.style-desk .navy-lede-aside b,
+.slide.navy-slide.style-desk .navy-donut figcaption b,
+.slide.navy-slide.style-desk .dw-perf-figure strong {
+  font-family: var(--navy-mono);
+  font-weight: 400;
+  letter-spacing: -1px;
+}
+.slide.navy-slide.style-desk .navy-row-display { font-size: 22px; }
+.slide.navy-slide.style-desk .navy-stat-figure { font-size: 24px; }
+.slide.navy-slide.style-desk .navy-row-name { font-size: 16px; }
+
+/* Every block of content sits on a panel. */
+.slide.navy-slide.style-desk .navy-lede,
+.slide.navy-slide.style-desk .navy-rows,
+.slide.navy-slide.style-desk .navy-chart,
+.slide.navy-slide.style-desk .navy-bars,
+.slide.navy-slide.style-desk .navy-stat-strip,
+.slide.navy-slide.style-desk .navy-section,
+.slide.navy-slide.style-desk .navy-allocation-table,
+.slide.navy-slide.style-desk .navy-donut,
+.slide.navy-slide.style-desk .dw-perf-lead > *,
+.slide.navy-slide.style-desk .dw-money-lead > *,
+.slide.navy-slide.style-desk .dw-perf-table,
+.slide.navy-slide.style-desk .navy-admin-move,
+.slide.navy-slide.style-desk .navy-admin-col,
+.slide.navy-slide.style-desk .dw-discussion li {
+  background: var(--desk-panel);
+  border: 1px solid var(--desk-edge);
+  border-radius: 10px;
+}
+.slide.navy-slide.style-desk .navy-lede { padding: 16px 22px; margin-top: 16px; align-items: center; }
+.slide.navy-slide.style-desk .navy-lede-note { margin: 0; }
+.slide.navy-slide.style-desk .navy-lede-aside { padding-bottom: 0; }
+.slide.navy-slide.style-desk .navy-rows { padding: 12px 22px; margin-top: 16px; }
+.slide.navy-slide.style-desk .navy-row { padding: 11px 0; }
+.slide.navy-slide.style-desk .navy-row-head { padding: 2px 0 9px; }
+.slide.navy-slide.style-desk .navy-chart { padding: 14px 16px 8px; margin-top: 16px; }
+.slide.navy-slide.style-desk .navy-bars { padding: 14px 20px 8px; margin-top: 16px; }
+.slide.navy-slide.style-desk .navy-stat-strip { padding: 14px 22px; margin-top: 12px; border-top: 1px solid var(--desk-edge); }
+.slide.navy-slide.style-desk .navy-section { padding: 16px 22px; margin-top: 16px; }
+.slide.navy-slide.style-desk .navy-allocation-layout { gap: 16px; align-items: stretch; }
+.slide.navy-slide.style-desk .navy-donut { padding: 18px; }
+.slide.navy-slide.style-desk .navy-allocation-table { padding: 16px 22px; }
+.slide.navy-slide.style-desk .navy-allocation-table .navy-rows { background: none; border: 0; padding: 0; margin-top: 8px; }
+.slide.navy-slide.style-desk .navy-allocation-note { font-family: var(--navy-sans); font-style: normal; font-size: 12.5px; }
+.slide.navy-slide.style-desk .navy-grid { stroke: rgba(255, 255, 255, 0.05); }
+.slide.navy-slide.style-desk .navy-source { font-size: 8.5px; }
+
+/* Performance and income: the lead figures become three tiles. */
+.slide.navy-slide.style-desk .dw-perf-lead,
+.slide.navy-slide.style-desk .dw-money-lead { gap: 14px; border-bottom: 0; padding: 0; margin-bottom: 14px; }
+.slide.navy-slide.style-desk .dw-perf-lead > *,
+.slide.navy-slide.style-desk .dw-money-lead > * { padding: 16px 20px; }
+.slide.navy-slide.style-desk .dw-perf-figure strong { font-size: 44px; }
+.slide.navy-slide.style-desk .dw-perf-table { border-collapse: separate; border-spacing: 0; padding: 6px 20px; }
+.slide.navy-slide.style-desk .dw-perf-table td,
+.slide.navy-slide.style-desk .dw-perf-table td:first-child { font-family: var(--navy-mono); font-size: 14px; }
+.slide.navy-slide.style-desk .dw-perf-table td:first-child { font-family: var(--navy-sans); }
+.slide.navy-slide.style-desk .dw-perf-table th { padding-top: 12px; }
+
+/* Admin and discussion */
+.slide.navy-slide.style-desk .navy-admin-move { padding: 14px 16px; }
+.slide.navy-slide.style-desk .navy-admin-col { padding: 14px 16px; }
+.slide.navy-slide.style-desk .dw-discussion li { padding: 14px 20px; margin-bottom: 10px; border-bottom: 1px solid var(--desk-edge); }
+.slide.navy-slide.style-desk .dw-discussion li:last-child { border-bottom: 1px solid var(--desk-edge); padding-bottom: 14px; }
+
+/* Cover */
+.slide.navy-slide.style-desk .is-classic .navy-cover-title h2 {
+  font-size: 78px;
+  font-weight: 600;
+  letter-spacing: -2.6px;
+  line-height: 1;
+}
+.slide.navy-slide.style-desk .is-classic .navy-cover-title h2 em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--navy-gold-bright);
+}
+.slide.navy-slide.style-desk .navy-wordmark { font-weight: 600; letter-spacing: 2.4px; }
+.slide.navy-slide.style-desk .is-classic .navy-cover-meta {
+  border-top: 0;
+  gap: 14px;
+  padding-top: 0;
+  align-items: stretch;
+}
+.slide.navy-slide.style-desk .is-classic .navy-cover-meta > div {
+  background: var(--desk-panel);
+  border: 1px solid var(--desk-edge);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.slide.navy-slide.style-desk .is-classic .navy-cover-meta b {
+  font-family: var(--navy-mono);
+  font-size: 22px;
+  font-weight: 400;
+  margin-top: 8px;
+}
+.slide.navy-slide.style-desk .is-classic .navy-cover-value { text-align: left; }
+
+
+/* ======================================================================== */
+/* F · Statement                                                             */
+/* ======================================================================== */
+.slide.navy-slide.style-statement {
+  --navy-ground: #111e42;
+  --navy-serif: "DM Serif Display", Georgia, serif;
+  --navy-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --navy-mono: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --navy-ink-2: #d2daee;
+  --navy-ink-3: #a9b6d6;
+  font-variant-numeric: tabular-nums;
+}
+.slide.navy-slide.style-statement .navy-shell.is-cover { background: #111e42; }
+.slide.navy-slide.style-statement .navy-field { padding: 44px 56px 36px; }
+
+/* A short gold bar heads every page, then the section in tracked caps. */
+.slide.navy-slide.style-statement .navy-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3.4px;
+  margin-bottom: 12px;
+}
+.slide.navy-slide.style-statement .navy-kicker::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  background: var(--navy-gold);
+  margin-bottom: 16px;
+}
+.slide.navy-slide.style-statement .navy-head h2 {
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
+}
+.slide.navy-slide.style-statement .navy-meta { font-size: 11px; letter-spacing: 1.2px; }
+.slide.navy-slide.style-statement .navy-eyebrow { font-size: 9.5px; font-weight: 600; letter-spacing: 2.6px; }
+
+/* The promoted figure is the page. */
+.slide.navy-slide.style-statement .navy-display {
+  font-size: 150px;
+  font-weight: 400;
+  letter-spacing: -5px;
+  line-height: 0.92;
+  color: var(--navy-gold-bright);
+}
+.slide.navy-slide.style-statement .navy-display .navy-display-unit { color: var(--navy-gold); font-size: 0.4em; }
+.slide.navy-slide.style-statement .navy-display.is-compact { font-size: 104px; letter-spacing: -3px; }
+.slide.navy-slide.style-statement .navy-display.is-score { font-size: 170px; }
+.slide.navy-slide.style-statement .navy-lede { gap: 40px; margin-top: 14px; }
+.slide.navy-slide.style-statement .navy-lede-note {
+  font-family: var(--navy-serif);
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--navy-ink);
+  max-width: 420px;
+  margin-bottom: 18px;
+}
+.slide.navy-slide.style-statement .navy-row-display,
+.slide.navy-slide.style-statement .navy-stat-figure,
+.slide.navy-slide.style-statement .navy-measure-figure,
+.slide.navy-slide.style-statement .navy-range-anchors b,
+.slide.navy-slide.style-statement .navy-lede-aside b,
+.slide.navy-slide.style-statement .navy-donut figcaption b { font-weight: 400; letter-spacing: -0.4px; }
+.slide.navy-slide.style-statement .navy-row-display { font-size: 32px; }
+.slide.navy-slide.style-statement .navy-stat-figure { font-size: 34px; }
+.slide.navy-slide.style-statement .navy-row-name { font-size: 17px; }
+.slide.navy-slide.style-statement .navy-row-fig { font-size: 15px; }
+.slide.navy-slide.style-statement .navy-allocation-note { font-style: italic; font-size: 17px; }
+.slide.navy-slide.style-statement .navy-source { font-size: 9px; letter-spacing: 0.2px; }
+.slide.navy-slide.style-statement .navy-folio { font-size: 12px; letter-spacing: 1px; color: var(--navy-gold); }
+
+/* Performance and income: the portfolio figure takes the left of the page. */
+.slide.navy-slide.style-statement .dw-perf-figure strong { font-weight: 400; letter-spacing: -1px; }
+.slide.navy-slide.style-statement .dw-perf-lead .dw-perf-figure:first-child strong,
+.slide.navy-slide.style-statement .dw-money-lead .dw-perf-figure:first-child strong {
+  font-size: 96px;
+  letter-spacing: -3px;
+  color: var(--navy-gold-bright);
+}
+.slide.navy-slide.style-statement .dw-perf-lead { align-items: end; }
+.slide.navy-slide.style-statement .dw-perf-table td { font-size: 15px; }
+
+/* Discussion: the points are the statement. */
+.slide.navy-slide.style-statement .dw-discussion p { font-family: var(--navy-serif); font-size: 30px; line-height: 1.2; }
+.slide.navy-slide.style-statement .dw-discussion-index { color: var(--navy-gold); }
+
+/* Cover: the name, very large, and nothing competing with it. */
+.slide.navy-slide.style-statement .is-classic .navy-cover-title h2 {
+  font-size: 118px;
+  font-weight: 400;
+  letter-spacing: -3px;
+  line-height: 0.95;
+}
+.slide.navy-slide.style-statement .is-classic .navy-cover-title h2 em { color: var(--navy-gold-bright); font-weight: 400; }
+.slide.navy-slide.style-statement .is-classic .navy-cover-title p { font-size: 19px; }
+.slide.navy-slide.style-statement .navy-wordmark { font-weight: 600; letter-spacing: 3.4px; }
+.slide.navy-slide.style-statement .is-classic .navy-cover-meta { border-top: 3px solid var(--navy-gold); }
+.slide.navy-slide.style-statement .is-classic .navy-cover-meta b { font-size: 26px; font-weight: 400; }
+
+
+/* ======================================================================== */
+/* G · Soft                                                                  */
+/* ======================================================================== */
+.slide.navy-slide.style-soft {
+  --navy-ground: #f4f6fa;
+  --navy-ink: #17233f;
+  --navy-ink-2: #32436a;
+  --navy-ink-3: #56658a;          /* 5.4:1 on the ground */
+  --navy-index: #5f6e8c;
+  --navy-gold: #3d6290;           /* the light deck's blue, a step darker for small text on tint */
+  --navy-gold-bright: #456b92;
+  --navy-hair: rgba(23, 35, 63, 0.08);
+  --navy-rule: rgba(23, 35, 63, 0.14);
+  --navy-serif: Manrope, ui-sans-serif, system-ui, sans-serif;
+  --navy-sans: Manrope, ui-sans-serif, system-ui, sans-serif;
+  --navy-mono: Manrope, ui-sans-serif, system-ui, sans-serif;
+  --soft-panel: #ffffff;
+  --soft-tint: #e6edf6;
+  --soft-shadow: 0 1px 2px rgba(23, 35, 63, 0.05), 0 6px 20px rgba(23, 35, 63, 0.05);
+  font-variant-numeric: tabular-nums;
+  background: #f4f6fa;
+  border-color: #e3e8f0;
+}
+.slide.navy-slide.style-soft.cover,
+.slide.navy-slide.style-soft .navy-shell.is-cover { background: #f4f6fa; }
+.slide.navy-slide.style-soft .navy-field { padding: 30px 38px 24px; }
+
+.slide.navy-slide.style-soft .navy-kicker {
+  align-self: flex-start;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--navy-gold);
+  background: var(--soft-tint);
+  border-radius: 999px;
+  padding: 5px 13px;
+  margin-bottom: 12px;
+}
+.slide.navy-slide.style-soft .navy-head { border-bottom: 0; padding-bottom: 0; margin-bottom: 14px; }
+.slide.navy-slide.style-soft .navy-head h2 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1.1px;
+}
+.slide.navy-slide.style-soft .navy-meta {
+  font-family: var(--navy-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navy-ink-3);
+}
+.slide.navy-slide.style-soft .navy-eyebrow,
+.slide.navy-slide.style-soft .dw-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; }
+.slide.navy-slide.style-soft .navy-foot { color: var(--navy-ink-3); }
+.slide.navy-slide.style-soft .navy-foot-firm { font-weight: 700; letter-spacing: 1.4px; }
+
+.slide.navy-slide.style-soft .navy-display {
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: -3px;
+}
+.slide.navy-slide.style-soft .navy-row-display,
+.slide.navy-slide.style-soft .navy-stat-figure,
+.slide.navy-slide.style-soft .navy-measure-figure,
+.slide.navy-slide.style-soft .navy-range-anchors b,
+.slide.navy-slide.style-soft .navy-lede-aside b,
+.slide.navy-slide.style-soft .navy-donut figcaption b,
+.slide.navy-slide.style-soft .dw-perf-figure strong,
+.slide.navy-slide.style-soft .dw-measures dd,
+.slide.navy-slide.style-soft .dw-risk-total b {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+.slide.navy-slide.style-soft .navy-row-display { font-size: 22px; }
+
+/* Content sits on white rounded panels lifted off the pale ground. */
+.slide.navy-slide.style-soft .navy-lede,
+.slide.navy-slide.style-soft .navy-rows,
+.slide.navy-slide.style-soft .navy-chart,
+.slide.navy-slide.style-soft .navy-bars,
+.slide.navy-slide.style-soft .navy-section,
+.slide.navy-slide.style-soft .navy-allocation-table,
+.slide.navy-slide.style-soft .navy-donut,
+.slide.navy-slide.style-soft .dw-perf-lead > *,
+.slide.navy-slide.style-soft .dw-money-lead > *,
+.slide.navy-slide.style-soft .dw-perf-table,
+.slide.navy-slide.style-soft .dw-risk-panel,
+.slide.navy-slide.style-soft .dw-contents-col,
+.slide.navy-slide.style-soft .navy-admin-move,
+.slide.navy-slide.style-soft .navy-admin-col,
+.slide.navy-slide.style-soft .context-board,
+.slide.navy-slide.style-soft .dw-discussion li {
+  background: var(--soft-panel);
+  border: 0;
+  border-radius: 16px;
+  box-shadow: var(--soft-shadow);
+}
+.slide.navy-slide.style-soft .navy-lede { padding: 18px 24px; margin-top: 10px; align-items: center; }
+.slide.navy-slide.style-soft .navy-lede-note { margin: 0; }
+.slide.navy-slide.style-soft .navy-lede-aside { padding-bottom: 0; }
+.slide.navy-slide.style-soft .navy-rows { padding: 12px 24px; margin-top: 14px; }
+.slide.navy-slide.style-soft .navy-row { padding: 11px 0; }
+.slide.navy-slide.style-soft .navy-row-head { padding: 4px 0 9px; font-weight: 700; letter-spacing: 1px; }
+.slide.navy-slide.style-soft .navy-chart { padding: 14px 18px 8px; margin-top: 14px; }
+.slide.navy-slide.style-soft .navy-bars { padding: 14px 20px 8px; margin-top: 14px; }
+.slide.navy-slide.style-soft .navy-stat-strip { border-top: 0; padding-top: 12px; }
+.slide.navy-slide.style-soft .navy-section { padding: 16px 24px; margin-top: 14px; border-top: 0; }
+.slide.navy-slide.style-soft .navy-allocation-layout { gap: 16px; align-items: stretch; }
+.slide.navy-slide.style-soft .navy-donut { padding: 18px; }
+.slide.navy-slide.style-soft .navy-allocation-table { padding: 16px 24px; }
+.slide.navy-slide.style-soft .navy-allocation-table .navy-rows { background: none; box-shadow: none; padding: 0; margin-top: 8px; border-radius: 0; }
+.slide.navy-slide.style-soft .navy-allocation-note { font-family: var(--navy-sans); font-style: normal; font-size: 13px; }
+.slide.navy-slide.style-soft .navy-classperf-track,
+.slide.navy-slide.style-soft .navy-classperf-track i { border-radius: 999px; }
+.slide.navy-slide.style-soft .navy-classperf-track { height: 10px; }
+.slide.navy-slide.style-soft .navy-grid { stroke: rgba(23, 35, 63, 0.06); }
+.slide.navy-slide.style-soft .navy-axis,
+.slide.navy-slide.style-soft .navy-bar-value,
+.slide.navy-slide.style-soft .navy-bar-name { font-family: Manrope, sans-serif; }
+.slide.navy-slide.style-soft .navy-source,
+.slide.navy-slide.style-soft .dw-source { font-size: 9px; color: var(--navy-ink-3); }
+.slide.navy-slide.style-soft .context-board { padding: 16px 20px; }
+
+/* Performance and income */
+.slide.navy-slide.style-soft .dw-perf-lead,
+.slide.navy-slide.style-soft .dw-money-lead { gap: 14px; border-bottom: 0; padding: 0; margin-bottom: 14px; }
+.slide.navy-slide.style-soft .dw-perf-lead > *,
+.slide.navy-slide.style-soft .dw-money-lead > * { padding: 18px 22px; }
+.slide.navy-slide.style-soft .dw-perf-lead > :first-child,
+.slide.navy-slide.style-soft .dw-money-lead > :first-child { background: #456b92; }
+.slide.navy-slide.style-soft .dw-perf-lead > :first-child *,
+.slide.navy-slide.style-soft .dw-money-lead > :first-child * { color: #ffffff; }
+.slide.navy-slide.style-soft .dw-perf-lead > :first-child .dw-eyebrow,
+.slide.navy-slide.style-soft .dw-money-lead > :first-child .dw-eyebrow,
+.slide.navy-slide.style-soft .dw-perf-lead > :first-child small,
+.slide.navy-slide.style-soft .dw-money-lead > :first-child small { color: #e3ebf5; }
+.slide.navy-slide.style-soft .dw-perf-table { border-collapse: separate; border-spacing: 0; padding: 6px 22px; }
+.slide.navy-slide.style-soft .dw-perf-table th { padding-top: 12px; font-weight: 700; letter-spacing: 1px; }
+
+/* Risk and contents, which the light layouts own */
+.slide.navy-slide.style-soft .dw-risk-panel { padding: 18px 22px; }
+.slide.navy-slide.style-soft .dw-contents { gap: 16px; }
+.slide.navy-slide.style-soft .dw-contents-col { padding: 18px 24px; }
+
+/* Admin and discussion */
+.slide.navy-slide.style-soft .navy-admin-move { padding: 14px 16px; }
+.slide.navy-slide.style-soft .navy-admin-col { padding: 14px 16px; border-left: 0; }
+.slide.navy-slide.style-soft .navy-admin-chip { border-radius: 12px; }
+.slide.navy-slide.style-soft .navy-admin-chip.is-new { background: var(--soft-tint); border-color: transparent; }
+.slide.navy-slide.style-soft .navy-admin-when { background: #456b92; border-radius: 999px; }
+.slide.navy-slide.style-soft .dw-discussion li { padding: 16px 22px; margin-bottom: 10px; }
+.slide.navy-slide.style-soft .dw-discussion li:last-child { padding-bottom: 16px; }
+.slide.navy-slide.style-soft .dw-discussion-index {
+  width: 30px; height: 30px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--soft-tint); color: var(--navy-gold); font-weight: 700;
+}
+
+/* Cover: the lockup returns as an app-style mark, the review block becomes a
+   blue card. */
+.slide.navy-slide.style-soft.cover .brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.slide.navy-slide.style-soft .brand-lockup img {
+  width: 40px; height: 40px; object-fit: contain;
+  background: #ffffff; border-radius: 12px; padding: 5px; box-shadow: var(--soft-shadow);
+}
+.slide.navy-slide.style-soft .brand-lockup span {
+  font: 700 12px/1.35 var(--navy-sans);
+  color: var(--navy-ink);
+}
+.slide.navy-slide.style-soft .brand-lockup span small {
+  display: block;
+  font-weight: 500;
+  color: var(--navy-ink-3);
+}
+.slide.navy-slide.style-soft .is-split .navy-cover-main {
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: var(--soft-shadow);
+  padding: 36px 40px;
+  margin-right: 18px;
+}
+.slide.navy-slide.style-soft .is-split .navy-cover-firm { display: none; }
+.slide.navy-slide.style-soft .is-split .navy-cover-head {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-top: auto;
+}
+.slide.navy-slide.style-soft .is-split .navy-cover-sub { font-family: var(--navy-sans); font-size: 16px; }
+.slide.navy-slide.style-soft .is-split .navy-cover-rule { display: none; }
+.slide.navy-slide.style-soft .is-split .navy-cover-client { font-size: 34px; font-weight: 700; letter-spacing: -1px; }
+.slide.navy-slide.style-soft .is-split .navy-cover-advisor b { font-family: var(--navy-sans); font-weight: 600; }
+.slide.navy-slide.style-soft .is-split .navy-cover-aside {
+  background: #456b92;
+  border: 0;
+  border-radius: 22px;
+  padding: 36px 34px;
+  color: #ffffff;
+}
+.slide.navy-slide.style-soft .is-split .navy-cover-aside .navy-eyebrow { color: #e3ebf5; }
+.slide.navy-slide.style-soft .is-split .navy-cover-quarter { color: #ffffff; font-weight: 800; letter-spacing: -4px; }
+.slide.navy-slide.style-soft .is-split .navy-cover-year,
+.slide.navy-slide.style-soft .is-split .navy-cover-date { color: #ffffff; font-family: var(--navy-sans); font-weight: 600; }
+.slide.navy-slide.style-soft .is-split .navy-cover-aside-rule { background: rgba(255, 255, 255, 0.25); }
+
+
+/* ======================================================================== */
+/* Context boards (sector, earnings, attribution) in the three styles        */
+/* ======================================================================== */
+.slide.navy-slide.style-desk .board-chart,
+.slide.navy-slide.style-desk .attrib-columns {
+  background: var(--desk-panel);
+  border: 1px solid var(--desk-edge);
+  border-radius: 10px;
+  padding: 14px 20px;
+}
+.slide.navy-slide.style-desk .context-board .board-head h2 { font-family: var(--navy-sans); font-size: 30px; font-weight: 600; letter-spacing: -0.6px; }
+.slide.navy-slide.style-desk .context-board.is-navy .attrib-headline {
+  font-family: var(--navy-mono);
+  font-weight: 400;
+  font-size: 56px;
+  letter-spacing: -2px;
+}
+
+.slide.navy-slide.style-statement .context-board .board-head h2 { font-family: var(--navy-serif); font-size: 46px; font-weight: 400; }
+.slide.navy-slide.style-statement .context-board.is-navy .attrib-headline {
+  font-family: var(--navy-serif);
+  font-weight: 400;
+  font-size: 120px;
+  letter-spacing: -4px;
+}
+
+.slide.navy-slide.style-soft .context-board { background: none; box-shadow: none; border-radius: 0; padding: 0; }
+.slide.navy-slide.style-soft .board-chart,
+.slide.navy-slide.style-soft .attrib-columns {
+  background: var(--soft-panel);
+  border-radius: 16px;
+  box-shadow: var(--soft-shadow);
+  padding: 14px 22px;
+}
+.slide.navy-slide.style-soft .context-board .board-head h2 { font-family: var(--navy-sans); font-size: 32px; font-weight: 800; letter-spacing: -1.1px; }
+.slide.navy-slide.style-soft .context-board .attrib-headline {
+  font-family: var(--navy-sans);
+  font-weight: 800;
+  font-size: 60px;
+  letter-spacing: -2.5px;
+  color: var(--navy-ink);
+}
+.slide.navy-slide.style-soft .attrib-fig,
+.slide.navy-slide.style-soft .attrib-contribution { font-family: var(--navy-sans); }
+.slide.navy-slide.style-soft .attrib-contribution { color: var(--navy-gold); font-weight: 700; }
+
+
+/* ======================================================================== */
+/* F · Statement, louder                                                     */
+/* The deck opens and closes on a full gold page set in navy, and every page */
+/* between carries a gold rail down its left edge and a large ghosted folio.  */
+/* ======================================================================== */
+.slide.navy-slide.style-statement:not(.cover):not(.slide-notes) .navy-shell::before {
+  content: "";
+  flex: none;
+  width: 14px;
+  background: #d8b870;
+}
+.slide.navy-slide.style-statement .navy-folio {
+  font-family: var(--navy-serif);
+  font-size: 44px;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: rgba(216, 184, 112, 0.32);
+  bottom: 10px;
+  right: 24px;
+}
+.slide.navy-slide.style-statement.cover .navy-folio { display: none; }
+.slide.navy-slide.style-statement .navy-head h2 { font-size: 46px; }
+.slide.navy-slide.style-statement .navy-head h2 em,
+.slide.navy-slide.style-statement .navy-head h2 i { color: var(--navy-gold-bright); }
+
+/* The bookends: gold ground, navy ink. */
+.slide.navy-slide.style-statement.cover,
+.slide.navy-slide.style-statement.slide-notes {
+  --navy-ground: #d8b870;
+  --navy-ink: #111e42;
+  --navy-ink-2: #1d2b55;
+  --navy-ink-3: #3a4672;          /* 5.6:1 on the gold */
+  --navy-index: #3a4672;
+  --navy-gold: #111e42;
+  --navy-gold-bright: #111e42;
+  --navy-hair: rgba(17, 30, 66, 0.18);
+  --navy-rule: rgba(17, 30, 66, 0.4);
+  background: #d8b870;
+  border-color: #d8b870;
+}
+.slide.navy-slide.style-statement .navy-shell.is-cover,
+.slide.navy-slide.style-statement.slide-notes .navy-shell { background: #d8b870; }
+.slide.navy-slide.style-statement.cover .is-classic .navy-cover-title h2 { font-size: 132px; }
+.slide.navy-slide.style-statement.cover .is-classic .navy-cover-title h2 em { color: #111e42; }
+.slide.navy-slide.style-statement.cover .is-classic .navy-cover-meta { border-top-color: #111e42; }
+.slide.navy-slide.style-statement.cover .is-classic .navy-cover-value b { color: #111e42; }
+.slide.navy-slide.style-statement.cover .navy-wordmark-sub { color: #111e42; }
+.slide.navy-slide.style-statement.cover .navy-folio,
+.slide.navy-slide.style-statement.slide-notes .navy-folio { color: rgba(17, 30, 66, 0.3); }
+.slide.navy-slide.style-statement.slide-notes .navy-kicker::before { background: #111e42; }
+.slide.navy-slide.style-statement.slide-notes .navy-head h2 { font-size: 64px; letter-spacing: -1.5px; }
+.slide.navy-slide.style-statement.slide-notes .dw-discussion p { color: #111e42; font-size: 34px; }
+.slide.navy-slide.style-statement.slide-notes .dw-discussion li { border-bottom-color: rgba(17, 30, 66, 0.25); }
+.slide.navy-slide.style-statement.slide-notes .dw-discussion-index { color: #111e42; }
+
+
+/* ======================================================================== */
+/* G · Soft, with the firm's navy header band                                */
+/* ======================================================================== */
+.slide.navy-slide.style-soft:not(.cover) .navy-field {
+  background: linear-gradient(#17233f 0 116px, transparent 116px);
+}
+.slide.navy-slide.style-soft:not(.cover) .navy-kicker {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+}
+.slide.navy-slide.style-soft:not(.cover) .navy-head,
+.slide.navy-slide.style-soft:not(.cover) .context-board .board-head { margin-bottom: 26px; border-bottom: 0; }
+.slide.navy-slide.style-soft:not(.cover) .navy-head h2,
+.slide.navy-slide.style-soft:not(.cover) .context-board .board-head h2 { color: #ffffff; }
+.slide.navy-slide.style-soft:not(.cover) .navy-head .navy-meta,
+.slide.navy-slide.style-soft:not(.cover) .board-meta { color: #cdd6ec; }
+
+/* The heading's input is a fixed width; the wider faces here outgrow it. */
+.slide.navy-slide.style-desk .navy-admin-head h3 .slide-field,
+.slide.navy-slide.style-statement .navy-admin-head h3 .slide-field,
+.slide.navy-slide.style-soft .navy-admin-head h3 .slide-field { field-sizing: content; min-width: 12ch; }
