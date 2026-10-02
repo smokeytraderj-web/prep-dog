@@ -1,3 +1,5 @@
+import { SNAPSHOT_PATH, boardFromSnapshot, requestedBoard } from './market-snapshot.js';
+
 export async function fetchMarketJson(path, fetcher = fetch) {
   let lastError;
   for (let attempt=0;attempt<2;attempt++) {
@@ -15,5 +17,23 @@ export async function fetchMarketJson(path, fetcher = fetch) {
       if (/session|sign-in/.test(lastError.message)) break;
     }
   }
+  // Yahoo refuses most datacentre addresses, so a deployed deck would lose
+  // every market slide to a failure the advisor cannot do anything about. The
+  // saved snapshot stands in, dated and flagged, rather than nothing at all.
+  // A broken session is not that failure: it is fixed by signing in, and
+  // standing in for it would hide the one thing the advisor has to act on.
+  if (!/session|sign-in/.test(lastError?.message || '')) {
+    const saved = await snapshotBoard(path, fetcher);
+    if (saved) return saved;
+  }
   throw lastError;
+}
+
+async function snapshotBoard(path, fetcher) {
+  try {
+    const response = await fetcher(SNAPSHOT_PATH, {cache: 'no-store', signal: AbortSignal.timeout(8000)});
+    if (!response.ok) return null;
+    const {board, symbols} = requestedBoard(path);
+    return boardFromSnapshot(await response.json(), board, symbols);
+  } catch { return null; }
 }

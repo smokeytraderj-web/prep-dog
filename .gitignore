@@ -2,3 +2,6 @@ node_modules/
 dist/
 .env*
 *.log
+
+# Python bytecode from the market snapshot script
+__pycache__/

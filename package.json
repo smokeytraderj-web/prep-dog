@@ -8,6 +8,7 @@
     "build": "vite build && node scripts/build-site.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test src/*.test.js docs/slide-skills/risk-snapshot/scripts/snapshot.test.mjs",
+    "market:snapshot": "python3 scripts/market_snapshot.py",
     "build:site": "npm run build"
   },
   "dependencies": {

@@ -19,6 +19,34 @@ Paste two columns (ticker and total USD position value), or upload XLSX, CSV, TS
 
 No holdings are stored in localStorage or sent to the benchmark endpoint. Reloading clears the portfolio. Values are supplied position values, not fetched live prices.
 
+## Market data, and the saved snapshot
+
+Index, sector, fixed income and per-position returns come from Yahoo Finance's
+chart API, fetched server-side by `/api/market/ytd`. Year-to-date is measured
+from the prior year-end close against the latest close, on adjusted closes, so
+ETF proxies carry their distributions.
+
+Yahoo answers a desktop and refuses most datacentre addresses, so the same
+request from a deployed worker can fail and take every market slide out of the
+deck with it. `scripts/market_snapshot.py` writes those figures to
+`public/market-snapshot.json` using yfinance, and the app falls back to that
+file when the live service cannot be reached:
+
+```sh
+pip install yfinance
+python scripts/market_snapshot.py                       # the three boards
+python scripts/market_snapshot.py --symbols IVV,AGG,TLT # plus position returns
+python scripts/market_snapshot_test.py                  # offline, no network
+```
+
+A board is written whole or not at all: a sector chart missing three of its
+eleven bars is worse than a slide that stays out of the deck. A served snapshot
+is always marked — the panel reports the date it was taken and asks for a
+refresh — so saved figures cannot pass as today's. A broken sign-in is never
+answered from the snapshot, because that is a failure the advisor can fix.
+The symbol tables in the script and in `src/market-indexes.js` are held in step
+by `src/market-boards.test.js`.
+
 ## Daily S&P 500 exposure
 
 The benchmark uses the public [iShares IVV daily holdings CSV](https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf/latest-holdings.csv). IVV tracks the S&P 500 but is an ETF proxy, not a licensed official index constituent feed. Equity market values are aggregated into all 11 sectors and normalized to 100%; cash and derivatives are excluded. The API rejects incomplete files, missing sectors, invalid dates, duplicate symbols and unexpected constituent counts.
