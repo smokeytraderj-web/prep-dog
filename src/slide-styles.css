@@ -548,7 +548,7 @@
 
 /* ======================================================================== */
 /* F · Statement, louder                                                     */
-/* The deck opens and closes on a full gold page set in navy, and every page */
+/* The deck opens and closes on a white page set in navy, and every page     */
 /* between carries a gold rail down its left edge and a large ghosted folio.  */
 /* ======================================================================== */
 .slide.navy-slide.style-statement:not(.cover):not(.slide-notes) .navy-shell::before {
@@ -571,34 +571,34 @@
 .slide.navy-slide.style-statement .navy-head h2 em,
 .slide.navy-slide.style-statement .navy-head h2 i { color: var(--navy-gold-bright); }
 
-/* The bookends: gold ground, navy ink. */
+/* The bookends: white ground, navy ink. */
 .slide.navy-slide.style-statement.cover,
 .slide.navy-slide.style-statement.slide-notes {
-  --navy-ground: #d8b870;
+  --navy-ground: #ffffff;
   --navy-ink: #111e42;
   --navy-ink-2: #1d2b55;
-  --navy-ink-3: #3a4672;          /* 5.6:1 on the gold */
-  --navy-index: #3a4672;
+  --navy-ink-3: #4a5578;          /* 7.4:1 on white */
+  --navy-index: #4a5578;
   --navy-gold: #111e42;
   --navy-gold-bright: #111e42;
-  --navy-hair: rgba(17, 30, 66, 0.18);
-  --navy-rule: rgba(17, 30, 66, 0.4);
-  background: #d8b870;
-  border-color: #d8b870;
+  --navy-hair: rgba(17, 30, 66, 0.12);
+  --navy-rule: rgba(17, 30, 66, 0.3);
+  background: #ffffff;
+  border-color: #dfe4ed;
 }
 .slide.navy-slide.style-statement .navy-shell.is-cover,
-.slide.navy-slide.style-statement.slide-notes .navy-shell { background: #d8b870; }
+.slide.navy-slide.style-statement.slide-notes .navy-shell { background: #ffffff; }
 .slide.navy-slide.style-statement.cover .is-classic .navy-cover-title h2 { font-size: 132px; }
 .slide.navy-slide.style-statement.cover .is-classic .navy-cover-title h2 em { color: #111e42; }
 .slide.navy-slide.style-statement.cover .is-classic .navy-cover-meta { border-top-color: #111e42; }
 .slide.navy-slide.style-statement.cover .is-classic .navy-cover-value b { color: #111e42; }
 .slide.navy-slide.style-statement.cover .navy-wordmark-sub { color: #111e42; }
 .slide.navy-slide.style-statement.cover .navy-folio,
-.slide.navy-slide.style-statement.slide-notes .navy-folio { color: rgba(17, 30, 66, 0.3); }
+.slide.navy-slide.style-statement.slide-notes .navy-folio { color: rgba(17, 30, 66, 0.2); }
 .slide.navy-slide.style-statement.slide-notes .navy-kicker::before { background: #111e42; }
 .slide.navy-slide.style-statement.slide-notes .navy-head h2 { font-size: 64px; letter-spacing: -1.5px; }
 .slide.navy-slide.style-statement.slide-notes .dw-discussion p { color: #111e42; font-size: 34px; }
-.slide.navy-slide.style-statement.slide-notes .dw-discussion li { border-bottom-color: rgba(17, 30, 66, 0.25); }
+.slide.navy-slide.style-statement.slide-notes .dw-discussion li { border-bottom-color: rgba(17, 30, 66, 0.15); }
 .slide.navy-slide.style-statement.slide-notes .dw-discussion-index { color: #111e42; }
 
 
@@ -623,3 +623,170 @@
 .slide.navy-slide.style-desk .navy-admin-head h3 .slide-field,
 .slide.navy-slide.style-statement .navy-admin-head h3 .slide-field,
 .slide.navy-slide.style-soft .navy-admin-head h3 .slide-field { field-sizing: content; min-width: 12ch; }
+
+
+/* ======================================================================== */
+/* F · Statement's own charts (StatementCharts.jsx)                          */
+/* ======================================================================== */
+.style-statement {
+  --st-c1: #e8c98a;
+  --st-c2: #a9bde8;
+  --st-c3: #6f86c4;
+  --st-c4: #cbd5ec;
+  --st-c5: #3f5590;
+  --st-c6: #8392bb;
+}
+.style-statement .st-c1 { background: var(--st-c1); }
+.style-statement .st-c2 { background: var(--st-c2); }
+.style-statement .st-c3 { background: var(--st-c3); }
+.style-statement .st-c4 { background: var(--st-c4); }
+.style-statement .st-c5 { background: var(--st-c5); }
+.style-statement .st-c6 { background: var(--st-c6); }
+
+/* The headline sentence a chart page opens on. */
+.style-statement .st-statement {
+  margin: 18px 0 0;
+  font-family: var(--navy-serif);
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -0.6px;
+  max-width: 900px;
+}
+.style-statement .st-statement em { font-style: normal; color: var(--navy-gold-bright); }
+.style-statement .st-statement-sm { font-size: 28px; margin-top: 12px; }
+
+/* Small multiples: name, its own line, its figure. */
+.style-statement .st-multiples { margin-top: 22px; display: flex; flex-direction: column; }
+.style-statement .st-multiple {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 170px;
+  gap: 32px;
+  align-items: center;
+  padding: 13px 0;
+  border-top: 1px solid var(--navy-hair);
+}
+.style-statement .st-multiple:last-child { border-bottom: 1px solid var(--navy-hair); }
+.style-statement .st-multiple-name { font-size: 17px; }
+.style-statement .st-multiple-name small { display: block; font-size: 11.5px; color: var(--navy-ink-3); margin-top: 3px; }
+.style-statement .st-multiple-fig {
+  font-family: var(--navy-serif);
+  font-size: 40px;
+  text-align: right;
+  letter-spacing: -0.8px;
+}
+.style-statement .st-multiple.is-lead .st-multiple-fig { color: var(--navy-gold-bright); }
+.style-statement .st-spark { width: 100%; height: 50px; display: block; }
+.style-statement .st-spark-zero { stroke: var(--navy-rule); stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+.style-statement .st-spark-line { fill: none; stroke: var(--navy-ink-2); stroke-width: 2; stroke-linejoin: round; }
+.style-statement .st-spark-line.is-lead { stroke: var(--navy-gold-bright); stroke-width: 2.6; }
+.style-statement .st-spark-area { fill: rgba(203, 213, 236, 0.08); stroke: none; }
+.style-statement .st-spark-area.is-lead { fill: rgba(232, 201, 138, 0.14); }
+
+/* Diverging ranked bars, shared by sectors and the class dots. */
+.style-statement .st-diverging { margin-top: 12px; display: flex; flex-direction: column; }
+.style-statement .st-div-row,
+.style-statement .st-dot-row {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 90px;
+  gap: 24px;
+  align-items: center;
+  padding: 4px 0;
+}
+.style-statement .st-div-name { font-size: 14px; }
+.style-statement .st-div-name small { display: block; font-size: 11px; color: var(--navy-ink-3); margin-top: 2px; }
+.style-statement .st-div-track,
+.style-statement .st-dot-track { position: relative; height: 18px; }
+.style-statement .st-div-track i,
+.style-statement .st-dot-track i { position: absolute; display: block; }
+.style-statement .st-div-zero { top: -6px; bottom: -6px; width: 1px; background: var(--navy-rule); }
+.style-statement .st-div-bar { top: 3px; bottom: 3px; border-radius: 1px; }
+.style-statement .st-div-bar.is-up { background: var(--navy-gold-bright); }
+.style-statement .st-div-bar.is-down { background: #7f93c4; }
+.style-statement .st-div-fig { font-family: var(--navy-serif); font-size: 21px; text-align: right; }
+.style-statement .st-div-fig.is-down { color: #a9bde8; }
+
+/* Allocation: the waffle and its key. */
+.style-statement .st-alloc {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 64px;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  margin-top: 18px;
+}
+.style-statement .st-waffle {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  width: 330px;
+}
+.style-statement .st-waffle i { display: block; aspect-ratio: 1; border-radius: 3px; }
+.style-statement .st-alloc-list { display: flex; flex-direction: column; }
+.style-statement .st-alloc-row {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--navy-hair);
+}
+.style-statement .st-alloc-row > i { width: 14px; height: 14px; border-radius: 3px; display: block; }
+.style-statement .st-alloc-name { font-size: 16px; }
+.style-statement .st-alloc-name small { display: block; font-size: 12px; color: var(--navy-ink-3); margin-top: 2px; }
+.style-statement .st-alloc-fig { font-family: var(--navy-serif); font-size: 38px; letter-spacing: -0.8px; line-height: 1; }
+.style-statement .st-alloc-fig small { font-size: 0.45em; color: var(--navy-ink-3); margin-left: 2px; }
+.style-statement .st-alloc-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 14px;
+  font-size: 13px;
+  color: var(--navy-ink-3);
+}
+.style-statement .st-alloc-total b { font-family: var(--navy-serif); font-weight: 400; font-size: 26px; color: var(--navy-gold-bright); }
+.style-statement .st-alloc-note { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--navy-ink-2); }
+
+/* Class performance: the big figure, then a dot per class on one scale. */
+.style-statement .st-classperf {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+}
+.style-statement .st-big {
+  font-family: var(--navy-serif);
+  font-size: 110px;
+  letter-spacing: -3.5px;
+  line-height: 1;
+  color: var(--navy-gold-bright);
+  margin-top: 8px;
+}
+.style-statement .st-dot-row { grid-template-columns: 200px minmax(0, 1fr) 80px; padding: 14px 0; border-bottom: 1px solid var(--navy-hair); }
+.style-statement .st-dot-stem { top: 8px; height: 2px; background: var(--navy-rule); }
+.style-statement .st-dot {
+  top: 1px;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+}
+.style-statement .st-dot.is-up { background: var(--navy-gold-bright); }
+.style-statement .st-dot.is-down { background: #a9bde8; }
+.style-statement .st-dot-mark.is-portfolio {
+  top: -4px;
+  bottom: -4px;
+  width: 0;
+  border-left: 2px dotted var(--navy-ink-3);
+}
+.style-statement .st-dot-key {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--navy-ink-3);
+}
+.style-statement .st-dot-key .st-dot-mark { position: static; display: inline-block; height: 14px; }

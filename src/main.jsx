@@ -43,9 +43,10 @@ import "./slide-dwyer-layouts.css";
 import { DwyerRisk, DwyerContents } from "./DwyerSlides";
 import "./print-fidelity.css";
 import { DwyerDiscussion, DwyerPerformance, DwyerIncome } from "./DwyerSlides";
+import { StatementMarket, StatementSectors, StatementAllocation, StatementClassPerformance } from "./StatementCharts";
 import { incomeAndCost } from "./portfolio-income";
 import { blendedBenchmark } from "./blended-benchmark";
-import { assetClassPerformance } from "./allocation";
+import { assetClassPerformance, allocationRows } from "./allocation";
 import { NavyFrame, NavyCover, NavyCoverClassic, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
@@ -752,6 +753,24 @@ function App() {
     const label = NAVY_LABELS[slide.id];
     if (!label) return null;
     const positions = enrichedPositions;
+    // Style F draws its charts differently; the figures are the same ones.
+    const statement = slideTheme === "statement";
+    const boardReady = (b) => b?.indexes?.length && b.indexes.every(i => Number.isFinite(Number(i.return)));
+    if (statement && slide.id === "market-indexes" && boardReady(marketIndexes))
+      return {label, body: <StatementMarket data={marketIndexes}
+        note="Index returns are cumulative and unmanaged. They set the context for the portfolio, and are not its return."/>};
+    if (statement && slide.id === "fixed-income" && boardReady(fixedIncome))
+      return {label, body: <StatementMarket data={fixedIncome} title="What bonds did"
+        note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
+    if (statement && slide.id === "sector-ytd" && boardReady(sectorBoard))
+      return {label, body: <StatementSectors data={sectorBoard}/>};
+    if (statement && slide.id === "allocation") {
+      const body = <StatementAllocation positions={positions} asOf={asOfLabel} source={importSource}/>;
+      if (allocationRows(positions).total) return {label, body};
+    }
+    if (statement && slide.id === "asset-class-performance" && assetClassPerformance(positions, positionReturns?.returns).rows.length)
+      return {label, body: <StatementClassPerformance positions={positions} returns={positionReturns?.returns}
+        asOf={positionReturns?.asOf} source={positionReturns?.source}/>};
     if (slide.id === "cover") {
       // Only the light deck was rebuilt on the Dwyer file's split cover; navy
       // keeps the cover it already had.
