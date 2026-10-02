@@ -284,17 +284,14 @@ function App() {
     [page, setPage] = useState(0),
     [done, setDone] = useState(false),
     [drag, setDrag] = useState(false);
-  // Slides only: the app chrome keeps its own palette. Persisted so an advisor
-  // who works in one theme is not flipped back on every deck.
-  const [slideTheme, setSlideTheme] = useState(() => {
-    try {
-      const saved = localStorage.getItem("prepdog.slideTheme");
-      return SLIDE_THEMES.some(t => t.id === saved) ? saved : DEFAULT_THEME;
-    } catch { return DEFAULT_THEME; }
-  });
+  // Slides only: the app chrome keeps its own palette. Every visit opens on
+  // Navy, whatever was chosen last time; a theme picked here lasts for this
+  // session only.
+  const [slideTheme, setSlideTheme] = useState(DEFAULT_THEME);
   useEffect(() => {
-    try { localStorage.setItem("prepdog.slideTheme", slideTheme); } catch { /* private window */ }
-  }, [slideTheme]);
+    // Earlier builds saved the choice; clear it so nothing reads it back.
+    try { localStorage.removeItem("prepdog.slideTheme"); } catch { /* private window */ }
+  }, []);
   const [importedEquity, setEquity] = useState(null),
     [equityError, setEquityError] = useState(""),
     [showExample, setShowExample] = useState(false);
