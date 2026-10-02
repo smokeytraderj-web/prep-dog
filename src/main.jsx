@@ -413,7 +413,7 @@ function App() {
   // every slide title are inputs — so a keystroke aimed at one is left alone,
   // as is any modified key, which belongs to the browser.
   useEffect(() => {
-    if (step !== 2) return;
+    if (step !== 1) return;
     const onKey = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const el = e.target;
@@ -766,7 +766,8 @@ function App() {
     <>
       <div className="app-shell print:hidden">
         <header className="app-header">
-          <button type="button" className="brand brand-home" aria-label="Go to home" onClick={() => navigate(0)}>
+          <button type="button" className="brand brand-home" title="Back to holdings"
+            aria-label="Back to holdings" onClick={() => { if (step === 0 && reviewed) setReviewed(false); else navigate(0); }}>
             <img className="brand-logo" src="/gswm-logo.png" alt="Gottfried & Somberg Wealth Management logo"/>
             <div className="brand-name">
               GOTTFRIED & SOMBERG<small>WEALTH MANAGEMENT</small>
