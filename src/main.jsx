@@ -42,6 +42,7 @@ import "./slide-brand.css";
 import "./slide-dwyer-layouts.css";
 import { DwyerRisk, DwyerContents } from "./DwyerSlides";
 import "./print-fidelity.css";
+import { DwyerDiscussion } from "./DwyerSlides";
 import { NavyFrame, NavyCover, NavyCoverClassic, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
@@ -394,6 +395,11 @@ function App() {
         s.id === "risk" && riskSnapshot ? [{...s, name:"Risk snapshot"}] : s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
         : s.id === "risk" ? []
         : s.id === "equity" && !equity ? []
+        : s.id === "market-indexes" && !validMarketIndexes(marketIndexes) ? []
+        : s.id === "fixed-income" && !fixedIncome?.indexes?.length ? []
+        : s.id === "sector-ytd" && !sectorBoard?.indexes?.length ? []
+        : s.id === "asset-class-performance" && !positionReturns ? []
+        : s.id === "regional-attribution" && !attribution?.rows?.length ? []
         : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
         : [s],
       ),
@@ -659,6 +665,7 @@ function App() {
     "admin": "ADMINISTRATIVE UPDATES",
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
+    "notes": "FOR OUR CONVERSATION",
   };
   // The file writes its as-of as a date a client would read. Navy keeps the ISO
   // stamp it already had; only the light deck spells it out.
@@ -694,11 +701,11 @@ function App() {
       return {label, body: <NavyMarketIndexes data={fixedIncome} heading="Fixed income, year to date"
         title="What bonds did" note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
     if (slide.id === "sector-ytd")
-      return {label, body: <SectorYtdSlide data={sectorBoard} navy/>};
+      return {label, body: <SectorYtdSlide data={sectorBoard} navy longDates={!themeOf(slideTheme).dark}/>};
     if (slide.id === "earnings-expectations")
-      return {label, body: <EarningsExpectationsSlide data={supporting.earningsTable || SP500_EARNINGS} navy/>};
+      return {label, body: <EarningsExpectationsSlide data={supporting.earningsTable || SP500_EARNINGS} navy longDates={!themeOf(slideTheme).dark}/>};
     if (slide.id === "regional-attribution")
-      return {label, body: <PositionAttributionSlide result={attribution} asOf={positionReturns?.asOf} source={positionReturns?.source} navy/>};
+      return {label, body: <PositionAttributionSlide result={attribution} asOf={positionReturns?.asOf} source={positionReturns?.source} navy longDates={!themeOf(slideTheme).dark}/>};
     if (slide.id === "equity" && equity)
       return {label, body: <NavyEquity data={equity}/>};
     if (slide.id === "risk" && riskSnapshot)
@@ -707,6 +714,8 @@ function App() {
       return {label, body: themeOf(slideTheme).dark
         ? <NavyRisk s={riskSnapshot}/>
         : <DwyerRisk s={riskSnapshot}/>};
+    if (slide.id === "notes")
+      return {label, body: <DwyerDiscussion points={noteLines.slice(slide.offset, slide.offset + 4)}/>};
     if (slide.id === "allocation")
       return {label, body: <NavyAllocation positions={positions} asOf={asOfLabel} source={importSource}/>};
     if (slide.id === "asset-class-performance")

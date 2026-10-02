@@ -27,6 +27,15 @@ const usd = n => new Intl.NumberFormat('en-US', {
 //   total        y498 label, y524 value at 28pt
 //   right column x538: range y179, allocation y282, bar y314, legend y349,
 //                measures from y429
+// Every page in the deck sets its date the same way: the long form, so one
+// slide cannot read as though a different hand made it.
+export function longDate(value) {
+  if (!value) return '';
+  const parsed = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(parsed.getTime())) return String(value);
+  return parsed.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
+}
+
 export function DwyerRisk({s}) {
   const scaleMax = s.scale_max || 99;
   const score = Math.max(0, Math.min(scaleMax, Number(s.risk_score) || 0));
@@ -38,9 +47,9 @@ export function DwyerRisk({s}) {
   const span = (Math.max(0, r.upside_pct || 0) - Math.min(0, r.downside_pct || 0)) || 1;
   const zero = (-Math.min(0, r.downside_pct || 0) / span) * 100;
   const measures = [
-    ['Risk-adjusted grade', s.metrics?.grade == null ? null : `${s.metrics.grade.toFixed(1)} / 4.3`],
+    ['Risk-adjusted grade (4.3 is best)', s.metrics?.grade == null ? null : `${s.metrics.grade.toFixed(1)} / 4.3`],
     ['Annual dividend', s.metrics?.annual_dividend_pct == null ? null : `${s.metrics.annual_dividend_pct.toFixed(2)}%`],
-    ['Annual range midpoint', s.metrics?.annual_range_midpoint_pct == null ? null : `${s.metrics.annual_range_midpoint_pct.toFixed(2)}%`],
+    ['Centre of the modeled annual range', s.metrics?.annual_range_midpoint_pct == null ? null : `${s.metrics.annual_range_midpoint_pct.toFixed(2)}%`],
     ['Annualized volatility', s.metrics?.annual_volatility_pct == null ? null : `${s.metrics.annual_volatility_pct.toFixed(2)}%`],
     ['Maximum drawdown', s.metrics?.max_drawdown_pct == null ? null : `${s.metrics.max_drawdown_pct.toFixed(2)}%`],
     ['Total annual cost', costTotal == null ? null : `${costTotal.toFixed(2)}%`],
@@ -66,7 +75,7 @@ export function DwyerRisk({s}) {
   return <div className="dw-slide">
     <div className="navy-head">
       <h2>How much risk you are carrying</h2>
-      {s.as_of && <span className="navy-meta">As of {s.as_of}</span>}
+      {s.as_of && <span className="navy-meta">AS OF {longDate(s.as_of)}</span>}
     </div>
     <div className="dw-risk">
       <section className="dw-risk-panel">
@@ -163,6 +172,7 @@ const CONTENTS_SECTIONS = [
   {name: 'Portfolio positioning', ids: ['equity', 'regional-attribution']},
   {name: 'Market outlook', ids: ['earnings-expectations', 'midterm']},
   {name: 'Wealth planning & administration', ids: ['admin']},
+  {name: 'Next steps', ids: ['notes']},
 ];
 
 export function DwyerContents({slides = []}) {
@@ -197,7 +207,7 @@ export function DwyerContents({slides = []}) {
   return <div className="dw-slide">
     <div className="navy-head">
       <h2>Contents</h2>
-      <span className="navy-meta">{entries.length} slides</span>
+      <span className="navy-meta">{slides.length} slides</span>
     </div>
     <div className="dw-contents">
       {columns.filter(c => c.length).map((column, ci) => <div className="dw-contents-col" key={ci}>
@@ -213,5 +223,24 @@ export function DwyerContents({slides = []}) {
         </section>)}
       </div>)}
     </div>
+  </div>;
+}
+
+
+// --- the closing discussion page ------------------------------------------
+// The advisor's own points, set as the deck sets everything else. Numbered so
+// they can be referred to across the table, and spaced so four of them fill
+// the page rather than huddling at the top.
+export function DwyerDiscussion({points = [], heading = 'What we will cover'}) {
+  return <div className="dw-slide is-discussion">
+    <div className="navy-head">
+      <h2>{heading}</h2>
+    </div>
+    <ol className="dw-discussion">
+      {points.map((point, i) => <li key={i}>
+        <span className="dw-discussion-index">{String(i + 1).padStart(2, '0')}</span>
+        <p>{point}</p>
+      </li>)}
+    </ol>
   </div>;
 }

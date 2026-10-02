@@ -275,3 +275,55 @@
   font-size: 10.5px; line-height: 1.55; color: var(--navy-ink-3);
   max-width: 76ch;
 }
+
+/* --- the closing discussion page ------------------------------------------
+   The points carry the page on their own, so they are set at reading size with
+   the number in the margin, and the list fills the plate rather than stacking
+   at the top of an empty page. */
+.dw-slide.is-discussion {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.navy-light .dw-discussion,
+.navy-slide .dw-discussion {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 26px;
+  flex: 1;
+  min-height: 0;
+}
+.navy-light .dw-discussion li,
+.navy-slide .dw-discussion li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--navy-rule, #dfe4ed);
+}
+.navy-light .dw-discussion li:last-child,
+.navy-slide .dw-discussion li:last-child { border-bottom: 0; padding-bottom: 0; }
+.navy-light .dw-discussion-index,
+.navy-slide .dw-discussion-index {
+  font-family: var(--navy-sans);
+  font-size: 11px;
+  letter-spacing: 2.6px;
+  color: var(--navy-gold);
+}
+.navy-light .dw-discussion p,
+.navy-slide .dw-discussion p {
+  margin: 0;
+  font-family: var(--navy-serif);
+  font-size: 23px;
+  line-height: 1.45;
+  letter-spacing: -0.2px;
+  color: var(--navy-ink, #17233f);
+}
+.navy-slide:not(.navy-light) .dw-discussion p { color: #eef3fa; }
+.navy-slide:not(.navy-light) .dw-discussion li { border-bottom-color: #2b4260; }

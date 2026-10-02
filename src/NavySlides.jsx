@@ -1,4 +1,5 @@
 import React from 'react';
+import { completedQuarter } from './cover-period';
 import { groupPositions } from './supporting-data.js';
 import { allocationRows, allocationNote, assetClassPerformance } from './allocation.js';
 
@@ -58,7 +59,7 @@ export function NavyCoverClassic({title, preparedFor, advisor, reportDate, total
     </div>
     <div className="navy-cover-title">
       <h2>{headline}{subject && <><br/><em>{subject}</em></>}</h2>
-      <p>Allocation, market context and risk, built from your confirmed holdings.</p>
+      <p>Your allocation, how markets moved, and the risk you are carrying.</p>
     </div>
     <div className="navy-cover-meta">
       {!preparedFor?.trim() && <div><div className="navy-eyebrow">REVIEW</div><b>{title?.trim() || 'Account review'}</b></div>}
@@ -79,13 +80,14 @@ export function NavyCover({title, preparedFor, advisor, reportDate, total}) {
   const date = valid
     ? parsed.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
     : '';
-  const quarter = valid ? `Q${Math.floor(parsed.getMonth() / 3) + 1}` : '';
-  const year = valid ? String(parsed.getFullYear()) : '';
+  const period = valid ? completedQuarter(parsed) : null;
+  const quarter = period ? `Q${period.quarter}` : '';
+  const year = period ? String(period.year) : '';
   return <div className="navy-cover is-split">
     <div className="navy-cover-main">
       <div className="navy-cover-firm">GOTTFRIED &amp; SOMBERG WEALTH MANAGEMENT, LLC</div>
       <h2 className="navy-cover-head">{title?.trim() || 'Portfolio Review'}</h2>
-      <p className="navy-cover-sub">Allocation, market context and risk, built from your confirmed holdings.</p>
+      <p className="navy-cover-sub">Your allocation, how markets moved, and the risk you are carrying.</p>
       <div className="navy-cover-rule"/>
       <div className="navy-eyebrow is-gold">PREPARED FOR</div>
       <div className="navy-cover-client">{preparedFor?.trim() || 'Account review'}</div>
@@ -282,7 +284,7 @@ export function NavyRegional({positions, data}) {
       </div>
     </>}
 
-    <p className="navy-source">Illustrative exposure contribution = client regional weight × supplied YTD index return. It is not security-level performance attribution. {data?.source || ''} Regional weights are calculated from the confirmed holdings; unmapped positions are not silently reassigned.</p>
+    <p className="navy-source">Illustrative exposure contribution = client regional weight × supplied YTD index return. It is not security-level performance attribution. {data?.source || ''} Regional weights are calculated from your holdings; unmapped positions are not silently reassigned.</p>
   </div>;
 }
 

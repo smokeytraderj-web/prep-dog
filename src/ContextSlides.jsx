@@ -1,4 +1,5 @@
 import React from 'react';
+import { longDate } from './DwyerSlides';
 import { SP500_EARNINGS, earningsGrowth } from './earnings-data.js';
 import { contributors } from './attribution.js';
 
@@ -18,7 +19,7 @@ const signed0 = n => `${n > 0 ? '+' : ''}${n.toFixed(0)}%`;
 // the bar's foot — otherwise the deepest sector's number lands on its own name.
 const S = {w: 1160, h: 420, top: 40, base: 296, names: 342, lineH: 13, fill: 0.62};
 
-export function SectorYtdSlide({data, navy = false}) {
+export function SectorYtdSlide({data, navy = false, longDates = false}) {
   const ready = data?.indexes?.length && data.indexes.every(i => Number.isFinite(Number(i.return)));
   if (!ready) return <Waiting navy={navy} kicker="MARKET CONTEXT" title="Sector performance, year to date"
     body="This slide builds from the Select Sector SPDR funds as soon as the market service responds. No sector returns are invented from the holdings."/>;
@@ -35,7 +36,7 @@ export function SectorYtdSlide({data, navy = false}) {
 
   return <div className={`context-board ${navy ? 'is-navy' : ''}`}>
     <Head navy={navy} kicker="MARKET CONTEXT" title="Sector performance, year to date"
-      meta={data.asOf ? `Year-to-date through ${data.asOf}` : ''}/>
+      meta={data.asOf ? `Year-to-date through ${longDates ? longDate(data.asOf) : data.asOf}` : ''}/>
     <div className="board-chart">
       <svg viewBox={`0 0 ${S.w} ${S.h}`} preserveAspectRatio="xMidYMid meet" role="img"
         aria-label="S&P 500 sector total returns year to date, ranked lowest to highest">
@@ -65,7 +66,7 @@ export function SectorYtdSlide({data, navy = false}) {
 
 const E = {w: 760, h: 430, top: 44, base: 360, left: 54, lineH: 13};
 
-export function EarningsExpectationsSlide({data = SP500_EARNINGS, navy = false}) {
+export function EarningsExpectationsSlide({data = SP500_EARNINGS, navy = false, longDates = false}) {
   const series = data.series || [];
   if (series.length < 2) return <Waiting navy={navy} kicker="MARKET CONTEXT" title="S&P 500 earnings expectations"
     body="This slide needs the earnings table to carry at least two periods."/>;
@@ -83,7 +84,7 @@ export function EarningsExpectationsSlide({data = SP500_EARNINGS, navy = false})
 
   return <div className={`context-board earnings-board ${navy ? 'is-navy' : ''}`}>
     <Head navy={navy} kicker="MARKET CONTEXT" title="S&P 500 earnings expectations"
-      meta={data.asOf ? `As of ${data.asOf}` : ''}/>
+      meta={data.asOf ? `As of ${longDates ? longDate(data.asOf) : data.asOf}` : ''}/>
     <div className="earnings-split">
       <ul className="earnings-points">
         {(data.points || []).map(point => <li key={point}>{point}</li>)}
@@ -141,7 +142,7 @@ export function ContentsSlide({slides = [], navy = false}) {
   const columns = [entries.slice(0, split), entries.slice(split)].filter(c => c.length);
 
   return <div className={`context-board contents-board ${navy ? 'is-navy' : ''}`}>
-    <Head navy={navy} kicker="IN THIS REVIEW" title="Contents" meta={`${entries.length} slides`}/>
+    <Head navy={navy} kicker="IN THIS REVIEW" title="Contents" meta={`${slides.length} slides`}/>
     <div className="contents-columns" style={{gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`}}>
       {columns.map((column, c) => <ol key={c} className="contents-list">
         {column.map(entry => <li key={entry.id + entry.page}>
@@ -160,7 +161,7 @@ export function ContentsSlide({slides = [], navy = false}) {
 const usd = n => new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(n);
 const pp = n => `${n > 0 ? '+' : ''}${n.toFixed(2)}`;
 
-export function AttributionSlide({result, asOf, source, navy = false}) {
+export function AttributionSlide({result, asOf, source, navy = false, longDates = false}) {
   if (!result || !result.rows.length) return <Waiting navy={navy} kicker="ATTRIBUTION PERFORMANCE"
     title="What moved the portfolio"
     body="This slide builds once the market service returns a year-to-date return for the confirmed holdings."/>;
@@ -180,7 +181,7 @@ export function AttributionSlide({result, asOf, source, navy = false}) {
 
   return <div className={`context-board attrib-board ${navy ? 'is-navy' : ''}`}>
     <Head navy={navy} kicker="ATTRIBUTION PERFORMANCE" title="What moved the portfolio"
-      meta={asOf ? `Year-to-date through ${asOf}` : ''}/>
+      meta={asOf ? `Year-to-date through ${longDates ? longDate(asOf) : asOf}` : ''}/>
 
     <div className="attrib-lede">
       <div>
