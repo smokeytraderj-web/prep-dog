@@ -47,7 +47,7 @@ export function NavyCoverClassic({title, preparedFor, advisor, reportDate, total
     ? new Date(`${reportDate}T12:00:00`).toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
     : '';
   const headline = preparedFor?.trim() || title?.trim() || 'Account review';
-  const subject = preparedFor?.trim() ? 'Account review' : '';
+  const subject = preparedFor?.trim() ? (title?.trim() || 'Account review') : '';
   return <div className="navy-cover is-classic">
     <div className="navy-cover-top">
       <div>
@@ -61,7 +61,7 @@ export function NavyCoverClassic({title, preparedFor, advisor, reportDate, total
       <p>Allocation, market context and risk, built from your confirmed holdings.</p>
     </div>
     <div className="navy-cover-meta">
-      {!preparedFor?.trim() && <div><div className="navy-eyebrow">REVIEW</div><b>Account review</b></div>}
+      {!preparedFor?.trim() && <div><div className="navy-eyebrow">REVIEW</div><b>{title?.trim() || 'Account review'}</b></div>}
       {advisor && <div><div className="navy-eyebrow">ADVISOR</div><b>{advisor}</b></div>}
       {total > 0 && <div className="navy-cover-value"><div className="navy-eyebrow">PORTFOLIO VALUE</div><b>{usd(total)}</b></div>}
     </div>
