@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  ArrowLeft,
   Upload,
   Check,
   Layers,
@@ -15,10 +14,8 @@ import {
   Download,
   Plus,
   X,
-  FileText,
   Sun,
   Moon,
-  Scissors,
   Landmark,
   GripVertical,
 } from "lucide-react";
@@ -53,6 +50,9 @@ import { enrichPositions } from "./asset-class";
 import { comparePortfolio, isBenchmarkStale } from "./benchmark";
 import BenchmarkPanel, { useBenchmark } from "./BenchmarkPanel";
 import HoldingsImport from "./HoldingsImport";
+import ContextChat from "./ContextChat";
+import { contextLines } from "./context-chat";
+import "./studio.css";
 import MultiAccountImport from "./MultiAccountImport";
 import { textToSheets, detectTable, extractHoldings } from "./holding-import";
 import { fetchMarketJson } from "./market-fetch";
@@ -151,10 +151,11 @@ const sections = [
   { id: "risk", name: "Risk snapshot", description: "Risk score, modeled range, and allocation from the confirmed holdings.", icon: ShieldCheck },
 ];
 
-// Every slide marked auto is part of the standing deck. Derived, not listed:
-// the reset paths below used to carry their own copies of this and fell out of
-// step the moment a slide was added.
-const AUTO_SLIDES = sections.filter(s => s.auto).map(s => s.id);
+// Every slide the app can build is in the standing deck. There is no step that
+// asks which ones to make any more: the deck arrives whole and the advisor
+// takes slides out of it. Derived, not listed, so adding a section cannot
+// leave the reset paths behind.
+const AUTO_SLIDES = sections.map(s => s.id);
 
 // Every slide's position is the advisor's to choose, Admin included, so the
 // selected list is the deck order exactly as it stands.
@@ -224,7 +225,7 @@ function App() {
     [reviewed, setReviewed] = useState(false),
     [selected, setSelected] = useState(AUTO_SLIDES),
     [title, setTitle] = useState("Portfolio review"),
-    [notes, setNotes] = useState(""),
+    [contextEntries, setContextEntries] = useState([]),
     [page, setPage] = useState(0),
     [done, setDone] = useState(false),
     [drag, setDrag] = useState(false);
@@ -242,7 +243,6 @@ function App() {
   const [importedEquity, setEquity] = useState(null),
     [equityError, setEquityError] = useState(""),
     [showExample, setShowExample] = useState(false);
-  const [deckEquity, setDeckEquity] = useState(null);
   const [riskSnapshot, setRiskSnapshot] = useState(null);
   const [riskStatus, setRiskStatus] = useState({busy: false, error: "", retry: null});
   const [snippetImages, setSnippetImages] = useState([]);
@@ -257,7 +257,6 @@ function App() {
   // Attribution needs a year-to-date return for each position the client holds,
   // so unlike the fixed boards this request depends on the holdings.
   const [positionReturns, setPositionReturns] = useState(null);
-  const [deckMarket, setDeckMarket] = useState({});
   const [positions, setPositions] = useState([]), [supporting, setSupporting] = useState({}), [supportError, setSupportError] = useState("");
   const [preparedFor, setPreparedFor] = useState(""), [advisor, setAdvisor] = useState(""), [reportDate, setReportDate] = useState(new Date().toLocaleDateString('en-CA'));
   // Browsers offer document.title as the default name in the print dialog, so
@@ -383,10 +382,7 @@ function App() {
   const file = useRef(null);
   const total = totalValue(holdings);
   const ranked = [...holdings].sort((a, b) => b.value - a.value);
-  const noteLines = notes
-    .split("\n")
-    .filter(Boolean)
-    .flatMap((line) => line.match(/.{1,140}(?:\s|$)|.{1,140}/g) || []);
+  const noteLines = contextLines(contextEntries);
   const deckOrder = orderSelection(selected);
   const slides = [
     { id: "cover", name: "Account review" },
@@ -402,6 +398,11 @@ function App() {
       ),
   ];
   slides.push(...snippetImages.map(image => ({id:`snippet-${image.id}`, name:image.title || 'Source image', snippet:image})));
+  // The points typed into the context notebook close the deck.
+  slides.push(...Array.from({length: Math.ceil(noteLines.length / 4)}, (_, i) => ({
+    id: "notes", offset: i * 4,
+    name: noteLines.length > 4 ? `For our conversation · ${i + 1}` : "For our conversation",
+  })));
   useEffect(() => {
     if (page > slides.length - 1) setPage(Math.max(0, slides.length - 1));
   }, [slides.length, page]);
@@ -538,7 +539,7 @@ function App() {
     setReviewed(false);
     setSelected(AUTO_SLIDES);
     setTitle("Portfolio review");
-    setNotes("");
+    setContextEntries([]);
     setErrors([]);
     setEquity(null);
     setEquityError("");
@@ -571,7 +572,7 @@ function App() {
   }
   function slideContent(slide) {
     if (slide.snippet) return <SourceSnippetSlide data={slide.snippet}/>;
-    if (slide.id === "equity") return <EquitySlide data={deckEquity} />;
+    if (slide.id === "equity") return <EquitySlide data={equity} />;
     if (slide.id === "cover")
       return (
         <div className="cover-content">
@@ -588,19 +589,19 @@ function App() {
         </div>
       );
     if (slide.id === "contents") return <ContentsSlide slides={slides}/>;
-    if (slide.id === "account-summary") return <AccountSummarySlide positions={deckMarket.positions || enrichedPositions} source={importSource}/>;
-    if (slide.id === "market-indexes") return <MarketIndexesSlide data={deckMarket.marketIndexes}/>;
-    if (slide.id === "fixed-income") return <MarketIndexesSlide data={deckMarket.fixedIncome} kicker="MARKET CONTEXT" title="Fixed income, year to date"/>;
-    if (slide.id === "sector-ytd") return <SectorYtdSlide data={deckMarket.sectorBoard}/>;
-    if (slide.id === "earnings-expectations") return <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS}/>;
-    if (slide.id === "regional-attribution") return <PositionAttributionSlide result={deckMarket.attribution} asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source}/>;
-    if (slide.id === "risk" && deckMarket.riskSnapshot) return <RiskSnapshotSlide data={deckMarket.riskSnapshot} theme={slideTheme}/>;
-    if (slide.id === "risk") return <RiskSlide data={deckMarket.supporting.risk} offset={slide.offset}/>;
-    if (slide.id === "attribution") return <AttributionSlide data={deckMarket.supporting.attribution} accountIndex={slide.accountIndex}/>;
-    if (slide.id === "overview") return <PortfolioOverview holdings={holdings} equity={deckEquity}/>;
-    if (slide.id === "allocation") return <PortfolioAllocation holdings={holdings} equity={deckEquity}/>;
-    if (slide.id === "sector-performance") return <SectorPerformanceSlide data={deckMarket.sectorPerformance}/>;
-    if (slide.id === "earnings") return <EarningsSlide data={deckMarket.earnings}/>;
+    if (slide.id === "account-summary") return <AccountSummarySlide positions={enrichedPositions} source={importSource}/>;
+    if (slide.id === "market-indexes") return <MarketIndexesSlide data={marketIndexes}/>;
+    if (slide.id === "fixed-income") return <MarketIndexesSlide data={fixedIncome} kicker="MARKET CONTEXT" title="Fixed income, year to date"/>;
+    if (slide.id === "sector-ytd") return <SectorYtdSlide data={sectorBoard}/>;
+    if (slide.id === "earnings-expectations") return <EarningsExpectationsSlide data={supporting.earningsTable || SP500_EARNINGS}/>;
+    if (slide.id === "regional-attribution") return <PositionAttributionSlide result={attribution} asOf={positionReturns?.asOf} source={positionReturns?.source}/>;
+    if (slide.id === "risk" && riskSnapshot) return <RiskSnapshotSlide data={riskSnapshot} theme={slideTheme}/>;
+    if (slide.id === "risk") return <RiskSlide data={supporting.risk} offset={slide.offset}/>;
+    if (slide.id === "attribution") return <AttributionSlide data={supporting.attribution} accountIndex={slide.accountIndex}/>;
+    if (slide.id === "overview") return <PortfolioOverview holdings={holdings} equity={equity}/>;
+    if (slide.id === "allocation") return <PortfolioAllocation holdings={holdings} equity={equity}/>;
+    if (slide.id === "sector-performance") return <SectorPerformanceSlide data={sectorPerformance}/>;
+    if (slide.id === "earnings") return <EarningsSlide data={earnings}/>;
     if (slide.id === "holdings")
       return (
         <>
@@ -671,7 +672,7 @@ function App() {
     if (slide.snippet) return null;
     const label = NAVY_LABELS[slide.id];
     if (!label) return null;
-    const positions = deckMarket.positions || enrichedPositions;
+    const positions = enrichedPositions;
     if (slide.id === "cover") {
       // Only the light deck was rebuilt on the Dwyer file's split cover; navy
       // keeps the cover it already had.
@@ -681,7 +682,7 @@ function App() {
     if (slide.id === "account-summary")
       return {label, body: <NavyAccountSummary positions={positions} source={importSource} asOf={asOfLabel}/>};
     if (slide.id === "market-indexes")
-      return {label, body: <NavyMarketIndexes data={deckMarket.marketIndexes}/>};
+      return {label, body: <NavyMarketIndexes data={marketIndexes}/>};
     if (slide.id === "contents")
       // The file groups its agenda into numbered sections across two columns;
       // navy keeps the single list it had.
@@ -689,27 +690,27 @@ function App() {
         ? <ContentsSlide slides={slides} navy/>
         : <DwyerContents slides={slides}/>};
     if (slide.id === "fixed-income")
-      return {label, body: <NavyMarketIndexes data={deckMarket.fixedIncome} heading="Fixed income, year to date"
+      return {label, body: <NavyMarketIndexes data={fixedIncome} heading="Fixed income, year to date"
         title="What bonds did" note="Total returns, so coupon income is included. Bond market segments are shown through ETF proxies."/>};
     if (slide.id === "sector-ytd")
-      return {label, body: <SectorYtdSlide data={deckMarket.sectorBoard} navy/>};
+      return {label, body: <SectorYtdSlide data={sectorBoard} navy/>};
     if (slide.id === "earnings-expectations")
-      return {label, body: <EarningsExpectationsSlide data={deckMarket.earningsTable || SP500_EARNINGS} navy/>};
+      return {label, body: <EarningsExpectationsSlide data={supporting.earningsTable || SP500_EARNINGS} navy/>};
     if (slide.id === "regional-attribution")
-      return {label, body: <PositionAttributionSlide result={deckMarket.attribution} asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source} navy/>};
-    if (slide.id === "equity" && deckEquity)
-      return {label, body: <NavyEquity data={deckEquity}/>};
-    if (slide.id === "risk" && deckMarket.riskSnapshot)
+      return {label, body: <PositionAttributionSlide result={attribution} asOf={positionReturns?.asOf} source={positionReturns?.source} navy/>};
+    if (slide.id === "equity" && equity)
+      return {label, body: <NavyEquity data={equity}/>};
+    if (slide.id === "risk" && riskSnapshot)
       // The file's risk slide is a different arrangement, not the navy one
       // recoloured, so the light deck renders its own.
       return {label, body: themeOf(slideTheme).dark
-        ? <NavyRisk s={deckMarket.riskSnapshot}/>
-        : <DwyerRisk s={deckMarket.riskSnapshot}/>};
+        ? <NavyRisk s={riskSnapshot}/>
+        : <DwyerRisk s={riskSnapshot}/>};
     if (slide.id === "allocation")
       return {label, body: <NavyAllocation positions={positions} asOf={asOfLabel} source={importSource}/>};
     if (slide.id === "asset-class-performance")
-      return {label, body: <NavyAssetClassPerformance positions={positions} returns={deckMarket.positionReturns?.returns}
-        asOf={deckMarket.positionReturns?.asOf} source={deckMarket.positionReturns?.source}/>};
+      return {label, body: <NavyAssetClassPerformance positions={positions} returns={positionReturns?.returns}
+        asOf={positionReturns?.asOf} source={positionReturns?.source}/>};
     if (slide.id === "admin")
       return {label, body: <NavyAdmin admin={admin}/>};
     return null;
@@ -775,7 +776,7 @@ function App() {
           </div>
         </header>
         <nav className="step-nav" aria-label="Deck progress">
-          {["Add holdings", "Choose components", "Review deck"].map(
+          {["Add holdings", "Build the deck"].map(
             (label, i) => (
               <React.Fragment key={label}>
                 {i > 0 && <span className="step-line" />}
@@ -928,7 +929,7 @@ function App() {
                   </div>
                   <div className="flex justify-end mt-6">
                     <button className="primary" onClick={() => navigate(1)}>
-                      Choose components
+                      Build the deck
                     </button>
                   </div>
                 </section>
@@ -948,221 +949,15 @@ function App() {
             <>
               <div className="workspace-heading">
                 <div>
-                  <h1>Choose components</h1>
-                  <p>Select the components you want in your deck.</p>
-                </div>
-                <span className="portfolio-pill">
-                  {holdings.length} positions <span>·</span> {money(total)}
-                </span>
-              </div>
-              <div className="builder-layout">
-                <section>
-                  <div className="optional-heading"><span className="slide-kicker">OPTIONAL ADD-ONS</span><p>Add only the specialist slides you want reviewed.</p></div>
-                  <div className="component-grid optional-components">
-                    {sections.filter(s=>!s.auto).map((s) => <button key={s.id} aria-pressed={selected.includes(s.id)} className={`component-card ${selected.includes(s.id) ? "selected" : ""}`} onClick={() => setSelected(v => v.includes(s.id) ? v.filter(x=>x!==s.id) : [...v,s.id])}><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="checkbox">{selected.includes(s.id) && <Check size={13} />}</span></div><h2>{s.name}</h2><p>{s.description}</p></button>)}
-                    {/* The skill behind this does not exist yet. The card is
-                        disabled rather than selectable so it cannot be added to
-                        a deck and then render nothing. */}
-                    <div className="component-card is-planned" aria-disabled="true">
-                      <div className="flex justify-between items-start"><Scissors size={23} strokeWidth={1.4}/><span className="auto-badge is-planned">PLANNED</span></div>
-                      <h2>Tax loss harvesting</h2>
-                      <p>Realised and unrealised losses by lot, with wash-sale windows flagged. Not built yet.</p>
-                    </div>
-                  </div>
-                  <div className="auto-flow-note"><span className="slide-kicker">AUTOMATIC CORE DECK</span><p>A cover and contents page open every deck. These slides need no setup — they are built from the confirmed holdings and live market data.</p></div>
-                  <div className="component-grid auto-components">
-                    {sections.filter(s=>s.auto).map((s) => <div key={s.id} className="component-card auto-card selected"><div className="flex justify-between items-start"><s.icon size={23} strokeWidth={1.4} /><span className="auto-badge">AUTO</span></div><h2>{s.name}</h2><p>{s.description}</p></div>)}
-                  </div>
-                  {/* Deck order. Quiet by design: a plain numbered list that
-                      happens to be draggable, with the handle and the remove
-                      control surfacing on hover or keyboard focus. Arrow-key
-                      buttons do the same job for anyone not using a mouse. */}
-                  <div className="deck-order">
-                    <div className="optional-heading"><span className="slide-kicker">DECK ORDER</span><p>Drag to reorder. The cover and contents always open the deck.</p></div>
-                    <ol className="order-list">
-                      {deckOrder.map((id, i) => {
-                        const section = sections.find((x) => x.id === id);
-                        if (!section) return null;
-                        return <li
-                          key={id}
-                          draggable
-                          className={`order-row ${dragId === id ? "is-dragging" : ""}`}
-                          onDragStart={(e) => { setDragId(id); e.dataTransfer.effectAllowed = "move"; }}
-                          onDragEnd={() => setDragId(null)}
-                          onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
-                          onDrop={(e) => { e.preventDefault(); moveSlide(deckOrder.indexOf(dragId), i); setDragId(null); }}
-                        >
-                          <GripVertical className="order-grip" size={15} aria-hidden="true"/>
-                          <span className="order-index">{String(i + 3).padStart(2, "0")}</span>
-                          <span className="order-name">{section.name}</span>
-                          <span className="order-tools">
-                            <button type="button" aria-label={`Move ${section.name} up`} disabled={i === 0} onClick={() => moveSlide(i, i - 1)}>↑</button>
-                            <button type="button" aria-label={`Move ${section.name} down`} disabled={i === deckOrder.length - 1} onClick={() => moveSlide(i, i + 1)}>↓</button>
-                            <button type="button" aria-label={`Remove ${section.name}`} onClick={() => setSelected((v) => v.filter((x) => x !== id))}><X size={14}/></button>
-                          </span>
-                        </li>;
-                      })}
-                    </ol>
-                    {sections.filter((x) => !selected.includes(x.id)).length > 0 && <div className="order-add">
-                      {sections.filter((x) => !selected.includes(x.id)).map((x) => (
-                        <button key={x.id} type="button" onClick={() => setSelected((v) => [...v, x.id])}>
-                          <Plus size={13}/> {x.name}
-                        </button>
-                      ))}
-                    </div>}
-                  </div>
-
-                  <details className="data-drawer">
-                    <summary><span>Admin slide</span><small>{admin.contacts.some((c) => c.name.trim()) ? "Contacts added" : "Optional"}</small><ChevronRight size={16}/></summary>
-                    <section className="supporting-upload admin-fields">
-                      <p>The custodian move is the same for every client; the professional contacts are not, so they start empty and the card is left off the slide until you fill them in.</p>
-                      <div className="admin-grid">
-                        <label className="field-label">Heading<input maxLength={70} value={admin.heading} onChange={(e) => setAdmin((a) => ({...a, heading: e.target.value}))}/></label>
-                        <label className="field-label">When<input maxLength={40} placeholder="Weekend of Nov. 13, 2026" value={admin.when} onChange={(e) => setAdmin((a) => ({...a, when: e.target.value}))}/></label>
-                        <label className="field-label">Current custodian<input maxLength={40} value={admin.fromCustodian} onChange={(e) => setAdmin((a) => ({...a, fromCustodian: e.target.value}))}/></label>
-                        <label className="field-label">New custodian<input maxLength={40} value={admin.toCustodian} onChange={(e) => setAdmin((a) => ({...a, toCustodian: e.target.value}))}/></label>
-                        <label className="field-label">Current portal<input maxLength={40} value={admin.fromPortal} onChange={(e) => setAdmin((a) => ({...a, fromPortal: e.target.value}))}/></label>
-                        <label className="field-label">New portal<input maxLength={40} value={admin.toPortal} onChange={(e) => setAdmin((a) => ({...a, toPortal: e.target.value}))}/></label>
-                        {admin.contacts.map((c, i) => (
-                          <label className="field-label" key={c.role}>{c.role}<input maxLength={60} placeholder="Name" value={c.name}
-                            onChange={(e) => setAdmin((a) => ({...a, contacts: a.contacts.map((x, j) => j === i ? {...x, name: e.target.value} : x)}))}/></label>
-                        ))}
-                      </div>
-                    </section>
-                  </details>
-
-                  {selected.includes("equity") && !equity && (
-                    <details className="data-drawer" open><summary><span>Equity benchmark</span><small>Review needed</small><ChevronRight size={16}/></summary><div className="equity-input">
-                      <div>
-                        <h3>Portfolio vs. S&P 500</h3>
-                        <p>{benchmark.loading && !benchmark.snapshot ? "Loading daily benchmark…" : benchmark.snapshot ? `IVV equity proxy · As of ${benchmark.snapshot.asOf}` : "Benchmark unavailable. Retry or import sector data."}</p>
-                        {comparison && !importedEquity && <p className="coverage-note">{comparison.coverage.toFixed(1)}% of portfolio classified</p>}
-                        {comparison?.unmatched.length > 0 && !importedEquity && <p className="errors" role="alert">Sector data needed for {comparison.unmatched.map(h => h.ticker).join(", ")}. Import verified sector data to include this slide. We do not guess ETF look-through or unknown sectors.</p>}
-                        {benchmark.snapshot && isBenchmarkStale(benchmark.snapshot) && !importedEquity && <p className="errors">This benchmark is older than four days. Refresh or import a current sector file before building this slide.</p>}
-                      </div>
-                      <div className="flex gap-3 flex-wrap">
-                        <button className="secondary" disabled={benchmark.loading} onClick={benchmark.refresh}>Refresh benchmark</button>
-                        <button className="secondary" onClick={() => equityFile.current.click()}><Upload size={14} /> Import sector data</button>
-                        {/* The example book is ETF-heavy, and the app will not guess
-                            ETF look-through, so the matching sector file is one click
-                            away rather than a download the advisor has to find. */}
-                        <button className="text-button" onClick={async () => {
-                          try {
-                            const response = await fetch("/example-sectors.json");
-                            if (!response.ok) throw Error("The example sector file could not be loaded.");
-                            setEquity(validateEquity(await response.json()));
-                            setEquityError("");
-                          } catch (error) { setEquityError(error.message || "The example sector file could not be loaded."); }
-                        }}>Load example sectors</button>
-                        <button className="text-button" onClick={() => setShowExample(true)}>Layout example</button>
-                        {importedEquity && <button className="text-button" onClick={() => setEquity(null)}>Use daily benchmark</button>}
-                      </div>
-                      <input
-                        className="hidden"
-                        ref={equityFile}
-                        type="file"
-                        accept=".json"
-                        onChange={(e) => {
-                          uploadEquity(e.target.files[0]);
-                          e.target.value = "";
-                        }}
-                      />
-                      {equity && <p className="live-status"><Check size={15}/> {importedEquity ? "Imported sector data" : "Portfolio comparison ready"} · {equity.as_of}</p>}
-                      {benchmark.error && !importedEquity && <p className="errors" role="alert">{benchmark.error}</p>}
-                      {equityError && (
-                        <p className="errors" role="alert">
-                          {equityError}
-                        </p>
-                      )}
-                    </div></details>
-                  )}
-                  {/* The snapshot builds itself, so this row is only shown when it failed and
-                      there is something to act on. It stays mounted either way -- swapping
-                      the element would remount it and refire the price-history fetch. */}
-                  {selected.includes("risk") && (() => {
-                    const needsAction = !!riskStatus.error && !riskSnapshot && !supporting.risk;
-                    return (
-                      <details className={needsAction ? "data-drawer" : "hidden"} open={needsAction}>
-                        <summary><span>Risk snapshot</span><small>Unavailable</small><ChevronRight size={16}/></summary>
-                        <RiskSnapshotStatus holdings={holdings} positions={enrichedPositions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/>
-                      </details>
-                    );
-                  })()}
-                  <details className="data-drawer"><summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary><MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/></details>
-                  {(selected.includes("risk") || selected.includes("market-indexes") || selected.includes("regional-attribution")) && <details className="data-drawer source-drawer"><summary><span>Source images & report data</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary><section className="supporting-upload"><p>Add screenshots and report snippets. Each image becomes its own slide. Give it a context sentence and the slide leads with your point, with the image as support.</p><SourceSnippets images={snippetImages} onChange={setSnippetImages}/><details className="structured-data"><summary>Structured market and Riskalyze data</summary><p className="helper">Import verified values for the generated charts and metrics.</p><div className="flex gap-3 flex-wrap"><button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button><a className="text-button" href="/report-data-template.json" download>Download data template</a></div><input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/><p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>{supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}{supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}{supportError && <p className="errors" role="alert">{supportError}</p>}</details></section></details>}
-                </section>
-                <aside className="deck-summary">
-                  <div className="summary-icon">
-                    <FileText size={22} strokeWidth={1.4} />
-                  </div>
-                  <h2>Your deck</h2>
-                  <label htmlFor="deck-title">Deck title</label>
-                  <input
-                    id="deck-title"
-                    maxLength={65}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                  <div className="personalization"><label className="field-label">Prepared for<input maxLength={80} value={preparedFor} onChange={e=>setPreparedFor(e.target.value)}/></label><label className="field-label">Advisor<input maxLength={80} value={advisor} onChange={e=>setAdvisor(e.target.value)}/></label><label className="field-label">Report date<input type="date" value={reportDate} onChange={e=>setReportDate(e.target.value)}/></label></div>
-                  <div className="deck-outline">
-                    <div>
-                      <span>01</span>Cover <small>Included</small>
-                    </div>
-                    {slides.slice(1).map((s, i) => (
-                      <div key={s.id}><span>{String(i + 2).padStart(2, "0")}</span>{s.name}</div>
-                    ))}
-                  </div>
-                  <div className="summary-count">
-                    <span>{slides.length} slides</span>
-                    <span>GSWM theme</span>
-                  </div>
-                  <button
-                    className="primary w-full"
-                    disabled={
-                      !selected.length ||
-                      (marketLoading && !validMarketIndexes(marketIndexes)) ||
-                      (selected.includes("equity") && !equity) ||
-                      (selected.includes("risk") && !supporting.risk && !riskSnapshot && riskStatus.busy)
-                    }
-                    onClick={() => { setDeckEquity(equity); setDeckMarket({positions: structuredClone(enrichedPositions), riskSnapshot: structuredClone(riskSnapshot), marketIndexes: structuredClone(marketIndexes), attribution: structuredClone(attribution), positionReturns: structuredClone(positionReturns), fixedIncome: structuredClone(fixedIncome), sectorBoard: structuredClone(sectorBoard), sectorPerformance: structuredClone(sectorPerformance), earnings: structuredClone(earnings), supporting: structuredClone(supporting)}); navigate(2); }}
-                  >
-                    Preview deck
-                  </button>
-                  {selected.includes("risk") && !supporting.risk && !riskSnapshot && (riskStatus.busy
-                    ? <p className="helper">Building the risk snapshot from your holdings&hellip;</p>
-                    : <p className="helper">{riskStatus.error || "The risk snapshot is unavailable."} This slide will be left out of the deck.{riskStatus.retry && <> <button className="text-button inline" onClick={riskStatus.retry}>Try again</button></>}</p>)}
-                  {selected.includes("equity") && !equity && <p className="helper">Complete the sector comparison to preview this component.</p>}
-                  {selected.includes("notes") && !notes.trim() && (
-                    <p className="helper">
-                      Add your discussion points to continue.
-                    </p>
-                  )}
-                  <button
-                    className="text-button mx-auto mt-4"
-                    onClick={() => navigate(0)}
-                  >
-                    <ArrowLeft size={14} /> Back to holdings
-                  </button>
-                </aside>
-              </div>
-            </>
-          )}
-          {step === 2 && (
-            <>
-              <div className="workspace-heading">
-                <div>
                   <h1>
                     {done ? "Your deck is ready." : "Review your deck"}
                   </h1>
                   <p>
                     {done
-                      ? "Save a PDF or return to refine your components."
-                      : "Review each slide before you finish your deck."}
+                      ? "Save a PDF, or keep editing \u2014 nothing is locked."
+                      : "Built from your holdings. Drag to reorder, remove what you do not need, add anything back."}
                   </p>
                 </div>
-                <button className="secondary" onClick={() => navigate(1)}>
-                  Edit components
-                </button>
               </div>
               <div className="preview-layout">
                 <aside className="slide-list">
@@ -1272,7 +1067,112 @@ function App() {
                       </button>
                     </div>
                   </div>
+                  {/* The deck's own details belong with the cover, not in a
+                      form on a step that no longer exists. The strip appears
+                      under the preview while the cover is the slide on screen,
+                      so the line being typed is the line being watched. */}
+                  {slides[page]?.id === "cover" && (
+                    <div className="cover-fields">
+                      <label><span>Prepared for</span>
+                        <input id="cover-client" maxLength={80} placeholder="Client name" value={preparedFor} onChange={(e) => setPreparedFor(e.target.value)}/></label>
+                      <label><span>Deck title</span>
+                        <input id="cover-title" maxLength={65} placeholder="Portfolio review" value={title} onChange={(e) => setTitle(e.target.value)}/></label>
+                      <label><span>Advisor</span>
+                        <input id="cover-advisor" maxLength={80} placeholder="Presented by" value={advisor} onChange={(e) => setAdvisor(e.target.value)}/></label>
+                      <label><span>Report date</span>
+                        <input id="cover-date" type="date" value={reportDate} onChange={(e) => setReportDate(e.target.value)}/></label>
+                    </div>
+                  )}
                 </div>
+              </div>
+              {/* The inputs sit under the deck they change, where the slide
+                  they feed is in view. There is no step that asks what to
+                  build any more, so this is the only place they can live. */}
+              <section className="studio-panels" aria-label="Deck inputs">
+                <details className="data-drawer source-drawer" open>
+                  <summary><span>Files &amp; source images</span><small>{snippetImages.length ? `${snippetImages.length} images` : "Optional"}</small><ChevronRight size={16}/></summary>
+                  <section className="supporting-upload">
+                    <p>Add screenshots and report snippets. Each image becomes its own slide. Give it a context sentence and the slide leads with your point, with the image as support.</p>
+                    <SourceSnippets images={snippetImages} onChange={setSnippetImages}/>
+                    <details className="structured-data">
+                      <summary>Structured market and Riskalyze data</summary>
+                      <p className="helper">Import verified values for the generated charts and metrics.</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <button className="secondary" onClick={() => supportFile.current.click()}><Upload size={15}/> Upload report data</button>
+                        <a className="text-button" href="/report-data-template.json" download>Download data template</a>
+                      </div>
+                      <input className="hidden" ref={supportFile} type="file" accept=".json" onChange={e => {uploadSupporting(e.target.files[0]);e.target.value="";}}/>
+                      <p className="helper">One JSON adapter can populate the automatic YTD index slide and the optional Riskalyze slide.</p>
+                      {supporting.marketIndexes && <p className="live-status">Market context loaded · {supporting.marketIndexes.asOf}</p>}
+                      {supporting.risk && <p className="live-status">Riskalyze data loaded · {supporting.risk.accounts.length} accounts · {supporting.risk.asOf}</p>}
+                      {!supporting.risk && !riskSnapshot && !riskStatus.busy && riskStatus.error && (
+                        <p className="helper">{riskStatus.error} The risk slide is left out of the deck.{riskStatus.retry && <> <button className="text-button inline" onClick={riskStatus.retry}>Try again</button></>}</p>
+                      )}
+                      {supportError && <p className="errors" role="alert">{supportError}</p>}
+                    </details>
+                    <details className="structured-data">
+                      <summary>Sector data for the equity slide</summary>
+                      <p className="helper">{benchmark.loading && !benchmark.snapshot ? "Loading the daily benchmark…" : benchmark.snapshot ? `IVV equity proxy · As of ${benchmark.snapshot.asOf}` : "Benchmark unavailable. Retry, or import sector data."}</p>
+                      {comparison && !importedEquity && <p className="coverage-note">{comparison.coverage.toFixed(1)}% of portfolio classified</p>}
+                      {comparison?.unmatched.length > 0 && !importedEquity && <p className="helper">Sector data needed for {comparison.unmatched.map(h => h.ticker).join(", ")}. Until it resolves the equity slide is left out: ETF look-through and unknown sectors are never guessed.</p>}
+                      {benchmark.snapshot && isBenchmarkStale(benchmark.snapshot) && !importedEquity && <p className="errors">This benchmark is older than four days. Refresh, or import a current sector file.</p>}
+                      <div className="flex gap-3 flex-wrap">
+                        <button className="secondary" disabled={benchmark.loading} onClick={benchmark.refresh}>Refresh benchmark</button>
+                        <button className="secondary" onClick={() => equityFile.current.click()}><Upload size={14}/> Import sector data</button>
+                        <button className="text-button" onClick={async () => {
+                          try {
+                            const response = await fetch("/example-sectors.json");
+                            if (!response.ok) throw Error("The example sector file could not be loaded.");
+                            setEquity(validateEquity(await response.json()));
+                            setEquityError("");
+                          } catch (error) { setEquityError(error.message || "The example sector file could not be loaded."); }
+                        }}>Load example sectors</button>
+                        <button className="text-button" onClick={() => setShowExample(true)}>Layout example</button>
+                        {importedEquity && <button className="text-button" onClick={() => setEquity(null)}>Use daily benchmark</button>}
+                      </div>
+                      <input className="hidden" ref={equityFile} type="file" accept=".json" onChange={(e) => {uploadEquity(e.target.files[0]);e.target.value="";}}/>
+                      {equity && <p className="live-status"><Check size={15}/> {importedEquity ? "Imported sector data" : "Portfolio comparison ready"} · {equity.as_of}</p>}
+                      {benchmark.error && !importedEquity && <p className="errors" role="alert">{benchmark.error}</p>}
+                      {equityError && <p className="errors" role="alert">{equityError}</p>}
+                    </details>
+                  </section>
+                </details>
+                <details className="data-drawer">
+                  <summary><span>Admin slide</span><small>{admin.contacts.some((c) => c.name.trim()) ? "Contacts added" : "Optional"}</small><ChevronRight size={16}/></summary>
+                  <section className="supporting-upload admin-fields">
+                    <p>The custodian move is the same for every client; the professional contacts are not, so they start empty and the card is left off the slide until you fill them in.</p>
+                    <div className="admin-grid">
+                      <label className="field-label">Heading<input maxLength={70} value={admin.heading} onChange={(e) => setAdmin((a) => ({...a, heading: e.target.value}))}/></label>
+                      <label className="field-label">When<input maxLength={40} placeholder="Weekend of Nov. 13, 2026" value={admin.when} onChange={(e) => setAdmin((a) => ({...a, when: e.target.value}))}/></label>
+                      <label className="field-label">Current custodian<input maxLength={40} value={admin.fromCustodian} onChange={(e) => setAdmin((a) => ({...a, fromCustodian: e.target.value}))}/></label>
+                      <label className="field-label">New custodian<input maxLength={40} value={admin.toCustodian} onChange={(e) => setAdmin((a) => ({...a, toCustodian: e.target.value}))}/></label>
+                      <label className="field-label">Current portal<input maxLength={40} value={admin.fromPortal} onChange={(e) => setAdmin((a) => ({...a, fromPortal: e.target.value}))}/></label>
+                      <label className="field-label">New portal<input maxLength={40} value={admin.toPortal} onChange={(e) => setAdmin((a) => ({...a, toPortal: e.target.value}))}/></label>
+                      {admin.contacts.map((c, i) => (
+                        <label className="field-label" key={c.role}>{c.role}<input maxLength={60} placeholder="Name" value={c.name}
+                          onChange={(e) => setAdmin((a) => ({...a, contacts: a.contacts.map((x, j) => j === i ? {...x, name: e.target.value} : x)}))}/></label>
+                      ))}
+                    </div>
+                  </section>
+                </details>
+                <details className="data-drawer">
+                  <summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary>
+                  <MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/>
+                </details>
+                <details className="data-drawer context-drawer" open>
+                  <summary><span>Context</span><small>{(() => { const n = contextEntries.filter(e => e.role === "user").length; return n ? `${n} ${n === 1 ? "point" : "points"}` : "No context yet"; })()}</small><ChevronRight size={16}/></summary>
+                  <ContextChat
+                    entries={contextEntries}
+                    onChange={setContextEntries}
+                    deckContext={{title, preparedFor, advisor, reportDate, holdings, total, slides: slides.map(s => s.name)}}
+                  />
+                </details>
+              </section>
+              {/* The snapshot builds itself from the holdings, and stays mounted
+                  so moving between panels cannot remount it and refire the
+                  price-history fetch. When it fails the slide is simply absent. */}
+              <div className="hidden">
+                <RiskSnapshotStatus holdings={holdings} positions={enrichedPositions} benchmark={benchmark.snapshot} asOf={reportDate} client={preparedFor} data={riskSnapshot} onChange={setRiskSnapshot} onStatus={setRiskStatus}/>
               </div>
               <div className="finish-row">
                 <p>

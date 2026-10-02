@@ -1,0 +1,73 @@
+/* The deck page is the only page now, so the inputs that feed the deck and the
+   cover's own details live under the preview, with the slide they change in
+   view. The slide list keeps the styles it already had. */
+.studio-panels { margin-top: 30px; display: grid; gap: 12px; }
+.studio-panels .data-drawer { margin-top: 0; }
+
+/* Cover details, shown only while the cover is the slide on screen. A strip
+   rather than an overlay: a panel floating on the cover covered the portfolio
+   value sitting in the same corner. */
+.cover-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid #cfdcea;
+  border-radius: 10px;
+  background: #fff;
+}
+.cover-fields label { display: grid; gap: 5px; min-width: 0; }
+.cover-fields span {
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #51708d;
+}
+.cover-fields input {
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
+  padding: 9px 11px;
+  border: 1px solid #bdcddd;
+  border-radius: 7px;
+  background: #f9fbfd;
+  color: #1b2a4a;
+}
+.cover-fields input:focus-visible { outline: 2px solid #7d9dc3; outline-offset: 0; }
+
+.context-chat { padding: 18px; background: #fbfdff; display: grid; gap: 14px; }
+.context-chat > .helper { margin: 0; }
+.context-transcript { display: grid; gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px; }
+.context-empty { font-size: 13px; color: #6b8299; line-height: 1.55; margin: 0; padding: 8px 4px; }
+.context-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid #dbe6f0;
+  border-radius: 9px;
+  background: #fff;
+}
+.context-line p { margin: 0; font-size: 13px; line-height: 1.5; color: #1b2a4a; flex: 1; min-width: 0; }
+.context-line .context-index { font-size: 10px; color: #789ab8; padding-top: 3px; }
+.context-line.is-assistant { background: #f1f6fb; border-style: dashed; }
+.context-line .icon-button { background: transparent; border: 0; color: #9db5cb; padding: 2px; }
+.context-line .icon-button:hover { color: #8a3d32; }
+.context-composer { display: flex; gap: 10px; }
+.context-composer input {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid #bdcddd;
+  border-radius: 8px;
+  background: #fff;
+  color: #1b2a4a;
+}
+.context-composer .primary { flex-shrink: 0; }
+
+@media (max-width: 760px) {
+  .cover-fields { grid-template-columns: 1fr; }
+  .context-composer { flex-wrap: wrap; }
+}
