@@ -8,14 +8,14 @@
    White has to invert that relationship: a panel is a tint of the ink rather
    than a lift out of it, so #f4f6fa carries the same separation on the page. */
 
-.navy-light .dw-slide {
+.navy-slide .dw-slide {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 }
 
-.navy-light .dw-eyebrow {
+.navy-slide .dw-eyebrow {
   font-family: var(--navy-sans);
   font-size: 10px;
   font-weight: 600;
@@ -24,8 +24,8 @@
   color: var(--navy-gold);
   margin-bottom: 11px;
 }
-.navy-light .dw-centre { text-align: center; }
-.navy-light .dw-source {
+.navy-slide .dw-centre { text-align: center; }
+.navy-slide .dw-source {
   margin: auto 0 0;
   font-size: 9px;
   line-height: 1.6;
@@ -327,3 +327,131 @@
 }
 .navy-slide:not(.navy-light) .dw-discussion p { color: #eef3fa; }
 .navy-slide:not(.navy-light) .dw-discussion li { border-bottom-color: #2b4260; }
+
+/* --- how the portfolio did ------------------------------------------------
+   Three figures across the top, then the class table under them. The lead
+   figure is the page: a client reads one number here and the table explains it. */
+.dw-perf-lead {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 32px;
+  padding: 4px 0 26px;
+  border-bottom: 1px solid var(--navy-rule, #dfe4ed);
+  margin-bottom: 22px;
+}
+.dw-perf-figure .dw-eyebrow { margin-bottom: 8px; }
+.dw-perf-figure strong {
+  font-family: var(--navy-serif);
+  font-size: 50px;
+  font-weight: 400;
+  letter-spacing: -1.4px;
+  line-height: 1;
+  color: var(--navy-ink, #17233f);
+  display: block;
+}
+.dw-perf-lead .dw-perf-figure:not(:first-child) strong { font-size: 34px; }
+.navy-light .dw-perf-figure strong.is-up { color: #1c7a47; }
+.navy-light .dw-perf-figure strong.is-down { color: #a4342c; }
+.navy-slide:not(.navy-light) .dw-perf-figure strong { color: #eef3fa; }
+.navy-slide:not(.navy-light) .dw-perf-figure strong.is-up { color: #7fd3a4; }
+.navy-slide:not(.navy-light) .dw-perf-figure strong.is-down { color: #e8928a; }
+
+.dw-perf-table { width: 100%; border-collapse: collapse; }
+.dw-perf-table th {
+  font-family: var(--navy-sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--navy-ink-3, #5f6e8c);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--navy-rule, #dfe4ed);
+}
+.dw-perf-table th:first-child, .dw-perf-table td:first-child { text-align: left; }
+.dw-perf-table td {
+  text-align: right;
+  padding: 12px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #ebeff5;
+  color: var(--navy-ink, #17233f);
+}
+.navy-slide:not(.navy-light) .dw-perf-table td { color: #e7eefa; border-bottom-color: #22354f; }
+.navy-slide:not(.navy-light) .dw-perf-table th { border-bottom-color: #2b4260; }
+.dw-perf-table td:first-child { font-size: 15px; }
+.dw-perf-table td small {
+  display: block;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--navy-ink-3, #5f6e8c);
+  margin-top: 3px;
+}
+.dw-perf-table td.is-up { color: #1c7a47; }
+.dw-perf-table td.is-down { color: #a4342c; }
+.navy-slide:not(.navy-light) .dw-perf-table td.is-up { color: #7fd3a4; }
+.navy-slide:not(.navy-light) .dw-perf-table td.is-down { color: #e8928a; }
+.dw-perf-lead { grid-template-columns: 1fr 1fr; }
+.dw-perf-figure small {
+  display: block;
+  margin-top: 9px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--navy-ink-3, #5f6e8c);
+}
+.dw-perf-table tfoot td {
+  border-bottom: 0;
+  border-top: 1px solid var(--navy-rule, #dfe4ed);
+  padding-top: 13px;
+  font-weight: 500;
+}
+.navy-slide:not(.navy-light) .dw-perf-table tfoot td { border-top-color: #2b4260; }
+
+/* --- what it pays and costs ----------------------------------------------- */
+.dw-money-lead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 4px 0 24px;
+  border-bottom: 1px solid var(--navy-rule, #dfe4ed);
+  margin-bottom: 24px;
+}
+.dw-money-lead .dw-perf-figure strong { font-size: 42px; }
+/* Clipped like the risk columns: the rows are sized to fit, and nothing that
+   outgrows the plate may print over the source note under it. */
+.dw-money-split { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; flex: 1; min-height: 0; overflow: hidden; }
+.dw-money-list { margin: 0; }
+.dw-money-list > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 9px 0;
+  border-bottom: 1px solid #ebeff5;
+}
+.navy-slide:not(.navy-light) .dw-money-list > div { border-bottom-color: #22354f; }
+.dw-money-list dt { font-size: 15px; color: var(--navy-ink, #17233f); }
+.navy-slide:not(.navy-light) .dw-money-list dt { color: #e7eefa; }
+.dw-money-list dd {
+  margin: 0;
+  text-align: right;
+  font-family: var(--navy-serif);
+  font-size: 17px;
+  color: var(--navy-ink, #17233f);
+}
+.navy-slide:not(.navy-light) .dw-money-list dd { color: #eef3fa; }
+.dw-money-list dt small, .dw-money-list dd small {
+  display: block;
+  font-family: var(--navy-sans);
+  font-size: 10px;
+  font-style: italic;
+  color: var(--navy-ink-3, #5f6e8c);
+  margin-top: 3px;
+}
+.dw-money-net { border-bottom: 0 !important; padding-top: 14px !important; }
+.dw-money-net dt { font-weight: 500; }
+.dw-fee-input { justify-content: flex-end; }
+.dw-fee-input .slide-field { max-width: 72px; text-align: right; flex: none; }
+
+/* Light rules under the title; navy separates with air instead. These pages are
+   served in both, so navy supplies the air the rule would otherwise occupy. */
+.navy-slide:not(.navy-light) .dw-slide > .navy-head { margin-bottom: 28px; }

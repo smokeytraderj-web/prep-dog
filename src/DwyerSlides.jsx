@@ -244,3 +244,160 @@ export function DwyerDiscussion({points = [], heading = 'What we will cover'}) {
     </ol>
   </div>;
 }
+
+// --- how the portfolio itself did ------------------------------------------
+// The page the deck was missing. Everything else said what markets did; this
+// says what the client's own money did, and against a benchmark built to their
+// mix rather than an index they do not hold.
+//
+// Both figures are estimates and the slide says so: the app is given today's
+// positions, not a transaction history, so a return can only be computed as
+// though every position were held all year. That assumption is stated on the
+// page rather than buried, because for a book that traded it is wrong.
+export function DwyerPerformance({result, blend, asOf, source, navy = false}) {
+  const pct = n => `${n > 0 ? '+' : ''}${n.toFixed(2)}%`;
+  const lead = result?.portfolioReturn;
+  return <div className="dw-slide">
+    <div className="navy-head">
+      <h2>How your portfolio did</h2>
+      {asOf && <span className="navy-meta">YEAR TO DATE THROUGH {String(asOf).toUpperCase()}</span>}
+    </div>
+
+    {/* Two figures, not three. A difference tile beside the headline would be
+        read as the headline minus the benchmark, and it is not: the headline is
+        the whole book, while the comparison can only speak for the classes an
+        index exists for. The table carries the like-for-like difference, with
+        its own total, so the arithmetic on the page is arithmetic the client
+        can follow. */}
+    <div className="dw-perf-lead">
+      <div className="dw-perf-figure">
+        <div className="dw-eyebrow">YOUR PORTFOLIO, ESTIMATED</div>
+        <strong className={lead >= 0 ? 'is-up' : 'is-down'}>{pct(lead)}</strong>
+      </div>
+      {blend && <div className="dw-perf-figure">
+        <div className="dw-eyebrow">A PORTFOLIO BUILT LIKE YOURS</div>
+        <strong>{pct(blend.benchmarkReturn)}</strong>
+        <small>{blend.coverage >= 99.5
+          ? 'Your own asset class weights, each at its index'
+          : `Your own weights across ${blend.coverage.toFixed(0)}% of the book`}</small>
+      </div>}
+    </div>
+
+    {blend && <table className="dw-perf-table">
+      <thead>
+        <tr>
+          <th>ASSET CLASS</th><th>WEIGHT</th><th>YOURS</th><th>BENCHMARK</th><th>DIFFERENCE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {blend.rows.map(row => <tr key={row.name}>
+          <td>{row.name}<small>{row.benchmarkLabel}</small></td>
+          <td>{row.weight.toFixed(1)}%</td>
+          <td>{pct(row.portfolioReturn)}</td>
+          <td>{pct(row.benchmarkReturn)}</td>
+          <td className={row.difference >= 0 ? 'is-up' : 'is-down'}>
+            {`${row.difference > 0 ? '+' : ''}${row.difference.toFixed(2)}`}
+          </td>
+        </tr>)}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>{blend.coverage >= 99.5 ? 'Whole portfolio' : 'Classes compared'}</td>
+          <td>100.0%</td>
+          <td>{pct(blend.portfolioReturn)}</td>
+          <td>{pct(blend.benchmarkReturn)}</td>
+          <td className={blend.difference >= 0 ? 'is-up' : 'is-down'}>
+            {`${blend.difference > 0 ? '+' : ''}${blend.difference.toFixed(2)}`}
+          </td>
+        </tr>
+      </tfoot>
+    </table>}
+
+    <p className="dw-source">
+      Estimated from the positions you hold now, measured from the prior year-end close, as though each
+      had been held all year; a position bought or sold during the year is not reflected.
+      {blend && blend.coverage < 99.5 &&
+        ` The comparison covers ${blend.coverage.toFixed(0)}% of the priced book${blend.excluded.length ? `; ${blend.excluded.join(' and ').toLowerCase()} have no index proxy and are excluded from both sides` : ''}.`}
+      {result?.unpriced?.length ? ` No price history for ${result.unpriced.join(', ')}.` : ''}
+      {source ? ` ${source}` : ''}
+    </p>
+  </div>;
+}
+
+// --- what it pays, and what it costs ---------------------------------------
+// The advisory fee is the one figure the app cannot know, so it is typed on the
+// slide the way the cover and the admin page are, and stays out of the total
+// until it has been. Everything else comes from published yields and expense
+// ratios already fetched for the risk snapshot.
+export function DwyerIncome({data, advisoryFee, onAdvisoryFee, edit = false, asOf}) {
+  const money = n => new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0}).format(n);
+  const pct = n => `${n.toFixed(2)}%`;
+  const top = data.rows.filter(row => row.income > 0).slice(0, 4);
+  return <div className="dw-slide">
+    <div className="navy-head">
+      <h2>What it pays, and what it costs</h2>
+      {asOf && <span className="navy-meta">AS OF {String(asOf).toUpperCase()}</span>}
+    </div>
+
+    <div className="dw-money-lead">
+      <div className="dw-perf-figure">
+        <div className="dw-eyebrow">ESTIMATED ANNUAL INCOME</div>
+        <strong>{data.annualIncome == null ? '--' : money(data.annualIncome)}</strong>
+        <small>{data.yieldPct == null ? 'No published yields' : `${pct(data.yieldPct)} on the positions that publish a yield`}</small>
+      </div>
+      <div className="dw-perf-figure">
+        <div className="dw-eyebrow">WHAT YOU PAY TO HOLD IT</div>
+        <strong>{pct(data.totalCostPct)}</strong>
+        <small>{data.advisoryPct == null
+          ? 'Fund expenses only; add the advisory fee below'
+          : `${money(data.totalCostValue)} a year, fund expenses and advisory fee`}</small>
+      </div>
+    </div>
+
+    <div className="dw-money-split">
+      <section>
+        <div className="dw-eyebrow">WHERE THE INCOME COMES FROM</div>
+        <dl className="dw-money-list">
+          {top.map(row => <div key={row.ticker}>
+            <dt>{row.ticker}<small>{row.name !== row.ticker ? row.name : ''}</small></dt>
+            <dd>{money(row.income)}<small>{pct(row.yieldPct)}</small></dd>
+          </div>)}
+        </dl>
+      </section>
+      <section>
+        <div className="dw-eyebrow">THE COST OF HOLDING IT</div>
+        <dl className="dw-money-list">
+          <div>
+            <dt>Fund expenses</dt>
+            <dd>{data.fundCostValue == null ? '--' : money(data.fundCostValue)}
+              <small>{data.fundCostPct == null ? '' : pct(data.fundCostPct)}</small></dd>
+          </div>
+          <div>
+            <dt>Advisory fee</dt>
+            <dd>
+              {edit
+                ? <span className="slide-field-row dw-fee-input">
+                    <input className="slide-field" inputMode="decimal" placeholder="0.00"
+                      value={advisoryFee ?? ''} onChange={(e) => onAdvisoryFee?.(e.target.value)}/>
+                    <span>%</span>
+                  </span>
+                : <>{data.advisoryValue == null ? 'Not stated' : money(data.advisoryValue)}
+                    <small>{data.advisoryPct == null ? '' : pct(data.advisoryPct)}</small></>}
+            </dd>
+          </div>
+          {data.netIncome != null && <div className="dw-money-net">
+            <dt>Income after those costs</dt>
+            <dd>{money(data.netIncome)}</dd>
+          </div>}
+        </dl>
+      </section>
+    </div>
+
+    <p className="dw-source">
+      Estimated from each holding's published yield and expense ratio, not from distributions received or
+      fees billed. Income is measured on the {data.incomeCoverage.toFixed(0)}% of the portfolio that publishes a
+      yield, and fund expenses on the {data.costCoverage.toFixed(0)}% that publishes a ratio.
+      {data.taxDragPct != null && ` Estimated tax drag of ${pct(data.taxDragPct)} a year is modelled separately and is not included above.`}
+    </p>
+  </div>;
+}

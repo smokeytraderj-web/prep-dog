@@ -42,7 +42,10 @@ import "./slide-brand.css";
 import "./slide-dwyer-layouts.css";
 import { DwyerRisk, DwyerContents } from "./DwyerSlides";
 import "./print-fidelity.css";
-import { DwyerDiscussion } from "./DwyerSlides";
+import { DwyerDiscussion, DwyerPerformance, DwyerIncome } from "./DwyerSlides";
+import { incomeAndCost } from "./portfolio-income";
+import { blendedBenchmark } from "./blended-benchmark";
+import { assetClassPerformance } from "./allocation";
 import { NavyFrame, NavyCover, NavyCoverClassic, NavyAccountSummary, NavyMarketIndexes, NavyRegional, NavyEquity, NavyRisk, NavyAllocation, NavyAssetClassPerformance, NavyAdmin } from "./NavySlides";
 import { SourceSnippets, SourceSnippetSlide } from "./SourceSnippets";
 import equityExample from "./equity-example.json";
@@ -84,6 +87,20 @@ const sections = [
     id: "account-summary",
     name: "Account summary",
     description: "Major breakdown, account values, and equities versus fixed income.",
+    icon: Layers,
+    auto: true,
+  },
+  {
+    id: "performance",
+    name: "Portfolio performance",
+    description: "The portfolio's year-to-date return against a benchmark built to its own mix.",
+    icon: ChartNoAxesColumnIncreasing,
+    auto: true,
+  },
+  {
+    id: "income",
+    name: "Income and cost",
+    description: "What the portfolio pays out each year, and what it costs to hold.",
     icon: Layers,
     auto: true,
   },
@@ -306,6 +323,7 @@ function App() {
     document.title = savedDeckName;
     return () => { document.title = previous; };
   }, [done, savedDeckName]);
+  const [advisoryFee, setAdvisoryFee] = useState("");
   const [admin, setAdmin] = useState({
     heading: "Transition to LPL Financial",
     when: "",
@@ -408,6 +426,18 @@ function App() {
     })();
     return () => { cancelled = true; };
   }, [tickerKey]);
+  const classPerformance = React.useMemo(
+    () => (positionReturns ? assetClassPerformance(enrichedPositions, positionReturns.returns) : null),
+    [enrichedPositions, positionReturns],
+  );
+  const blend = React.useMemo(
+    () => (classPerformance ? blendedBenchmark(classPerformance.rows, {indexes: marketIndexes, "fixed-income": fixedIncome}) : null),
+    [classPerformance, marketIndexes, fixedIncome],
+  );
+  const income = React.useMemo(
+    () => incomeAndCost(riskSnapshot, advisoryFee.trim() === "" ? null : Number(advisoryFee)),
+    [riskSnapshot, advisoryFee],
+  );
   const attribution = React.useMemo(
     () => (positionReturns ? computeAttribution(holdings, positionReturns.returns) : null),
     [holdings, positionReturns],
@@ -434,6 +464,8 @@ function App() {
         : s.id === "fixed-income" && !fixedIncome?.indexes?.length ? []
         : s.id === "sector-ytd" && !sectorBoard?.indexes?.length ? []
         : s.id === "asset-class-performance" && !positionReturns ? []
+        : s.id === "performance" && !attribution?.rows?.length ? []
+        : s.id === "income" && !income ? []
         : s.id === "regional-attribution" && !attribution?.rows?.length ? []
         : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
         : [s],
@@ -581,6 +613,7 @@ function App() {
     setReviewed(false);
     setSelected(AUTO_SLIDES);
     setTitle("Portfolio review");
+    setAdvisoryFee("");
     setContextEntries([]);
     setErrors([]);
     setEquity(null);
@@ -700,6 +733,8 @@ function App() {
     "admin": "ADMINISTRATIVE UPDATES",
     "equity": "EQUITY EXPOSURE",
     "risk": "RISK SNAPSHOT",
+    "performance": "PORTFOLIO PERFORMANCE",
+    "income": "INCOME AND COST",
     "notes": "FOR OUR CONVERSATION",
   };
   // The file writes its as-of as a date a client would read. Navy keeps the ISO
@@ -749,6 +784,12 @@ function App() {
       return {label, body: themeOf(slideTheme).dark
         ? <NavyRisk s={riskSnapshot}/>
         : <DwyerRisk s={riskSnapshot}/>};
+    if (slide.id === "performance")
+      return {label, body: <DwyerPerformance result={attribution} blend={blend} navy={themeOf(slideTheme).dark}
+        asOf={themeOf(slideTheme).dark ? positionReturns?.asOf : longDate(positionReturns?.asOf)} source={positionReturns?.source}/>};
+    if (slide.id === "income")
+      return {label, body: <DwyerIncome data={income} advisoryFee={advisoryFee} onAdvisoryFee={setAdvisoryFee}
+        edit={editable} asOf={themeOf(slideTheme).dark ? reportDate : longDate(reportDate)}/>};
     if (slide.id === "notes")
       return {label, body: <DwyerDiscussion points={noteLines.slice(slide.offset, slide.offset + 4)}/>};
     if (slide.id === "allocation")
