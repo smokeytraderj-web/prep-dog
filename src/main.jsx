@@ -137,19 +137,19 @@ const sections = [
     auto: true,
   },
   {
-    id: "admin",
-    name: "Admin",
-    description: "Custodian and portal transition, what stays the same, and professional contacts.",
-    icon: Landmark,
-    auto: true,
-  },
-  {
     id: "equity",
     name: "Equity exposure",
     description: "Sector weights versus the current S&P 500 proxy.",
     icon: ChartNoAxesColumnIncreasing,
   },
   { id: "risk", name: "Risk snapshot", description: "Risk score, modeled range, and allocation from the confirmed holdings.", icon: ShieldCheck },
+  {
+    id: "admin",
+    name: "Admin",
+    description: "Custodian and portal transition, what stays the same, and professional contacts.",
+    icon: Landmark,
+    auto: true,
+  },
 ];
 
 // Every slide the app can build is in the standing deck. There is no step that

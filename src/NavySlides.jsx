@@ -634,15 +634,24 @@ export function NavyAdmin({admin = {}, edit = false, onChange}) {
   // In edit mode nothing is filtered out: an empty field is the one that still
   // needs typing into, and hiding it would leave no way to fill it in.
   const set = (patch) => onChange?.({...admin, ...patch});
-  const chipFields = [
-    {key: 'fromCustodian', note: 'Current custodian', to: false},
-    {key: 'toCustodian', note: 'New custodian', to: true},
-    {key: 'fromPortal', note: 'Current client portal', to: false},
-    {key: 'toPortal', note: 'New client portal', to: true},
+  // Two moves, not a four-step chain. Rendering the four cards in one row of
+  // arrows read as NFS becoming LPL becoming Investor360 becoming Account View,
+  // which is not what happens: the custodian changes, and separately the portal
+  // does. Each is its own before-and-after, labelled with what is moving.
+  const moves = [
+    {label: 'CUSTODIAN', from: 'fromCustodian', to: 'toCustodian'},
+    {label: 'CLIENT PORTAL', from: 'fromPortal', to: 'toPortal'},
   ];
-  const chips = edit ? chipFields : chipFields.filter((c) => admin[c.key]?.trim());
+  const shownMoves = edit ? moves : moves.filter(m => admin[m.from]?.trim() || admin[m.to]?.trim());
   const contacts = admin.contacts || [];
-  const shownContacts = edit ? contacts : contacts.filter((c) => c.name?.trim());
+  const shownContacts = edit ? contacts : contacts.filter(c => c.name?.trim());
+  const chip = (key, placeholder, isNew) => <div className={`navy-admin-chip ${isNew ? 'is-new' : ''}`}>
+    {edit
+      ? <b><input className="slide-field" value={admin[key] || ''} placeholder={placeholder}
+          onChange={(e) => set({[key]: e.target.value})}/></b>
+      : <b>{admin[key]}</b>}
+    <small>{isNew ? 'New' : 'Current'}</small>
+  </div>;
   return <div className={`navy-slide-body ${edit ? 'is-editable' : ''}`}>
     <div className="navy-head"><h2>Admin</h2></div>
     <div className="navy-admin-head">
@@ -655,17 +664,15 @@ export function NavyAdmin({admin = {}, edit = false, onChange}) {
             placeholder="WHEN" onChange={(e) => set({when: e.target.value})}/></span>
         : admin.when?.trim() && <span className="navy-admin-when">{admin.when.toUpperCase()}</span>}
     </div>
-    {chips.length > 0 && <div className="navy-admin-flow">
-      {chips.map((c, i) => <React.Fragment key={c.key}>
-        {i > 0 && <span className="navy-admin-arrow" aria-hidden="true">&rarr;</span>}
-        <div className={`navy-admin-chip ${c.to ? 'is-new' : ''}`}>
-          {edit
-            ? <b><input className="slide-field" value={admin[c.key] || ''} placeholder={c.note}
-                onChange={(e) => set({[c.key]: e.target.value})}/></b>
-            : <b>{admin[c.key]}</b>}
-          <small>{c.note}</small>
+    {shownMoves.length > 0 && <div className="navy-admin-moves">
+      {shownMoves.map(move => <section key={move.label} className="navy-admin-move">
+        <div className="navy-eyebrow is-gold">{move.label}</div>
+        <div className="navy-admin-flow">
+          {chip(move.from, 'Current', false)}
+          <span className="navy-admin-arrow" aria-hidden="true">&rarr;</span>
+          {chip(move.to, 'New', true)}
         </div>
-      </React.Fragment>)}
+      </section>)}
     </div>}
     {/* Boxes floating in the lower half read as leftovers, however they are
         spaced. These are columns of one band instead: a rule across the page,

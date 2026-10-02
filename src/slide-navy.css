@@ -731,13 +731,17 @@ rect.navy-under { fill: var(--navy-under); }
   padding: 8px 17px;
   white-space: nowrap;
 }
-.navy-admin-flow { display: flex; align-items: stretch; gap: 14px; margin: 0 0 24px; }
+/* Two before-and-afters side by side, each labelled with what is moving. One
+   row of four cards and three arrows read as a single four-step sequence. */
+.navy-admin-moves { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; margin: 0 0 26px; }
+.navy-admin-move .navy-eyebrow { margin-bottom: 9px; }
+.navy-admin-flow { display: flex; align-items: stretch; gap: 12px; margin: 0; }
 .navy-admin-arrow { align-self: center; color: var(--navy-gold); font-size: 17px; }
 .navy-admin-chip {
   flex: 1;
   border: 1px solid var(--navy-hair);
   border-radius: 7px;
-  padding: 22px 16px;
+  padding: 16px 14px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -802,6 +806,7 @@ rect.navy-under { fill: var(--navy-under); }
 }
 @media screen and (max-width: 900px) {
   .navy-allocation-layout { grid-template-columns: 1fr; gap: 24px; }
+  .navy-admin-moves { grid-template-columns: 1fr; gap: 20px; }
   .navy-admin-flow { flex-wrap: wrap; }
   .navy-admin-columns { grid-template-columns: 1fr; }
 }
