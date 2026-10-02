@@ -16,6 +16,10 @@ const GROUPS = [
 const CHART = {w: 1160, h: 234, zero: 100, maxBar: 70, labelGap: 14, names: 206};
 
 export default function EquitySlide({data, example = false}) {
+  // The deck drops this slide when the sector comparison has not resolved, so
+  // this is a backstop rather than a state the advisor should ever see: a slide
+  // with no data must not take the whole app down with it.
+  if (!data?.sectors?.length) return null;
   const diffs = data.sectors.map(sector => sector.portfolio - sector.benchmark);
   const extent = Math.max(0.5, ...diffs.map(Math.abs));
   const scale = CHART.maxBar / extent;

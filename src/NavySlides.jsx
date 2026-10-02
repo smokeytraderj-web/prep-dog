@@ -589,27 +589,79 @@ export function NavyAssetClassPerformance({positions, returns, asOf, source}) {
 // review step: the names are a specific client's professional contacts, so
 // nothing is hardcoded into every deck, and a card with nothing in it is left
 // off rather than printed empty.
-export function NavyAdmin({admin = {}}) {
-  const chips = [
-    {label: admin.fromCustodian, note: 'Current custodian', to: false},
-    {label: admin.toCustodian, note: 'New custodian', to: true},
-    {label: admin.fromPortal, note: 'Current client portal', to: false},
-    {label: admin.toPortal, note: 'New client portal', to: true},
-  ].filter(c => c.label?.trim());
-  const same = (admin.staysTheSame || []).filter(s => s.trim());
-  const seen = (admin.whatYouSee || []).filter(s => s.trim());
-  const contacts = (admin.contacts || []).filter(c => c.name?.trim());
-  return <div className="navy-slide-body">
+// The admin slide is edited on the slide itself. Every field is the line it
+// will print, so there is no form to keep in step with the page, and nothing
+// to open before the slide can be changed. `edit` is only ever true in the
+// preview; the printed deck renders plain text.
+function AdminField({value, onChange, placeholder, tag = 'span', className = '', edit}) {
+  const Tag = tag;
+  if (!edit) return value?.trim() ? <Tag className={className}>{value}</Tag> : null;
+  return <Tag className={className}>
+    <input
+      className="slide-field"
+      value={value || ''}
+      placeholder={placeholder}
+      size={Math.max((value || placeholder || '').length, 6)}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </Tag>;
+}
+
+function AdminList({items, onChange, label, edit}) {
+  const shown = edit ? items : items.filter((s) => s.trim());
+  if (!shown.length && !edit) return null;
+  return <section className="navy-admin-col">
+    <div className="navy-eyebrow is-gold">{label}</div>
+    <ul>
+      {shown.map((item, i) => <li key={i}>
+        {edit ? <span className="slide-field-row">
+          <input className="slide-field" value={item} placeholder="Add a line"
+            onChange={(e) => onChange(items.map((x, j) => j === i ? e.target.value : x))}/>
+          <button type="button" className="slide-field-drop" aria-label={`Remove line ${i + 1}`}
+            onClick={() => onChange(items.filter((_, j) => j !== i))}>&times;</button>
+        </span> : item}
+      </li>)}
+      {edit && <li className="slide-field-add">
+        <button type="button" onClick={() => onChange([...items, ''])}>+ Add a line</button>
+      </li>}
+    </ul>
+  </section>;
+}
+
+export function NavyAdmin({admin = {}, edit = false, onChange}) {
+  // In edit mode nothing is filtered out: an empty field is the one that still
+  // needs typing into, and hiding it would leave no way to fill it in.
+  const set = (patch) => onChange?.({...admin, ...patch});
+  const chipFields = [
+    {key: 'fromCustodian', note: 'Current custodian', to: false},
+    {key: 'toCustodian', note: 'New custodian', to: true},
+    {key: 'fromPortal', note: 'Current client portal', to: false},
+    {key: 'toPortal', note: 'New client portal', to: true},
+  ];
+  const chips = edit ? chipFields : chipFields.filter((c) => admin[c.key]?.trim());
+  const contacts = admin.contacts || [];
+  const shownContacts = edit ? contacts : contacts.filter((c) => c.name?.trim());
+  return <div className={`navy-slide-body ${edit ? 'is-editable' : ''}`}>
     <div className="navy-head"><h2>Admin</h2></div>
     <div className="navy-admin-head">
-      <h3>{admin.heading?.trim() || 'Administrative updates'}</h3>
-      {admin.when?.trim() && <span className="navy-admin-when">{admin.when.toUpperCase()}</span>}
+      {edit
+        ? <h3><input className="slide-field" value={admin.heading || ''} placeholder="Administrative updates"
+            onChange={(e) => set({heading: e.target.value})}/></h3>
+        : <h3>{admin.heading?.trim() || 'Administrative updates'}</h3>}
+      {edit
+        ? <span className="navy-admin-when"><input className="slide-field" value={admin.when || ''}
+            placeholder="WHEN" onChange={(e) => set({when: e.target.value})}/></span>
+        : admin.when?.trim() && <span className="navy-admin-when">{admin.when.toUpperCase()}</span>}
     </div>
     {chips.length > 0 && <div className="navy-admin-flow">
-      {chips.map((c, i) => <React.Fragment key={`${c.label}-${i}`}>
-        {i > 0 && <span className="navy-admin-arrow" aria-hidden="true">→</span>}
+      {chips.map((c, i) => <React.Fragment key={c.key}>
+        {i > 0 && <span className="navy-admin-arrow" aria-hidden="true">&rarr;</span>}
         <div className={`navy-admin-chip ${c.to ? 'is-new' : ''}`}>
-          <b>{c.label}</b><small>{c.note}</small>
+          {edit
+            ? <b><input className="slide-field" value={admin[c.key] || ''} placeholder={c.note}
+                onChange={(e) => set({[c.key]: e.target.value})}/></b>
+            : <b>{admin[c.key]}</b>}
+          <small>{c.note}</small>
         </div>
       </React.Fragment>)}
     </div>}
@@ -618,19 +670,33 @@ export function NavyAdmin({admin = {}}) {
         hairlines between them running the full height, and the band carried to
         the foot of the slide. Two columns or three, the page is used. */}
     <div className="navy-admin-columns">
-      {same.length > 0 && <section className="navy-admin-col">
-        <div className="navy-eyebrow is-gold">WHAT STAYS THE SAME</div>
-        <ul>{same.map((s, i) => <li key={i}>{s}</li>)}</ul>
-      </section>}
-      {seen.length > 0 && <section className="navy-admin-col">
-        <div className="navy-eyebrow is-gold">WHAT YOU WILL SEE</div>
-        <ul>{seen.map((s, i) => <li key={i}>{s}</li>)}</ul>
-      </section>}
-      {contacts.length > 0 && <section className="navy-admin-col">
+      <AdminList items={admin.staysTheSame || []} edit={edit} label="WHAT STAYS THE SAME"
+        onChange={(staysTheSame) => set({staysTheSame})}/>
+      <AdminList items={admin.whatYouSee || []} edit={edit} label="WHAT YOU WILL SEE"
+        onChange={(whatYouSee) => set({whatYouSee})}/>
+      {(shownContacts.length > 0) && <section className="navy-admin-col">
         <div className="navy-eyebrow is-gold">PROFESSIONAL CONTACTS</div>
-        <dl>{contacts.map((c, i) => <React.Fragment key={i}>
-          <dt>{c.role}</dt><dd>{c.name}</dd>
+        <dl>{shownContacts.map((c, i) => <React.Fragment key={i}>
+          <dt>{edit
+            ? <input className="slide-field" value={c.role} placeholder="Role"
+                onChange={(e) => set({contacts: contacts.map((x, j) => j === i ? {...x, role: e.target.value} : x)})}/>
+            : c.role}</dt>
+          <dd>{edit
+            ? <span className="slide-field-row">
+                <input className="slide-field" value={c.name} placeholder="Name"
+                  onChange={(e) => set({contacts: contacts.map((x, j) => j === i ? {...x, name: e.target.value} : x)})}/>
+                <button type="button" className="slide-field-drop" aria-label={`Remove ${c.role || 'contact'}`}
+                  onClick={() => set({contacts: contacts.filter((_, j) => j !== i)})}>&times;</button>
+              </span>
+            : c.name}</dd>
         </React.Fragment>)}</dl>
+        {edit && <button type="button" className="slide-field-add-inline"
+          onClick={() => set({contacts: [...contacts, {role: 'Contact', name: ''}]})}>+ Add a contact</button>}
+      </section>}
+      {edit && shownContacts.length === 0 && <section className="navy-admin-col">
+        <div className="navy-eyebrow is-gold">PROFESSIONAL CONTACTS</div>
+        <button type="button" className="slide-field-add-inline"
+          onClick={() => set({contacts: [{role: 'CPA', name: ''}]})}>+ Add a contact</button>
       </section>}
     </div>
   </div>;

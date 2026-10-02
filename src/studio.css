@@ -71,3 +71,93 @@
   .cover-fields { grid-template-columns: 1fr; }
   .context-composer { flex-wrap: wrap; }
 }
+
+/* The deck runs to thirteen slides and the list ran well past the preview
+   beside it, every name wrapping onto three lines in a 190px column. Wider
+   column, one line per slide, tighter rows: the list now ends about where the
+   preview does, which is the only place the eye goes looking for it. */
+.preview-layout { grid-template-columns: 228px minmax(0, 1fr); }
+.slide-list .slide-row { align-items: stretch; }
+.slide-list button.slide-row-open {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 4px 9px 10px;
+  font-size: 12.5px;
+  line-height: 1.25;
+}
+.slide-list button.slide-row-open > span { flex-shrink: 0; font-size: 10px; }
+/* One line, clipped. The full name is on the slide itself a click away. */
+.slide-list button.slide-row-open > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.slide-list-add { margin-top: 9px; gap: 5px; }
+.slide-list-add button { padding: 6px 10px; }
+
+/* A few sentences, not a conversation: the box is narrow and short so it reads
+   as a note beside the images rather than a second panel under them. */
+.context-chat {
+  max-width: 480px;
+  padding: 0;
+  margin-top: 20px;
+  background: none;
+  gap: 10px;
+}
+.context-chat > .helper { margin: 0; }
+.context-transcript { max-height: 148px; gap: 6px; padding: 0; }
+.context-line { padding: 8px 10px; }
+.context-line p { font-size: 12.5px; }
+.context-empty { font-size: 12.5px; padding: 2px; }
+.context-composer input { font-size: 13px; padding: 8px 11px; }
+.context-composer .primary { font-size: 12px; padding: 8px 13px; }
+
+/* Fields on the slide itself. They have to disappear into the layout: the
+   point of editing here is seeing the line exactly as it will print, so the
+   input inherits the type it sits in and shows a hairline only. */
+.slide-field {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed currentColor;
+  padding: 0 1px 1px;
+  min-width: 2.5em;
+  max-width: 100%;
+  border-radius: 0;
+  opacity: .95;
+}
+.slide-field:focus { outline: none; border-bottom-style: solid; }
+.slide-field::placeholder { opacity: .45; font-style: italic; }
+.slide-field-row { display: flex; align-items: center; gap: 5px; width: 100%; }
+.slide-field-row .slide-field { flex: 1; min-width: 0; }
+/* The size attribute keeps a lone field tight to its text; inside a column the
+   line has a column to fill, and clipping its own content is worse. */
+.navy-admin-col .slide-field, .navy-admin-chip .slide-field { width: 100%; }
+.slide-field-drop,
+.slide-field-add button,
+.slide-field-add-inline {
+  font: inherit;
+  font-size: 11px;
+  background: none;
+  border: 0;
+  color: inherit;
+  opacity: .5;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.slide-field-drop:hover, .slide-field-add button:hover, .slide-field-add-inline:hover { opacity: 1; }
+.slide-field-add { list-style: none; margin-top: 4px; }
+.slide-field-add-inline { display: block; margin-top: 8px; text-align: left; }
+/* The dashed hairlines are editing affordances, never printed. */
+@media print {
+  .slide-field { border-bottom: 0; }
+  .slide-field-drop, .slide-field-add, .slide-field-add-inline { display: none; }
+}
+
+@media (max-width: 1000px) { .preview-layout { grid-template-columns: 186px minmax(0, 1fr); } }

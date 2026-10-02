@@ -393,6 +393,7 @@ function App() {
       .flatMap((s) =>
         s.id === "risk" && riskSnapshot ? [{...s, name:"Risk snapshot"}] : s.id === "risk" && supporting.risk ? Array.from({length: Math.ceil(supporting.risk.accounts.length / 2)}, (_, i) => ({...s, offset: i * 2, name: `Risk metrics${supporting.risk.accounts.length > 2 ? ` · ${i + 1}` : ""}`}))
         : s.id === "risk" ? []
+        : s.id === "equity" && !equity ? []
         : s.id === "attribution" && supporting.attribution ? supporting.attribution.accounts.map((a, i) => ({...s, accountIndex: i, name: `Contribution · ${a.name}`}))
         : [s],
       ),
@@ -667,7 +668,7 @@ function App() {
       ? d.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})
       : iso;
   };
-  function navyContent(slide) {
+  function navyContent(slide, editable) {
     const asOfLabel = themeOf(slideTheme).dark ? reportDate : longDate(reportDate);
     if (slide.snippet) return null;
     const label = NAVY_LABELS[slide.id];
@@ -712,17 +713,17 @@ function App() {
       return {label, body: <NavyAssetClassPerformance positions={positions} returns={positionReturns?.returns}
         asOf={positionReturns?.asOf} source={positionReturns?.source}/>};
     if (slide.id === "admin")
-      return {label, body: <NavyAdmin admin={admin}/>};
+      return {label, body: <NavyAdmin admin={admin} edit={editable} onChange={setAdmin}/>};
     return null;
   }
-  function renderSlide({ slide, index }) {
+  function renderSlide({ slide, index, editable }) {
     // These are the Dwyer slides: the spine, the promoted figure, the gold
     // rules. That design is not navy's alone, so both themes render it and the
     // palette is what changes — light serves it on white. The theme is on the
     // article, which is where slide-dwyer.css redefines the colours; the
     // components below are the same ones in either theme.
     const theme = themeOf(slideTheme);
-    const dwyer = navyContent(slide);
+    const dwyer = navyContent(slide, editable);
     if (dwyer)
       return (
         <article
@@ -1018,7 +1019,7 @@ function App() {
                   </div>}
                 </aside>
                 <div className="preview-stage">
-                  <SlideFrame>{renderSlide({ slide: slides[page], index: page })}</SlideFrame>
+                  <SlideFrame>{renderSlide({ slide: slides[page], index: page, editable: true })}</SlideFrame>
                   <div className="preview-controls">
                     <span>
                       {page + 1} / {slides.length}
@@ -1094,6 +1095,14 @@ function App() {
                   <section className="supporting-upload">
                     <p>Add screenshots and report snippets. Each image becomes its own slide. Give it a context sentence and the slide leads with your point, with the image as support.</p>
                     <SourceSnippets images={snippetImages} onChange={setSnippetImages}/>
+                    {/* A few sentences about the meeting, kept next to the
+                        images because both are the advisor's own material
+                        rather than fetched data. */}
+                    <ContextChat
+                      entries={contextEntries}
+                      onChange={setContextEntries}
+                      deckContext={{title, preparedFor, advisor, reportDate, holdings, total, slides: slides.map(s => s.name)}}
+                    />
                     <details className="structured-data">
                       <summary>Structured market and Riskalyze data</summary>
                       <p className="helper">Import verified values for the generated charts and metrics.</p>
@@ -1138,34 +1147,8 @@ function App() {
                   </section>
                 </details>
                 <details className="data-drawer">
-                  <summary><span>Admin slide</span><small>{admin.contacts.some((c) => c.name.trim()) ? "Contacts added" : "Optional"}</small><ChevronRight size={16}/></summary>
-                  <section className="supporting-upload admin-fields">
-                    <p>The custodian move is the same for every client; the professional contacts are not, so they start empty and the card is left off the slide until you fill them in.</p>
-                    <div className="admin-grid">
-                      <label className="field-label">Heading<input maxLength={70} value={admin.heading} onChange={(e) => setAdmin((a) => ({...a, heading: e.target.value}))}/></label>
-                      <label className="field-label">When<input maxLength={40} placeholder="Weekend of Nov. 13, 2026" value={admin.when} onChange={(e) => setAdmin((a) => ({...a, when: e.target.value}))}/></label>
-                      <label className="field-label">Current custodian<input maxLength={40} value={admin.fromCustodian} onChange={(e) => setAdmin((a) => ({...a, fromCustodian: e.target.value}))}/></label>
-                      <label className="field-label">New custodian<input maxLength={40} value={admin.toCustodian} onChange={(e) => setAdmin((a) => ({...a, toCustodian: e.target.value}))}/></label>
-                      <label className="field-label">Current portal<input maxLength={40} value={admin.fromPortal} onChange={(e) => setAdmin((a) => ({...a, fromPortal: e.target.value}))}/></label>
-                      <label className="field-label">New portal<input maxLength={40} value={admin.toPortal} onChange={(e) => setAdmin((a) => ({...a, toPortal: e.target.value}))}/></label>
-                      {admin.contacts.map((c, i) => (
-                        <label className="field-label" key={c.role}>{c.role}<input maxLength={60} placeholder="Name" value={c.name}
-                          onChange={(e) => setAdmin((a) => ({...a, contacts: a.contacts.map((x, j) => j === i ? {...x, name: e.target.value} : x)}))}/></label>
-                      ))}
-                    </div>
-                  </section>
-                </details>
-                <details className="data-drawer">
                   <summary><span>Market data</span><small>{marketLoading ? "Refreshing…" : marketIndexes.asOf ? `Through ${marketIndexes.asOf}` : "Not loaded"}{marketError ? " · Refresh issue" : ""}</small><ChevronRight size={16}/></summary>
                   <MarketIndexesEditor data={marketIndexes} onChange={setMarketIndexes} onRefresh={refreshMarketIndexes} loading={marketLoading} error={marketError}/>
-                </details>
-                <details className="data-drawer context-drawer" open>
-                  <summary><span>Context</span><small>{(() => { const n = contextEntries.filter(e => e.role === "user").length; return n ? `${n} ${n === 1 ? "point" : "points"}` : "No context yet"; })()}</small><ChevronRight size={16}/></summary>
-                  <ContextChat
-                    entries={contextEntries}
-                    onChange={setContextEntries}
-                    deckContext={{title, preparedFor, advisor, reportDate, holdings, total, slides: slides.map(s => s.name)}}
-                  />
                 </details>
               </section>
               {/* The snapshot builds itself from the holdings, and stays mounted
