@@ -27,8 +27,12 @@
   --dw-ink: #17233f;        /* the template's ground, used here as the ink */
   --dw-ink-2: #32436a;
   --dw-muted: #5f6e8c;
-  --dw-gold: #8a6b25;       /* text gold, 5.0:1 on white */
-  --dw-gold-rule: #d3bb81;  /* the file's gold, for rules and fills */
+  /* The template is a navy document and its gold was drawn for that ground.
+     Carried onto white at this density it took over the page, so the light
+     deck keeps the navy's own blues as its accent and spends gold nowhere:
+     the kickers, rules and fills below are all the ink, lightened. */
+  --dw-gold: #456b92;       /* accent at text weight, 5.6:1 on white */
+  --dw-gold-rule: #bcd0e2;  /* the same blue at rule weight */
   --dw-up: #1c7a47;
   --dw-down: #9b2c2c;
   --dw-hair: #dfe4ed;
@@ -214,14 +218,14 @@
   --navy-ink-2: #32436a;      /* 8.9:1 */
   --navy-ink-3: #5f6e8c;      /* 4.9:1, the muted blue darkened for white */
   --navy-index: #667494;      /* 4.6:1, the page numbers and axis labels */
-  --navy-gold: #8a6b25;       /* 5.0:1, the gold at text weight */
-  --navy-gold-bright: #b08d3e;/* 3.4:1 — large display figures only */
+  --navy-gold: #456b92;       /* 5.6:1, the accent at text weight */
+  --navy-gold-bright: #5b82ab;/* 4.0:1 — large display figures and fills */
   --navy-hair: rgba(23, 35, 63, 0.11);
   --navy-rule: rgba(23, 35, 63, 0.26);
   /* The same two ends on white: the template's gold against its blue. */
-  --navy-over: #b08d3e;
+  --navy-over: #5b82ab;
   --navy-under: #8fa0bd;
-  --navy-series-1: #8a6b25;
+  --navy-series-1: #456b92;
   --navy-series-2: #17233f;
   --navy-series-3: #6f85bc;
   --navy-series-4: #b9c4d8;
@@ -260,25 +264,25 @@
 .navy-light .context-board.is-navy {
   --board-ink: #17233f;
   --board-muted: #5f6e8c;
-  --board-rule: #d3bb81;
+  --board-rule: #bcd0e2;
   --board-grid: rgba(23, 35, 63, 0.1);
   --board-bar: #32436a;        /* reported periods */
   --board-bar-down: #a9b4c8;
-  --board-bar-estimate: #b08d3e;/* estimates stay the gold, darkened for white */
-  --board-growth: #8a6b25;
+  --board-bar-estimate: #5b82ab;/* estimates read as the lighter blue */
+  --board-growth: #456b92;
 }
 
 /* On navy the destination chips are a cream block holding dark text. Filling
    them with the darkened text gold on white makes two heavy mustard slabs, so
-   light keeps the same idea the other way up: the template's own gold as a
-   tint and a border, with the ink unchanged. */
+   light keeps the same idea the other way up: a tint and a border in the
+   deck's own blue, with the ink unchanged. */
 .navy-light .navy-admin-chip.is-new {
-  background: #faf5e9;
-  border-color: #d3bb81;
+  background: #eef3f9;
+  border-color: #bcd0e2;
 }
 .navy-light .navy-admin-chip.is-new b { color: var(--navy-ink); }
 .navy-light .navy-admin-chip.is-new small { color: var(--navy-ink-3); }
-.navy-light .navy-admin-when { color: #ffffff; background: #8a6b25; }
+.navy-light .navy-admin-when { color: #ffffff; background: #456b92; }
 
 /* --- the footer, from the file -------------------------------------------
    Every content slide in the Dwyer deck is signed along the foot: the firm's
@@ -329,9 +333,9 @@
 }
 .slide.navy-slide.navy-light.cover .navy-head { border-bottom: 0; }
 
-/* The donut's largest arc is the file's gold. The darkened text gold turns
-   olive across that much area; a fill carries no contrast minimum, so this
-   takes #d3bb81 exactly as the file has it. */
-.slide.navy-slide.navy-light .navy-slice-1 { stroke: #d3bb81; }
-.slide.navy-slide.navy-light .navy-swatch-cell i.navy-slice-1 { background: #d3bb81; }
-.slide.navy-slide.navy-light .navy-fill-equities { background: #d3bb81; }
+/* The donut's largest arc led the page in gold, which was most of why the
+   light deck read as a gold deck. It is the mid blue of the same family now,
+   so the slice that dominates the page belongs to it. */
+.slide.navy-slide.navy-light .navy-slice-1 { stroke: #8aa6c4; }
+.slide.navy-slide.navy-light .navy-swatch-cell i.navy-slice-1 { background: #8aa6c4; }
+.slide.navy-slide.navy-light .navy-fill-equities { background: #8aa6c4; }

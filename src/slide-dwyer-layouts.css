@@ -40,8 +40,13 @@
   gap: 45px;
   flex: 1;
   min-height: 0;
-  align-items: start;
+  align-items: stretch;
+  /* The columns used to overflow this track and print over the source note and
+     the footer beneath them. They are sized to fit below; this is the backstop
+     that keeps anything unforeseen inside the slide. */
+  overflow: hidden;
 }
+.navy-light .dw-risk > * { min-height: 0; }
 .navy-light .dw-risk-panel {
   background: #f4f6fa;
   border-radius: 4px;
@@ -51,7 +56,9 @@
   height: 100%;
 }
 .navy-light .dw-gauge { margin: 0; display: flex; flex-direction: column; }
-.navy-light .dw-gauge svg { width: 100%; height: auto; display: block; }
+/* Drawn at the full column width the dial alone was 227px tall and pushed the
+   total off the panel. It reads the same at two thirds of that. */
+.navy-light .dw-gauge svg { width: 100%; max-width: 252px; height: auto; display: block; margin: 0 auto; }
 .navy-light .dw-gauge-track { stroke: #d8e0ec; }
 .navy-light .dw-gauge-fill { stroke: var(--navy-gold-bright); }
 .navy-light .dw-gauge-score {
@@ -93,7 +100,7 @@
   top: 20px;
   bottom: 2px;
   width: 5px;
-  background: #7a6fbf;
+  background: #456b92;
 }
 .navy-light .dw-risk-total b {
   display: block;
@@ -137,10 +144,10 @@
 .navy-light .dw-alloc-keys span { display: flex; align-items: center; gap: 8px; }
 .navy-light .dw-alloc-keys b { font-weight: 600; color: var(--navy-ink); }
 .navy-light .dw-alloc-keys i { width: 9px; height: 9px; flex: none; }
-.navy-light .dw-fill-0 { background: #d3bb81; }
-.navy-light .dw-fill-1 { background: #6f80a8; }
-.navy-light .dw-fill-2 { background: #a9b3c7; }
-.navy-light .dw-fill-3 { background: #c9d2e3; }
+.navy-light .dw-fill-0 { background: #4a6f9c; }
+.navy-light .dw-fill-1 { background: #7d9ab9; }
+.navy-light .dw-fill-2 { background: #a9bed4; }
+.navy-light .dw-fill-3 { background: #cedcea; }
 
 .navy-light .dw-measures { margin: 0; border-top: 1px solid #dfe4ed; }
 .navy-light .dw-measures > div {
@@ -148,7 +155,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 20px;
-  padding: 15px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #ebeff5;
 }
 .navy-light .dw-measures dt { font-size: 14px; color: var(--navy-ink-2); }
